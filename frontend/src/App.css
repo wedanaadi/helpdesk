@@ -1,0 +1,19 @@
+@import url(./assets/fontawesome.min.css);
+@import url(../node_modules/bootstrap/dist/css/bootstrap.min.css);
+@import url(./assets/bootstrap.min.css);
+@import url(./assets/style.css);
+
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@100;400;500;600;700&display=swap');
+
+.w-5 {
+  width: 5%;
+}
+.w-10 {
+  width: 10%;
+}
+.w-15 {
+  width: 15%;
+}
+.w-20 {
+  width: 20%;
+}
