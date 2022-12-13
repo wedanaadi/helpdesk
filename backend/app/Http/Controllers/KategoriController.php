@@ -18,6 +18,19 @@ class KategoriController extends Controller
     return response()->json(['msg' => 'Get kategoris', "data" => $data, 'error' => []], 200);
   }
 
+  public function select(Request $request)
+  {
+    $pro = DB::select('SELECT * FROM kategoris');
+    $data = [];
+    foreach ($pro as $d) {
+      array_push($data, [
+        'label' => $d->nama_kategori,
+        'value' => $d->id
+      ]);
+    }
+    return response()->json(['msg' => 'Get kategoris', "data" => $data, 'error' => []], 200);
+  }
+
   public function store(Request $request)
   {
     $validator = Validator::make($request->all(), [

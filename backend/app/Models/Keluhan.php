@@ -2,20 +2,19 @@
 
 namespace App\Models;
 
-// use App\Traits\Uuid;
+use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pelanggan extends Model
+class Keluhan extends Model
 {
   use HasFactory;
-  // use Uuid;
+  use Uuid;
 
-  protected $table = 'pelanggans';
+  protected $table = 'keluhans';
   protected $guarded = [];
   public $timestamps = false;
   protected $keyType = 'string';
-  // protected $primaryKey = 'id';
 
   public function scopeFilter($query, array $filters)
   {
@@ -26,21 +25,16 @@ class Pelanggan extends Model
         ->orWhere('alamat', 'like', '%' . $search . '%')
         ->orWhereHas('kelurahan', function ($query) use ($search) {
           $query->where('name', $search);
-        })
-        ->orWhereHas('kelurahan.kecamatan', function ($query) use ($search) {
-          $query->where('name', $search);
-        })
-        ->orWhereHas('kelurahan.kecamatan.kabkot', function ($query) use ($search) {
-          $query->where('name', $search);
-        })
-        ->orWhereHas('kelurahan.kecamatan.kabkot.provinsi', function ($query) use ($search) {
-          $query->where('name', $search);
         });
+        // ->orWhereHas('kelurahan.kecamatan', function ($query) use ($search) {
+        //   $query->where('name', $search);
+        // })
+        // ->orWhereHas('kelurahan.kecamatan.kabkot', function ($query) use ($search) {
+        //   $query->where('name', $search);
+        // })
+        // ->orWhereHas('kelurahan.kecamatan.kabkot.provinsi', function ($query) use ($search) {
+        //   $query->where('name', $search);
+        // });
     });
-  }
-
-  public function kelurahan()
-  {
-    return $this->belongsTo(Kelurahan::class, 'kelurahan', 'id');
   }
 }

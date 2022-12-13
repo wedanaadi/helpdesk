@@ -44,7 +44,7 @@ const useHookAxios = () => {
         toast.error("unauthentication", { autoClose: 1500 });
         // error = { error: err.response.data.message, type: "unauthentication" };
       } else {
-        error = { error: err.response, type: "error" };
+        error = { error: err, type: "error" };
       }
       setError(error);
     } finally {

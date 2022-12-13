@@ -23,6 +23,19 @@ class PelangganController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  public function select(Request $request)
+  {
+    $pro = DB::select('SELECT * FROM pelanggans');
+    $data = [];
+    foreach ($pro as $d) {
+      array_push($data, [
+        'label' => $d->nama_pelanggan,
+        'value' => $d->id
+      ]);
+    }
+    return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
+  }
+
   public function provinsi(Request $request)
   {
     $pro = DB::select('SELECT * FROM provinces');

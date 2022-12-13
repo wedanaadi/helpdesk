@@ -3,6 +3,7 @@ import { RequiredAuth } from "./components/hook/MiddlewareAuth";
 import { RequiredLogin } from "./components/hook/RedirectHome";
 import Spinner from "./components/layout/Spinner";
 import Map from "./components/Map";
+import Test from "./components/test";
 const base_url = import.meta.env.VITE_bASE_ROUTE;
 const Home = React.lazy(() => import("./components/pages/Home"));
 const Login = React.lazy(() => import("./components/pages/Login"));
@@ -18,6 +19,7 @@ const NotFound = React.lazy(() => import("./components/pages/404"));
 const Pelanggan = React.lazy(() => import("./components/pages/pelanggan/Index"));
 const PelangganAdd = React.lazy(() => import("./components/pages/pelanggan/Add"));
 const PelangganEdit = React.lazy(() => import("./components/pages/pelanggan/Edit"));
+const KeluhanAdd = React.lazy(() => import("./components/pages/keluhan/Add"));
 
 export default [
   {
@@ -114,6 +116,14 @@ export default [
           </Suspense>
         ),
       },
+      {
+        path: `${base_url}/keluhan/add`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <KeluhanAdd />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -125,10 +135,10 @@ export default [
     ),
   },
   {
-    path: `${base_url}/map`,
+    path: `${base_url}/upload`,
     element: (
       <Suspense>
-          <Map />
+          <Test />
       </Suspense>
     ),
   },

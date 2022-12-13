@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PelangganController;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/hello', function () {
   return [0 => ['nama' => 'Adi'], 1 => ['nama' => 'Wedana']];
 });
+
+Route::post('keluhan', [ComplaintController::class, 'store']);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'store']);
@@ -49,6 +52,9 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/kabkot', [PelangganController::class, 'kabkot']);
   Route::get('/kecamatan', [PelangganController::class, 'kecamatan']);
   Route::get('/kelurahan', [PelangganController::class, 'kelurahan']);
+
+  Route::get('/pelanggan-select',[PelangganController::class, 'select']);
+  Route::get('/kategori-select',[KategoriController::class, 'select']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
