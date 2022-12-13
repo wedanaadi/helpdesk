@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { RequiredAuth } from "./components/hook/MiddlewareAuth";
 import { RequiredLogin } from "./components/hook/RedirectHome";
 import Spinner from "./components/layout/Spinner";
+import Map from "./components/Map";
 const base_url = import.meta.env.VITE_bASE_ROUTE;
 const Home = React.lazy(() => import("./components/pages/Home"));
 const Login = React.lazy(() => import("./components/pages/Login"));
@@ -14,6 +15,9 @@ const Pegawai = React.lazy(() => import("./components/pages/pegawai/index"));
 const PegawaiAdd = React.lazy(() => import("./components/pages/pegawai/Add"));
 const PegawaiEdit = React.lazy(() => import("./components/pages/pegawai/Edit"));
 const NotFound = React.lazy(() => import("./components/pages/404"));
+const Pelanggan = React.lazy(() => import("./components/pages/pelanggan/Index"));
+const PelangganAdd = React.lazy(() => import("./components/pages/pelanggan/Add"));
+const PelangganEdit = React.lazy(() => import("./components/pages/pelanggan/Edit"));
 
 export default [
   {
@@ -86,6 +90,30 @@ export default [
           </Suspense>
         ),
       },
+      {
+        path: `${base_url}/pelanggan`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <Pelanggan />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/pelanggan/add`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <PelangganAdd />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/pelanggan/edit`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <PelangganEdit />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -93,6 +121,14 @@ export default [
     element: (
       <Suspense>
           <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: `${base_url}/map`,
+    element: (
+      <Suspense>
+          <Map />
       </Suspense>
     ),
   },

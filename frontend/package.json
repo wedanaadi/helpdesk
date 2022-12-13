@@ -17,10 +17,12 @@
     "@popperjs/core": "^2.11.6",
     "axios": "^1.2.1",
     "bootstrap": "^5.2.3",
+    "leaflet": "^1.9.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.0",
     "react-confirm-alert": "^3.0.6",
     "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.0",
     "react-router-dom": "^6.4.5",
     "react-select": "^5.7.0",
     "react-toastify": "^9.1.1"

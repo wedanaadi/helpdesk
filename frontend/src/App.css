@@ -17,3 +17,16 @@
 .w-20 {
   width: 20%;
 }
+
+.leaflet-container {
+  width: 100%;
+  height: 500px;
+}
+
+.zi-100000 {
+  z-index: 1000 !important;
+}
+
+.leaflet-top,.leaflet-left {
+  z-index: 999 !important;
+}

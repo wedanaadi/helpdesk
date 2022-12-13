@@ -14,6 +14,8 @@ class Kategori extends Model
   protected $table = 'kategoris';
   protected $guarded = [];
   public $timestamps = false;
+  protected $keyType = 'string';
+  // protected $primaryKey = 'id';
 
   public function scopeFilter($query, array $filters)
   {

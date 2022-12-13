@@ -16,6 +16,8 @@ class Pegawai extends Model
   protected $guarded = [];
   public $incrementing = false;
   public $timestamps = false;
+  protected $keyType = 'string';
+  // protected $primaryKey = 'id';
 
   public function scopeFilter($query, array $filters)
   {

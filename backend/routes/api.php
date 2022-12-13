@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PelangganController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +25,6 @@ Route::get('/hello', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'store']);
 
-
 Route::middleware('auth:sanctum')->group(function () {
   Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -37,6 +37,16 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/pegawai', [PegawaiController::class, 'store']);
   Route::put('/pegawai/{id}', [PegawaiController::class, 'update']);
   Route::delete('/pegawai/{id}', [PegawaiController::class, 'destroy']);
+
+  Route::get('/pelanggan', [PelangganController::class, 'index']);
+  Route::post('/pelanggan', [PelangganController::class, 'store']);
+  Route::put('/pelanggan/{id}', [PelangganController::class, 'update']);
+  Route::delete('/pelanggan/{id}', [PelangganController::class, 'destroy']);
+
+  Route::get('/provinsi', [PelangganController::class, 'provinsi']);
+  Route::get('/kabkot', [PelangganController::class, 'kabkot']);
+  Route::get('/kecamatan', [PelangganController::class, 'kecamatan']);
+  Route::get('/kelurahan', [PelangganController::class, 'kelurahan']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
