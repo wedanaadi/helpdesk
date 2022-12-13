@@ -35,11 +35,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('/pegawai', [PegawaiController::class, 'index']);
   Route::post('/pegawai', [PegawaiController::class, 'store']);
+  Route::post('/pegawai/sendEmail', [PegawaiController::class, 'sendEmail']);
   Route::put('/pegawai/{id}', [PegawaiController::class, 'update']);
   Route::delete('/pegawai/{id}', [PegawaiController::class, 'destroy']);
 
   Route::get('/pelanggan', [PelangganController::class, 'index']);
   Route::post('/pelanggan', [PelangganController::class, 'store']);
+  Route::post('/pelanggan/sendEmail', [PelangganController::class, 'sendEmail']);
   Route::put('/pelanggan/{id}', [PelangganController::class, 'update']);
   Route::delete('/pelanggan/{id}', [PelangganController::class, 'destroy']);
 

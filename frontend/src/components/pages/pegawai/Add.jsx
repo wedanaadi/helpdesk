@@ -95,6 +95,17 @@ export default function AddPegawai() {
     }
 
     if (response && !error && !validation && !loading) {
+      axiosFuc({
+        axiosInstance: axios,
+        method: "POST",
+        url: `pegawai/sendEmail`,
+        data: response.email,
+        reqConfig: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        },
+      });
       toast.update(toastId.current, {
         render: "Successfuly created",
         type: "success",

@@ -10,6 +10,7 @@ export const INITIAL_STATE = {
   kabkot:"",
   kecamatan:"",
   kelurahan:"",
+  public_url:import.meta.env.VITE_BASE_PUBLIC,
 };
 
 export const pelangganReducer = (state, action) => {

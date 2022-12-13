@@ -213,6 +213,17 @@ export default function Add() {
     }
 
     if (response && !error && !validation && !loading) {
+      AxiosFuc({
+        axiosInstance: axios,
+        method: "POST",
+        url: `pelanggan/sendEmail`,
+        data: response.email,
+        reqConfig: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        },
+      });
       toast.update(toastId.current, {
         render: "Successfuly created",
         type: "success",
@@ -271,7 +282,7 @@ export default function Add() {
                 Email
               </label>
               <input
-                type="email"
+                type="text"
                 name="email"
                 className="form-control"
                 id="email"

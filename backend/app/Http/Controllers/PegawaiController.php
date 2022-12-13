@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendMailCreated;
 use App\Models\Pegawai;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -65,8 +66,16 @@ class PegawaiController extends Controller
       ];
       Pegawai::create($payload);
       User::create($payloadUser);
+      $dataEmail = [
+        'message' => 'Selamat, Akun berhasil dibuat!.',
+        'subject' => 'Created Data',
+        'username' => $request->username,
+        'password' => $request->password,
+        'email' => $request->email,
+        'public_url' => $request->public_url
+      ];
       DB::commit();
-      return response()->json(['msg' => 'Successfuly created data pegawai', "data" => $payload, 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly created data pegawai', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => null], 201);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed created data pegawai', "data" => null, 'error' => $e->getMessage()], 500);
@@ -112,13 +121,22 @@ class PegawaiController extends Controller
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
       ];
+      $dataEmail = [
+        'message' => 'Selamat, Akun berhasil dirubah!.',
+        'subject' => 'Updated Data',
+        'username' => $request->username,
+        'password' => 'Gunakan password lama',
+        'email' => $request->email,
+        'public_url' => $request->public_url
+      ];
       if($request->password != '' OR $request->password != null) {
         $payloadUser['password'] = Hash::make($request->password);
+        $dataEmail['password'] = $request->password;
       }
       $find->update($payload);
       User::create($payloadUser);
       DB::commit();
-      return response()->json(['msg' => 'Successfuly update data pegawai', "data" => $payload, 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly update data pegawai', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => null], 201);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed update data pegawai', "data" => null, 'error' => $e->getMessage()], 500);
@@ -142,5 +160,11 @@ class PegawaiController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'Failed update data delete', "data" => null, 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function sendEmail(Request $request)
+  {
+    dispatch(new SendMailCreated($request->all()));
+    return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
   }
 }

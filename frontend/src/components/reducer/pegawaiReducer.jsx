@@ -6,6 +6,7 @@ export const INITIAL_STATE = {
   password:"",
   telepon:"",
   role:"",
+  public_url:import.meta.env.VITE_BASE_PUBLIC,
 };
 
 export const pegawaiReducer = (state, action) => {

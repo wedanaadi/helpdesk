@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendMailCreated;
 use App\Libraries\Fungsi;
 use App\Models\Pelanggan;
 use App\Models\User;
@@ -135,8 +136,16 @@ class PelangganController extends Controller
       ];
       Pelanggan::create($payload);
       User::create($payloadUser);
+      $dataEmail = [
+        'message' => 'Selamat, Akun berhasil dibuat!.',
+        'subject' => 'Created Data',
+        'username' => $newID,
+        'password' => $newID,
+        'email' => $request->email,
+        'public_url' => $request->public_url
+      ];
       DB::commit();
-      return response()->json(['msg' => 'Successfuly created data pelanggan', "data" => $payload, 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly created data pelanggan', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => null], 201);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed created data pelanggan', "data" => null, 'error' => $e->getMessage()], 500);
@@ -193,8 +202,16 @@ class PelangganController extends Controller
       ];
       $find->update($payload);
       User::create($payloadUser);
+      $dataEmail = [
+        'message' => 'Selamat, Akun berhasil diubah!.',
+        'subject' => 'Updated Data',
+        'username' => $id,
+        'password' => $id,
+        'email' => $request->email,
+        'public_url' => $request->public_url
+      ];
       DB::commit();
-      return response()->json(['msg' => 'Successfuly updated data pelanggan', "data" => $payload, 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly updated data pelanggan', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => null], 200);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed updated data pelanggan', "data" => null, 'error' => $e->getMessage()], 500);
@@ -218,5 +235,11 @@ class PelangganController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'Failed update data delete', "data" => null, 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function sendEmail(Request $request)
+  {
+    dispatch(new SendMailCreated($request->all()));
+    return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
   }
 }

@@ -11,49 +11,50 @@ use Illuminate\Queue\SerializesModels;
 
 class SendCreated extends Mailable
 {
-    use Queueable, SerializesModels;
+  use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
+  /**
+   * Create a new message instance.
+   *
+   * @return void
+   */
+  public $data;
+  public function __construct($data)
+  {
+    $this->data = $data;
+  }
 
-    /**
-     * Get the message envelope.
-     *
-     * @return \Illuminate\Mail\Mailables\Envelope
-     */
-    public function envelope()
-    {
-        return new Envelope(
-            subject: 'Send Created',
-        );
-    }
+  /**
+   * Get the message envelope.
+   *
+   * @return \Illuminate\Mail\Mailables\Envelope
+   */
+  public function envelope()
+  {
+    return new Envelope(
+      subject: $this->data['subject'],
+    );
+  }
 
-    /**
-     * Get the message content definition.
-     *
-     * @return \Illuminate\Mail\Mailables\Content
-     */
-    public function content()
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
+  /**
+   * Get the message content definition.
+   *
+   * @return \Illuminate\Mail\Mailables\Content
+   */
+  public function content()
+  {
+    return new Content(
+      view: 'mail.akun-created',
+    );
+  }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array
-     */
-    public function attachments()
-    {
-        return [];
-    }
+  /**
+   * Get the attachments for the message.
+   *
+   * @return array
+   */
+  public function attachments()
+  {
+    return [];
+  }
 }
