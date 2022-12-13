@@ -18,7 +18,8 @@ return new class extends Migration
           $table->string('kategori_id',100);
           $table->string('pelanggan_id',100);
           $table->text('comment');
-          $table->integer('status');
+          $table->integer('status')->default('0');
+          $table->string('tiket',100);
           $table->bigInteger('created_at');
           $table->bigInteger('updated_at');
         });
