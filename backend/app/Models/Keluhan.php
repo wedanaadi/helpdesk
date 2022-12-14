@@ -19,22 +19,24 @@ class Keluhan extends Model
   public function scopeFilter($query, array $filters)
   {
     $query->when($filters['search'] ?? false, function ($query, $search) {
-      return $query->where('nama_pelanggan', 'like', '%' . $search . '%')
-        ->orWhere('email', 'like', '%' . $search . '%')
-        ->orWhere('telepon', 'like', '%' . $search . '%')
-        ->orWhere('alamat', 'like', '%' . $search . '%')
-        ->orWhereHas('kelurahan', function ($query) use ($search) {
-          $query->where('name', $search);
-        });
-        // ->orWhereHas('kelurahan.kecamatan', function ($query) use ($search) {
-        //   $query->where('name', $search);
-        // })
-        // ->orWhereHas('kelurahan.kecamatan.kabkot', function ($query) use ($search) {
-        //   $query->where('name', $search);
-        // })
-        // ->orWhereHas('kelurahan.kecamatan.kabkot.provinsi', function ($query) use ($search) {
-        //   $query->where('name', $search);
-        // });
+      return $query->where('comment', 'like', '%' . $search . '%')
+        ->orWhereHas('pelanggans', function ($query) use ($search) {
+          $query->where('nama_pelanggan', $search);
+        })
+        ->orWhereHas('kategoris', function ($query) use ($search) {
+          $query->where('nama_kategori', $search);
+        })
+        ;
     });
+  }
+
+  public function pelanggans()
+  {
+    return $this->belongsTo(Pelanggan::class, 'pelanggan_id','id');
+  }
+
+  public function kategoris()
+  {
+    return $this->belongsTo(Kategori::class, 'kategori_id', 'id');
   }
 }

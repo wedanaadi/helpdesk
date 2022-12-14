@@ -23,8 +23,6 @@ Route::get('/hello', function () {
   return [0 => ['nama' => 'Adi'], 1 => ['nama' => 'Wedana']];
 });
 
-Route::post('keluhan', [ComplaintController::class, 'store']);
-
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'store']);
 
@@ -55,6 +53,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('/pelanggan-select',[PelangganController::class, 'select']);
   Route::get('/kategori-select',[KategoriController::class, 'select']);
+
+  Route::get('keluhan', [ComplaintController::class, 'index']);
+  Route::get('keluhan/files/{id}', [ComplaintController::class, 'files']);
+  Route::post('keluhan', [ComplaintController::class, 'store']);
+  Route::put('keluhan/{id}', [ComplaintController::class, 'update']);
+  Route::delete('keluhan/{id}', [ComplaintController::class, 'destroy']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
