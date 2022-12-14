@@ -3,8 +3,10 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PelangganController;
+use App\Models\Maintenance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,12 +55,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('/pelanggan-select',[PelangganController::class, 'select']);
   Route::get('/kategori-select',[KategoriController::class, 'select']);
+  Route::get('/teknisi-select',[PegawaiController::class, 'select']);
 
   Route::get('keluhan', [ComplaintController::class, 'index']);
   Route::get('keluhan/files/{id}', [ComplaintController::class, 'files']);
   Route::post('keluhan', [ComplaintController::class, 'store']);
   Route::put('keluhan/{id}', [ComplaintController::class, 'update']);
+  Route::put('keluhan/status/{id}', [ComplaintController::class, 'solve']);
   Route::delete('keluhan/{id}', [ComplaintController::class, 'destroy']);
+
+  Route::post('maintenance', [MaintenanceController::class, 'store']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

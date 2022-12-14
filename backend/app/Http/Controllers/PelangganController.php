@@ -142,7 +142,7 @@ class PelangganController extends Controller
       $payloadUser = [
         'username' => $newID,
         'password' => bcrypt($newID),
-        'role' => "3",
+        'role' => "4",
         'relasi_id' => $payload['id'],
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
@@ -191,7 +191,7 @@ class PelangganController extends Controller
     $find=Pelanggan::findOrFail($id);
     DB::beginTransaction();
     try {
-      User::where('relasi_id',$id)->delete();
+      $userData = User::where('relasi_id',$id);
       $payload = [
         'nama_pelanggan' => $request->nama_pelanggan,
         'email' => $request->email,
@@ -208,13 +208,13 @@ class PelangganController extends Controller
       $payloadUser = [
         'username' => $id,
         'password' => bcrypt($id),
-        'role' => "3",
+        'role' => "4",
         'relasi_id' => $id,
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
       ];
       $find->update($payload);
-      User::create($payloadUser);
+      $userData->update($payloadUser);
       $dataEmail = [
         'message' => 'Selamat, Akun berhasil diubah!.',
         'subject' => 'Updated Data',

@@ -21,8 +21,18 @@ class ComplaintController extends Controller
   public function index()
   {
     $data = Keluhan::filter(request(['search']))
-      ->with('pelanggans','kategoris')
-      ->where('is_aktif','1')
+      ->with('pelanggan', 'kategori',
+      'pelanggan.kelurahan',
+      'pelanggan.kelurahan.kecamatan',
+      'pelanggan.kelurahan.kecamatan.kabkot',
+      'pelanggan.kelurahan.kecamatan.kabkot.provinsi',
+      'files')
+      ->select('*', DB::raw('date_format(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d %H:%i:%s") as created_at2'),
+      DB::raw('IF(status = "0","ON",IF(status= "1","SOLVE",IF(unix_timestamp(DATE_FORMAT(date_add(FROM_UNIXTIME(created_at/1000),INTERVAL 3 day),"%Y-%m-%d %H:%i:%s"))*1000<UNIX_TIMESTAMP(NOW()),"ON PROSESS","EXPIRED"))) as status_keluhan'),
+      DB::raw('DATE_FORMAT(date_add(FROM_UNIXTIME(created_at/1000),INTERVAL 3 day),"%Y-%m-%d %H:%i:%s") as expired_date')
+      )
+      // ->selectRaw('*, created_at AS "tanggal_tiket"')
+      ->where('is_aktif', '1')
       ->OrderBy('status', 'ASC')
       ->OrderBy('tiket', 'ASC')
       ->paginate(request('perpage'));
@@ -60,6 +70,8 @@ class ComplaintController extends Controller
         'pelanggan_id' => $request->pelanggan,
         'kategori_id' => $request->kategori,
         'comment' => $request->komentar,
+        'created_user' => $request->created_user,
+        'expired_date' => strtotime(date("Y-m-d H:i:s")."+3 days")*1000,
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
       ];
@@ -71,7 +83,7 @@ class ComplaintController extends Controller
           $dataImage = $request->all()['files'][$i];
           // $destinationPath = public_path().'/images/pegawai'; --> unuk folder public
           $destinationPath = storage_path('app') . '/public/file';
-          $fileName = 'file-'.Str::uuid()->toString(). "=" . preg_replace('/\s+/', '', $dataImage->getClientOriginalName());
+          $fileName = 'file-' . Str::uuid()->toString() . "=" . preg_replace('/\s+/', '', $dataImage->getClientOriginalName());
           $extensi = $dataImage->getClientOriginalExtension();
           $dataImage->move($destinationPath, $fileName);
           array_push($dataFile, [
@@ -117,24 +129,26 @@ class ComplaintController extends Controller
         'pelanggan_id' => $request->pelanggan,
         'kategori_id' => $request->kategori,
         'comment' => $request->komentar,
-        'created_at' => round(microtime(true) * 1000),
+        'created_user' => $request->created_user,
         'updated_at' => round(microtime(true) * 1000),
       ];
 
       // bagin upload file done
       $dataFile = [];
       if ($request->isFile === 'true') {
-        foreach ($request->_files as $old) {
-          $destinationPath = storage_path('app') . '/public/file';
-          // return $destinationPath;
-          unlink( $destinationPath.'/'.$old['file']);
+        if($request->is_File === 'true') {
+          foreach ($request->_files as $old) {
+            $destinationPath = storage_path('app') . '/public/file';
+            // return $destinationPath;
+            unlink($destinationPath . '/' . $old['file']);
+          }
+          FileKeluhan::where('keluhan_id', $find->tiket)->delete();
         }
-        FileKeluhan::where('keluhan_id',$find->tiket)->delete();
         for ($i = 0; $i < count($request->all()['files']); $i++) {
           $dataImage = $request->all()['files'][$i];
           // $destinationPath = public_path().'/images/pegawai'; --> unuk folder public
           $destinationPath = storage_path('app') . '/public/file';
-          $fileName = 'file-'.Str::uuid()->toString(). "=" . preg_replace('/\s+/', '', $dataImage->getClientOriginalName());
+          $fileName = 'file-' . Str::uuid()->toString() . "=" . preg_replace('/\s+/', '', $dataImage->getClientOriginalName());
           $extensi = $dataImage->getClientOriginalExtension();
           $dataImage->move($destinationPath, $fileName);
           array_push($dataFile, [
@@ -161,7 +175,7 @@ class ComplaintController extends Controller
 
   public function files($id)
   {
-    $data = FileKeluhan::where('keluhan_id',$id)->get();
+    $data = FileKeluhan::where('keluhan_id', $id)->get();
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
 
@@ -180,6 +194,24 @@ class ComplaintController extends Controller
     } catch (Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'fail delete data keluhan', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
+  public function solve(Request $request, $id)
+  {
+    $keluhanFind = Keluhan::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $payload = [
+        'status' => $request->status
+      ];
+
+      $keluhanFind->update($payload);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly update status', "data" => $payload, 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail update status', "data" => [], 'error' => $e->getMessage()], 500);
     }
   }
 }

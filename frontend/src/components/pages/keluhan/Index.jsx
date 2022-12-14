@@ -3,6 +3,7 @@ import axios from "../../util/jsonApi";
 import LoadingPage from "../../LoadingPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faCheckDouble,
   faPencilAlt,
   faPlus,
   faSearch,
@@ -15,8 +16,10 @@ import useHookAxios from "../../hook/useHookAxios";
 import { confirmAlert } from "react-confirm-alert";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../util/BaseUrl";
+import ToDate from "../../util/ToDate";
 
 export default function Index() {
+  const LocalUser = JSON.parse(localStorage.getItem("userData"));
   const [keluhans, error, loading, axiosFuc] = useHookAxios();
   const [onSearch, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -147,6 +150,11 @@ export default function Index() {
     axiosHandle && handleAxios();
   }, [keluhans, error]);
 
+  const handleDetail = (data) => {
+    localStorage.setItem('detailKeluhan',JSON.stringify(data))
+    navigasi('detail')
+  }
+
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
@@ -190,9 +198,16 @@ export default function Index() {
                     <th className="w-5">#</th>
                     <th>Tiket</th>
                     <th>Nama Pelanggan</th>
-                    <th>Kategori</th>
-                    <th>Komentar</th>
-                    <th>Status</th>
+                    <th>Dibuat</th>
+                    {LocalUser.role == "4" ? (
+                      <>
+                        <th>Kategori</th>
+                        <th>Komentar</th>
+                        <th>Status</th>
+                      </>
+                    ) : (
+                      false
+                    )}
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -205,26 +220,75 @@ export default function Index() {
                             {keluhans.pagination.from + index}
                           </td>
                           <td>{data.tiket}</td>
-                          <td>{data.pelanggans.nama_pelanggan}</td>
-                          <td>{data.kategoris.nama_kategori}</td>
-                          <td>{data.comment}</td>
-                          <td>{data.status===0?'Open':data.status === 2 ? 'On Proccess' : 'Solve'}</td>
+                          <td>{data.pelanggan.nama_pelanggan}</td>
+                          <td>{data.created_at2}</td>
+                          {LocalUser.role == "4" ? (
+                            <>
+                              <td>{data.kategori.nama_kategori}</td>
+                              <td>{data.comment}</td>
+                              <td>
+                                {data.status === 0
+                                  ? "Open"
+                                  : data.status === 2
+                                  ? "On Proccess"
+                                  : "Solve"}
+                              </td>
+                            </>
+                          ) : (
+                            false
+                          )}
                           <td className="text-center w-15">
-                            <button
-                              className="btn btn-warning"
-                              onClick={() => handleEditButton(data)}
+                            {/* {LocalUser.role == "2" || LocalUser.role == "5" ? (
+                              <>
+                                
+                                <button
+                                  className="btn btn-success"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <FontAwesomeIcon icon={faCheckDouble} />
+                                  &nbsp; Solve
+                                </button>
+                                &nbsp;
+                                <button
+                                  className="btn btn-info"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <FontAwesomeIcon icon={faCheckDouble} />
+                                  &nbsp; Maintenance
+                                </button>
+                                &nbsp;
+                              </>
+                            ) : (
+                              false
+                            )} */}
+                            <button onClick={()=>handleDetail(data)}
+                              className="btn btn-success mb-0"
                             >
-                              <FontAwesomeIcon icon={faPencilAlt} />
-                              &nbsp; Edit
+                              <FontAwesomeIcon icon={faSearch} />
+                              &nbsp; Detail
                             </button>
                             &nbsp;
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => confirm(data.id)}
-                            >
-                              <FontAwesomeIcon icon={faTrashAlt} />
-                              &nbsp; Delete
-                            </button>
+                            {LocalUser.idUser === data.created_user ? (
+                              <>
+                                <button
+                                  className="btn btn-warning"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <FontAwesomeIcon icon={faPencilAlt} />
+                                  &nbsp; Edit
+                                </button>
+                                &nbsp;
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => confirm(data.id)}
+                                >
+                                  <FontAwesomeIcon icon={faTrashAlt} />
+                                  &nbsp; Delete
+                                </button>
+                              </>
+                            ) : (
+                              <></>
+                            )}
                           </td>
                         </tr>
                       ))
@@ -263,5 +327,5 @@ export default function Index() {
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendMailJob;
+use App\Models\Pegawai;
+use App\Models\Pelanggan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,9 +32,34 @@ class AuthController extends Controller
       if (!$user || !Hash::check($request->password, $user->password)) {
         return response()->json(['errors' => 'Bad Credentials'], 403);
       }
+      if ($user->role == "4") {
+        $pelanggan = Pelanggan::find($user->relasi_id);
+        $userList = [
+          'idUser' => $pelanggan->id,
+          'role' => $user->role,
+          'relasi' => $pelanggan
+        ];
+      } else if ($user->role == '5') {
+        $userList = [
+          'idUser' => "0",
+          'role' => $user->role,
+          'relasi' => [
+            'nama' => 'Super User',
+            'Alamat' => 'Super User'
+          ]
+        ];
+      } else {
+        $pegawai = Pegawai::find($user->relasi_id);
+        $userList = [
+          'idUser' => $pegawai->id,
+          'role' => $user->role,
+          'relasi' => $pegawai
+        ];
+      }
       $token = $user->createToken('sanctum_token')->plainTextToken;
       $payload = [
-        'access_token' => $token
+        'access_token' => $token,
+        'user_data' => $userList
       ];
       return response()->json(['msg' => 'Successfuly Login', "data" => $payload, 'error' => null], 200);
     } catch (\Exception $e) {

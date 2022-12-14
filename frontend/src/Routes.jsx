@@ -20,8 +20,11 @@ const Pelanggan = React.lazy(() => import("./components/pages/pelanggan/Index"))
 const PelangganAdd = React.lazy(() => import("./components/pages/pelanggan/Add"));
 const PelangganEdit = React.lazy(() => import("./components/pages/pelanggan/Edit"));
 const Keluhan = React.lazy(() => import("./components/pages/keluhan/Index"));
+const KeluhanDetail = React.lazy(() => import("./components/pages/keluhan/Detail"));
 const KeluhanAdd = React.lazy(() => import("./components/pages/keluhan/Add"));
 const KeluhanEdit = React.lazy(() => import("./components/pages/keluhan/Edit"));
+const Maintenance = React.lazy(() => import("./components/pages/maintenance/Index"));
+const MaintenanceAdd = React.lazy(() => import("./components/pages/maintenance/Add"));
 
 export default [
   {
@@ -135,10 +138,34 @@ export default [
         ),
       },
       {
+        path: `${base_url}/keluhan/detail`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <KeluhanDetail />
+          </Suspense>
+        ),
+      },
+      {
         path: `${base_url}/keluhan/edit`,
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
             <KeluhanEdit />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/maintenance`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <Maintenance />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/maintenance/add`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <MaintenanceAdd />
           </Suspense>
         ),
       },

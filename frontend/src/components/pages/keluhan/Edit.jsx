@@ -92,6 +92,10 @@ export default function KeluhanEdit() {
 
   const handleFile = (e) => {
     dispatch({
+      type: "CHANGE_INPUT",
+      payload: {name:'files', value:[]},
+    });
+    dispatch({
       type: "CHANGE_FILE",
       payload: e.target.files,
     });
@@ -175,8 +179,8 @@ export default function KeluhanEdit() {
       dispatch({
         type: "CHANGE_INPUT",
         payload: {
-          name: '_method',
-          value: 'PUT',
+          name: "_method",
+          value: "PUT",
         },
       });
     }
@@ -195,19 +199,40 @@ export default function KeluhanEdit() {
   };
 
   useEffect(() => {
-    const interval = fileHandle && setTimeout(() => {
-      dispatch({
-        type: "CHANGE_INPUT",
-        payload: {
-          name: '_files',
-          value: files,
-        },
-      });
-    }, 1);
+    const interval =
+      fileHandle &&
+      setTimeout(() => {
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "_files",
+            value: files,
+          },
+        });
+      }, 1);
     return () => {
       clearInterval(interval);
     };
   }, [files]);
+
+  useEffect(() => {
+    const interval =
+      fileHandle &&
+      setTimeout(() => {
+        console.log("aksu");
+        state._files.length > 0 &&
+          dispatch({
+            type: "CHANGE_INPUT",
+            payload: {
+              name: "is_File",
+              value: "true",
+            },
+          });
+      }, 1);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [state._files]);
 
   useEffect(() => {
     const interval = setTimeout(() => {
@@ -299,7 +324,7 @@ export default function KeluhanEdit() {
                 </label>
                 <input
                   className="form-control"
-                  name="files"
+                  // name="files"
                   type="file"
                   // id="fileForm"
                   multiple
@@ -360,17 +385,19 @@ export default function KeluhanEdit() {
           </div>
           {!loadingFiles && !errFiles && files.length > 0 ? (
             <>
-              <div className="row ms-2">
+              <div className="row ms-2 p-2">
                 <ul>
-                  {fileHandle && files.map((file, index) => (
-                    <li key={index}>
-                      <a  target="_blank" href={`${import.meta.env.VITE_FILE_PUBLIC}/file/${
-                        file.file
-                      }`}>{`${import.meta.env.VITE_FILE_PUBLIC}/file/${
-                        file.file
-                      }`}</a>
-                    </li>
-                  ))}
+                  {fileHandle &&
+                    files.map((file, index) => (
+                      <li key={index}>
+                        <a
+                          target="_blank"
+                          href={`${import.meta.env.VITE_FILE_PUBLIC}/file/${
+                            file.file
+                          }`}
+                        >Lampiran {index+1}</a>
+                      </li>
+                    ))}
                 </ul>
               </div>
             </>

@@ -1,9 +1,13 @@
+const LocalUser = JSON.parse(localStorage.getItem('userData'))
+
 export const INITIAL_STATE = {
   pelanggan: "",
   kategori:"",
   komentar:"",
+  created_user: LocalUser?.idUser,
   files:[],
   isFile:'false',
+  is_File:'false',
 };
 
 export const kelurahanReducer = (state, action) => {

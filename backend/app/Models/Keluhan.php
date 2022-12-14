@@ -19,24 +19,29 @@ class Keluhan extends Model
   public function scopeFilter($query, array $filters)
   {
     $query->when($filters['search'] ?? false, function ($query, $search) {
-      return $query->where('comment', 'like', '%' . $search . '%')
-        ->orWhereHas('pelanggans', function ($query) use ($search) {
+      return $query->where('tiket', 'like', '%' . $search . '%')
+        // ->where('comment', 'like', '%' . $search . '%')
+        ->orWhereHas('pelanggan', function ($query) use ($search) {
           $query->where('nama_pelanggan', $search);
         })
-        ->orWhereHas('kategoris', function ($query) use ($search) {
+        ->orWhereHas('kategori', function ($query) use ($search) {
           $query->where('nama_kategori', $search);
-        })
-        ;
+        });
     });
   }
 
-  public function pelanggans()
+  public function pelanggan()
   {
-    return $this->belongsTo(Pelanggan::class, 'pelanggan_id','id');
+    return $this->belongsTo(Pelanggan::class, 'pelanggan_id', 'id');
   }
 
-  public function kategoris()
+  public function kategori()
   {
     return $this->belongsTo(Kategori::class, 'kategori_id', 'id');
+  }
+
+  public function files()
+  {
+    return $this->hasMany(File::class, 'keluhan_id','tiket');
   }
 }

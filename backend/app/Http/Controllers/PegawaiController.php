@@ -105,7 +105,7 @@ class PegawaiController extends Controller
     $find = Pegawai::findOrFail($id);
     DB::beginTransaction();
     try {
-      User::where('relasi_id',$id)->delete();
+      $userData = User::where('relasi_id',$id);
       $payload = [
         'nama_pegawai' => $request->nama_pegawai,
         'email' => $request->email,
@@ -134,7 +134,8 @@ class PegawaiController extends Controller
         $dataEmail['password'] = $request->password;
       }
       $find->update($payload);
-      User::create($payloadUser);
+      $userData->update($payloadUser);
+      // User::create($payloadUser);
       DB::commit();
       return response()->json(['msg' => 'Successfuly update data pegawai', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => null], 201);
     } catch (\Exception $e) {
@@ -166,5 +167,18 @@ class PegawaiController extends Controller
   {
     dispatch(new SendMailCreated($request->all()));
     return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
+  }
+
+  public function select(Request $request)
+  {
+    $pro = DB::select('SELECT * FROM pegawais WHERE role="3"');
+    $data = [];
+    foreach ($pro as $d) {
+      array_push($data, [
+        'label' => $d->nama_pegawai,
+        'value' => $d->id
+      ]);
+    }
+    return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 }

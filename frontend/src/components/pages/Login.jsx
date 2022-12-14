@@ -67,6 +67,7 @@ export default function Login() {
         autoClose: 1500,
       });
       localStorage.setItem("auth", response?.access_token);
+      localStorage.setItem("userData", JSON.stringify(response?.user_data));
       dispatch({ type: "login" });
       setTimeout(() => {
         setReload(true);

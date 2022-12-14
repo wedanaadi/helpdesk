@@ -152,7 +152,7 @@ export default function KeluhanAdd() {
   return (
     <div className="row col-6 bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
-        <h3 className="mb-0">Ajukan Keluhan</h3>
+        <h3 className="mb-0">Tambah Keluhan</h3>
         <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
           <FontAwesomeIcon icon={faArrowLeft} />
           &nbsp; Kembali
