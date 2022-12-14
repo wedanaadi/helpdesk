@@ -32,7 +32,7 @@ export default function Sidebar({sidebarOpen}) {
             </div>
           </div>
           <div className="navbar-nav w-100">
-            <a href="index.html" className="nav-item nav-link">
+            <a href="index.html" className="nav-item nav-link active">
               {/* <i className="fa fa-tachometer-alt me-2" /> */}
               <FontAwesomeIcon icon={faTachometerAlt} className="me-2" />
               Dashboard
@@ -69,41 +69,16 @@ export default function Sidebar({sidebarOpen}) {
               <FontAwesomeIcon icon={faKeyboard} className="me-2" />
               Pegawai
             </Link>
-            <a href="table.html" className="nav-item nav-link">
-              {/* <i className="fa fa-table me-2" /> */}
+            <Link to={`${base_url}/pegawai`} className="nav-item nav-link">
+              {/* <i className="fa fa-th me-2" /> */}
               <FontAwesomeIcon icon={faTable} className="me-2" />
-              Tables
-            </a>
+              Pelanggan
+            </Link>
             <a href="chart.html" className="nav-item nav-link">
               {/* <i className="fa fa-chart-bar me-2" /> */}
               <FontAwesomeIcon icon={faChartBar} className="me-2" />
               Charts
             </a>
-            <div className="nav-item dropdown">
-              <a
-                href="#"
-                className="nav-link dropdown-toggle active"
-                data-bs-toggle="dropdown"
-              >
-                {/* <i className="far fa-file-alt me-2" /> */}
-                <FontAwesomeIcon icon={faFileAlt} className="me-2" />
-                Pages
-              </a>
-              <div className="dropdown-menu bg-transparent border-0">
-                <a href="signin.html" className="dropdown-item">
-                  Sign In
-                </a>
-                <a href="signup.html" className="dropdown-item">
-                  Sign Up
-                </a>
-                <a href="404.html" className="dropdown-item">
-                  404 Error
-                </a>
-                <a href="blank.html" className="dropdown-item active">
-                  Blank Page
-                </a>
-              </div>
-            </div>
           </div>
         </nav>
       </aside>

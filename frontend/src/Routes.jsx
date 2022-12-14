@@ -19,7 +19,9 @@ const NotFound = React.lazy(() => import("./components/pages/404"));
 const Pelanggan = React.lazy(() => import("./components/pages/pelanggan/Index"));
 const PelangganAdd = React.lazy(() => import("./components/pages/pelanggan/Add"));
 const PelangganEdit = React.lazy(() => import("./components/pages/pelanggan/Edit"));
+const Keluhan = React.lazy(() => import("./components/pages/keluhan/Index"));
 const KeluhanAdd = React.lazy(() => import("./components/pages/keluhan/Add"));
+const KeluhanEdit = React.lazy(() => import("./components/pages/keluhan/Edit"));
 
 export default [
   {
@@ -117,10 +119,26 @@ export default [
         ),
       },
       {
+        path: `${base_url}/keluhan`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <Keluhan />
+          </Suspense>
+        ),
+      },
+      {
         path: `${base_url}/keluhan/add`,
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
             <KeluhanAdd />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/keluhan/edit`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <KeluhanEdit />
           </Suspense>
         ),
       },
@@ -131,14 +149,6 @@ export default [
     element: (
       <Suspense>
           <Login />
-      </Suspense>
-    ),
-  },
-  {
-    path: `${base_url}/upload`,
-    element: (
-      <Suspense>
-          <Test />
       </Suspense>
     ),
   },

@@ -3,10 +3,12 @@ import axios from "../../util/jsonApi";
 import Select from "../../Select";
 import useHookAxios from "../../hook/useHookAxios";
 import { kelurahanReducer, INITIAL_STATE } from "../../reducer/keluhanReducer";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../util/BaseUrl";
 import oriAxios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function KeluhanAdd() {
   const [pelanggan, errPelanggan, loadingPelanggan, pelFunc] = useHookAxios();
@@ -151,10 +153,10 @@ export default function KeluhanAdd() {
     <div className="row col-6 bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Ajukan Keluhan</h3>
-        {/* <Link to={`${baseUrl}/pelanggan`} className="btn btn-secondary mb-0">
+        <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
           <FontAwesomeIcon icon={faArrowLeft} />
           &nbsp; Kembali
-        </Link> */}
+        </Link>
       </div>
       <form autoComplete="off" className="px-0" onSubmit={handleSubmit}>
         <div className="row p-2">
