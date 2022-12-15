@@ -32,11 +32,11 @@ export default function Sidebar({sidebarOpen}) {
             </div>
           </div>
           <div className="navbar-nav w-100">
-            <a href="index.html" className="nav-item nav-link active">
+            <Link to={`${base_url}/`} className="nav-item nav-link active">
               {/* <i className="fa fa-tachometer-alt me-2" /> */}
               <FontAwesomeIcon icon={faTachometerAlt} className="me-2" />
               Dashboard
-            </a>
+            </Link>
             <Link to={`${base_url}/kategori`} className="nav-item nav-link">
               {/* <i className="fa fa-th me-2" /> */}
               <FontAwesomeIcon icon={faTh} className="me-2" />
@@ -75,18 +75,15 @@ export default function Sidebar({sidebarOpen}) {
               >
                 {/* <i className="fa fa-laptop me-2" /> */}
                 <FontAwesomeIcon icon={faLaptop} className="me-2" />
-                Elements
+                Laporan
               </a>
               <div className="dropdown-menu bg-transparent border-0">
-                <a href="button.html" className="dropdown-item">
-                  Buttons
-                </a>
-                <a href="typography.html" className="dropdown-item">
-                  Typography
-                </a>
-                <a href="element.html" className="dropdown-item">
-                  Other Elements
-                </a>
+                <Link to={`${base_url}/laporan/solved`} className="dropdown-item">
+                  Laporan Solved
+                </Link>
+                <Link to={`${base_url}/laporan/solved`} className="dropdown-item">
+                  Laporan Maintenance
+                </Link>
               </div>
             </div>
           </div>

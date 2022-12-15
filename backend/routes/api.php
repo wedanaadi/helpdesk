@@ -6,6 +6,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\ReportController;
 use App\Models\Maintenance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,10 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/kabkot', [PelangganController::class, 'kabkot']);
   Route::get('/kecamatan', [PelangganController::class, 'kecamatan']);
   Route::get('/kelurahan', [PelangganController::class, 'kelurahan']);
+  Route::get('/provinsi-report', [ReportController::class, 'provinsi']);
+  Route::get('/kabkot-report', [ReportController::class, 'kabkot']);
+  Route::get('/kecamatan-report', [ReportController::class, 'kecamatan']);
+  Route::get('/kelurahan-report', [ReportController::class, 'kelurahan']);
 
   Route::get('/pelanggan-select',[PelangganController::class, 'select']);
   Route::get('/kategori-select',[KategoriController::class, 'select']);
@@ -73,7 +78,10 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::put('maintenance/{id}', [MaintenanceController::class, 'update']);
   Route::put('maintenance/status/{id}', [MaintenanceController::class, 'changeStatus']);
   Route::delete('maintenance/{id}', [MaintenanceController::class, 'destroy']);
+
 });
+Route::get('solved-report',[ReportController::class, 'report_solved']);
+Route::get('maintenance-report',[ReportController::class, 'report_maintenance']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return $request->user();

@@ -30,6 +30,8 @@ const Maintenance = React.lazy(() => import("./components/pages/maintenance/Inde
 const MaintenanceAdd = React.lazy(() => import("./components/pages/maintenance/FormAdd"));
 const MaintenanceEdit = React.lazy(() => import("./components/pages/maintenance/FormEdit"));
 const MaintenanceDetail = React.lazy(() => import("./components/pages/maintenance/Detail"));
+const ReportSolved = React.lazy(() => import("./components/pages/laporan/Solved"));
+const ReportMaintenance = React.lazy(() => import("./components/pages/laporan/Maintenance"));
 
 export default [
   {
@@ -214,6 +216,22 @@ export default [
           </Suspense>
         ),
       },
+      {
+        path: `${base_url}/laporan/solved`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <ReportSolved />
+          </Suspense>
+        )
+      },
+      {
+        path: `${base_url}/laporan/maintenance`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <ReportMaintenance />
+          </Suspense>
+        )
+      }
     ],
   },
   {

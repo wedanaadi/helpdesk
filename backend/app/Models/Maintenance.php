@@ -26,6 +26,30 @@ class Maintenance extends Model
           $query->where('nama_pegawai', $search);
         });
     });
+    $query->when($filters['periode'] ?? false, function ($query, $params)  {
+      $periode = explode(',',$params);
+      return $query->whereRaw("created_at >= '".$periode[0]."' AND created_at <= '".$periode[1]."' ");
+    });
+    $query->when($filters['provinsi'] ?? false, function ($query, $params)  {
+      return $query->whereHas('keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi', function ($query) use ($params) {
+          $query->where('id', $params);
+        });
+    });
+    $query->when($filters['kabkot'] ?? false, function ($query, $params)  {
+      return $query->whereHas('keluhan.pelanggan.kelurahan.kecamatan.kabkot', function ($query) use ($params) {
+          $query->where('id', $params);
+        });
+    });
+    $query->when($filters['kecamatan'] ?? false, function ($query, $params)  {
+      return $query->whereHas('keluhan.pelanggan.kelurahan.kecamatan', function ($query) use ($params) {
+          $query->where('id', $params);
+        });
+    });
+    $query->when($filters['kelurahan'] ?? false, function ($query, $params)  {
+      return $query->whereHas('keluhan.pelanggan.kelurahan', function ($query) use ($params) {
+          $query->where('id', $params);
+        });
+    });
   }
   public function teknisi()
   {
