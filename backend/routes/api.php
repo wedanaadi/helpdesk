@@ -56,6 +56,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/pelanggan-select',[PelangganController::class, 'select']);
   Route::get('/kategori-select',[KategoriController::class, 'select']);
   Route::get('/teknisi-select',[PegawaiController::class, 'select']);
+  Route::get('/ticket-select',[ComplaintController::class, 'select']);
+  Route::get('/ticket-select2/{id}',[ComplaintController::class, 'selectOnlyId']);
 
   Route::get('keluhan', [ComplaintController::class, 'index']);
   Route::get('keluhan/files/{id}', [ComplaintController::class, 'files']);
@@ -64,7 +66,11 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::put('keluhan/status/{id}', [ComplaintController::class, 'solve']);
   Route::delete('keluhan/{id}', [ComplaintController::class, 'destroy']);
 
+  Route::get('maintenance', [MaintenanceController::class, 'index']);
   Route::post('maintenance', [MaintenanceController::class, 'store']);
+  Route::put('maintenance/{id}', [MaintenanceController::class, 'update']);
+  Route::put('maintenance/status/{id}', [MaintenanceController::class, 'changeStatus']);
+  Route::delete('maintenance/{id}', [MaintenanceController::class, 'destroy']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

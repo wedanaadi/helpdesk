@@ -1,38 +1,42 @@
 import {
   faArrowLeft,
   faCheckDouble,
+  faClock,
   faWrench,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import useHookAxios from "../../hook/useHookAxios";
 import Map2 from "../../Map2";
 import { baseUrl } from "../../util/BaseUrl";
-import axios from "../../util/jsonApi";
-import ToDate from "../../util/ToDate";
-const ModalMaintenance = React.lazy(() =>
-  import("../../pages/maintenance/Add")
-);
+import ToDate, { ConvertToEpoch } from "../../util/ToDate";
+import axios from "../../util/jsonApi"
+import { toast } from "react-toastify";
 
-export default function Detail() {
-  const detailLokal = JSON.parse(localStorage.getItem("detailKeluhan"));
+export default function DetailMaintenance() {
+  const detailLokal = JSON.parse(localStorage.getItem("detailMaintenance"));
   const [mapDetect, setMapDetect] = useState(false);
-  const [response, error, loading, actionAxios] = useHookAxios();
+  const [response, error, loading, axiosFunction] = useHookAxios()
   const [axiosHandle, setAxiosHandle] = useState(false);
   const toastId = useRef(null);
   const [validation, setValidation] = useState(null);
   const navigasi = useNavigate();
 
-  const handleSolve = () => {
+  const checkExp = () => {
+    const db = ConvertToEpoch(detailLokal.expired_date);
+    const now = ConvertToEpoch(new Date());
+    return db < now ? false : true;
+  };
+
+  const handlePenanganan = (status) => {
     setAxiosHandle(true);
     toastId.current = toast.loading("Please wait...");
-    actionAxios({
+    axiosFunction({
       axiosInstance: axios,
       method: "PUT",
-      url: `keluhan/status/${detailLokal.id}`,
-      data: { status: "1" },
+      url: `maintenance/status/${detailLokal.id}`,
+      data: { status: status },
       reqConfig: {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
@@ -40,7 +44,7 @@ export default function Detail() {
       },
     });
     setAxiosHandle(true);
-  };
+  }
 
   const handleAxios = () => {
     let message = "Error";
@@ -63,7 +67,7 @@ export default function Detail() {
         autoClose: 1500,
       });
       setAxiosHandle(false);
-      navigasi(`${baseUrl}/keluhan`);
+      navigasi(`${baseUrl}/maintenance`);
     }
   };
 
@@ -73,14 +77,14 @@ export default function Detail() {
 
   return (
     <div className="row g-4">
-      <Suspense fallback={<>Loading....</>}>
-        <ModalMaintenance ticket={detailLokal.tiket} />
-      </Suspense>
       <div className="col-12 mx-0">
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
-            <h3 className="pb-1 mb-0">Detail TICKET Keluhan</h3>
-            <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
+            <h3 className="pb-1 mb-0">Detail Ticket Maintenance</h3>
+            <Link
+              to={`${baseUrl}/maintenance`}
+              className="btn btn-secondary mb-0"
+            >
               <FontAwesomeIcon icon={faArrowLeft} />
               &nbsp; Kembali
             </Link>
@@ -91,28 +95,31 @@ export default function Detail() {
         <div className="row p-2">
           <div className="d-flex justify-content-between align-items-center">
             <div>
-              NOMOR: <b>{detailLokal.tiket}</b> - STATUS:{" "}
-              <b>{detailLokal.status_keluhan}</b> <br />
+              NOMOR: <b>{detailLokal.tiket_maintenance}</b> - STATUS:{" "}
+              <b>{detailLokal.status_desc}</b> <br />
               EXPIRED DATE TICKET:{" "}
               <b>{ToDate(detailLokal.expired_date, "full")}</b>
             </div>
             <div>
-              {detailLokal.status === 0 &&
-              detailLokal.status_keluhan === "ON" ? (
+              {parseInt(detailLokal.status) !== 1 && checkExp() ? (
                 <>
-                  <button className="btn btn-success" onClick={handleSolve}>
+                  <span>Update Ticket: </span>&nbsp;
+                  <button className="btn btn-success" onClick={()=>handlePenanganan('1')}>
                     <FontAwesomeIcon icon={faCheckDouble} />
-                    &nbsp; Ubah Status menjadi Solve
+                    &nbsp; Solved
                   </button>{" "}
                   &nbsp;{" "}
-                  <button
-                    className="btn btn-info"
-                    data-bs-toggle="modal"
-                    data-bs-target="#commentModal"
-                  >
-                    <FontAwesomeIcon icon={faWrench} />
-                    &nbsp; Tambahkan ke Maintenance
-                  </button>
+                  {parseInt(detailLokal.status) !== 2 ? (
+                    <button
+                      className="btn btn-warning"
+                      onClick={()=>handlePenanganan('2')}
+                    >
+                      <FontAwesomeIcon icon={faClock} />
+                      &nbsp; Pending
+                    </button>
+                  ) : (
+                    false
+                  )}
                 </>
               ) : (
                 false
@@ -133,34 +140,41 @@ export default function Detail() {
                   <tr>
                     <td>Nama Pelanggan</td>
                     <td>:</td>
-                    <td>{detailLokal.pelanggan.nama_pelanggan}</td>
+                    <td>{detailLokal.keluhan.pelanggan.nama_pelanggan}</td>
                   </tr>
                   <tr>
                     <td>Telepon</td>
                     <td>:</td>
-                    <td>{detailLokal.pelanggan.telepon}</td>
+                    <td>{detailLokal.keluhan.pelanggan.telepon}</td>
                   </tr>
                   <tr>
                     <td>Email</td>
                     <td>:</td>
-                    <td>{detailLokal.pelanggan.email}</td>
+                    <td>{detailLokal.keluhan.pelanggan.email}</td>
                   </tr>
                   <tr>
                     <td>Alamat</td>
                     <td>:</td>
                     <td>
-                      <b>{detailLokal.pelanggan.alamat}</b>, Kelurahan{" "}
-                      <b>{detailLokal.pelanggan.kelurahan.name}</b>, Kecamatan{" "}
-                      <b> {detailLokal.pelanggan.kelurahan.kecamatan.name}</b>,
-                      Kabupaten{" "}
+                      <b>{detailLokal.keluhan.pelanggan.alamat}</b>, Kelurahan{" "}
+                      <b>{detailLokal.keluhan.pelanggan.kelurahan.name}</b>,
+                      Kecamatan{" "}
                       <b>
-                        {detailLokal.pelanggan.kelurahan.kecamatan.kabkot.name}
+                        {" "}
+                        {detailLokal.keluhan.pelanggan.kelurahan.kecamatan.name}
+                      </b>
+                      , Kabupaten{" "}
+                      <b>
+                        {
+                          detailLokal.keluhan.pelanggan.kelurahan.kecamatan
+                            .kabkot.name
+                        }
                       </b>
                       , Provinsi{" "}
                       <b>
                         {
-                          detailLokal.pelanggan.kelurahan.kecamatan.kabkot
-                            .provinsi.name
+                          detailLokal.keluhan.pelanggan.kelurahan.kecamatan
+                            .kabkot.provinsi.name
                         }
                       </b>
                     </td>
@@ -181,20 +195,36 @@ export default function Detail() {
               <table className="table">
                 <tbody>
                   <tr>
+                    <td>Nomor Ticket</td>
+                    <td>:</td>
+                    <td>
+                      <b>{detailLokal.keluhan.tiket}</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Dibuat</td>
+                    <td>:</td>
+                    <td>
+                      <b>{ToDate(detailLokal.keluhan.created_at, "full")}</b>
+                    </td>
+                  </tr>
+                  <tr>
                     <td>Keluhan Text / Deskripsi</td>
                     <td>:</td>
                     <td>
-                      <p style={{ whiteSpace:'pre-line' }}><b>{detailLokal.comment}</b></p>
+                      <p style={{ whiteSpace: "pre-line" }}>
+                        <b>{detailLokal.keluhan.comment}</b>
+                      </p>
                     </td>
                   </tr>
                   <tr>
                     <td>File</td>
                     <td>:</td>
                     <td>
-                      {detailLokal.files.length > 0 ? (
+                      {detailLokal.keluhan.files.length > 0 ? (
                         <>
                           <ul>
-                            {detailLokal.files.map((file, index) => (
+                            {detailLokal.keluhan.files.map((file, index) => (
                               <div key={index}>
                                 <li>
                                   <a
@@ -230,8 +260,8 @@ export default function Detail() {
             <Map2
               aksi={mapDetect}
               stateProps={{
-                lat: detailLokal.pelanggan.lat,
-                lng: detailLokal.pelanggan.long,
+                lat: detailLokal.keluhan.pelanggan.lat,
+                lng: detailLokal.keluhan.pelanggan.long,
               }}
             />
           </div>

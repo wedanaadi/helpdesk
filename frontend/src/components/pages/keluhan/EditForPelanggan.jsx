@@ -10,7 +10,7 @@ import oriAxios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-export default function KeluhanEdit() {
+export default function KeluhanEditPelanggan() {
   const [pelanggan, errPelanggan, loadingPelanggan, pelFunc] = useHookAxios();
   const [kategori, errKategori, loadingKategori, katFunc] = useHookAxios();
   const [files, errFiles, loadingFiles, FilesFunc] = useHookAxios();
@@ -271,7 +271,7 @@ export default function KeluhanEdit() {
       <div className="col-sm-12 col-xl-6 mx-0">
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
-            <h3 className="pb-1 mb-0">Ubah Keluhan</h3>
+            <h3 className="pb-1 mb-0">Ubah Pengajuan Keluhan</h3>
           </div>
           <form autoComplete="off" className="px-0" onSubmit={handleSubmit}>
             <div className="row p-2">
@@ -280,6 +280,7 @@ export default function KeluhanEdit() {
                   Nama Pelanggan
                 </label>
                 <Select
+                disabled={true}
                   options={pelanggan}
                   placeHolder={"Pelanggan"}
                   getter={selectPelanggan}

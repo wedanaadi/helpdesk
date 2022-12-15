@@ -10,7 +10,7 @@ import oriAxios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-export default function KeluhanAdd() {
+export default function KeluhanAddPelanggan() {
   const [pelanggan, errPelanggan, loadingPelanggan, pelFunc] = useHookAxios();
   const [kategori, errKategori, loadingKategori, katFunc] = useHookAxios();
   const [selectPelanggan, setPelanggan] = useState(null);
@@ -21,6 +21,7 @@ export default function KeluhanAdd() {
   const navigasi = useNavigate();
   const [axiosHandle, setAxiosHandle] = useState(false);
   const [response, error, loading, AxiosFuc] = useHookAxios();
+  const LocalUser = JSON.parse(localStorage.getItem("userData"));
 
   const handleChange = (e) => {
     dispatch({
@@ -145,7 +146,7 @@ export default function KeluhanAdd() {
         autoClose: 1500,
       });
       setAxiosHandle(false);
-      navigasi(`${baseUrl}/keluhan`);
+      navigasi(`${baseUrl}/keluhan/pelanggan`);
     }
   };
 
@@ -153,11 +154,19 @@ export default function KeluhanAdd() {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  useEffect(() => {
+    const inv = setTimeout(() => {
+      const selected = pelanggan.filter(({value})=>value == LocalUser.idUser)
+        setPelanggan(selected[0]);
+    }, 1);
+    return () => clearInterval(inv);
+  }, [pelanggan]);
+
   return (
     <div className="row col-6 bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
-        <h3 className="mb-0">Tambah Keluhan</h3>
-        <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
+        <h3 className="mb-0">Ajukan Keluhan</h3>
+        <Link to={`${baseUrl}/keluhan/pelanggan`} className="btn btn-secondary mb-0">
           <FontAwesomeIcon icon={faArrowLeft} />
           &nbsp; Kembali
         </Link>
@@ -169,6 +178,7 @@ export default function KeluhanAdd() {
               Nama Pelanggan
             </label>
             <Select
+              disabled={true}
               options={pelanggan}
               placeHolder={"Pelanggan"}
               getter={selectPelanggan}

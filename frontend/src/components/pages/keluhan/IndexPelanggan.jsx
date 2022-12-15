@@ -3,6 +3,7 @@ import axios from "../../util/jsonApi";
 import LoadingPage from "../../LoadingPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faCheckDouble,
   faPencilAlt,
   faPlus,
   faSearch,
@@ -14,11 +15,12 @@ import { Link, useNavigate } from "react-router-dom";
 import useHookAxios from "../../hook/useHookAxios";
 import { confirmAlert } from "react-confirm-alert";
 import { toast } from "react-toastify";
+import { baseUrl } from "../../util/BaseUrl";
 import ToDate from "../../util/ToDate";
 
 export default function Index() {
   const LocalUser = JSON.parse(localStorage.getItem("userData"));
-  const [maintenances, error, loading, axiosFuc] = useHookAxios();
+  const [keluhans, error, loading, axiosFuc] = useHookAxios();
   const [onSearch, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
@@ -49,21 +51,26 @@ export default function Index() {
     },
   ];
 
-  const getMaintenance = () => {
+  const getKeluhan = () => {
     let pageParse = page;
-    let url = `maintenance?perpage=${pagination.value}`;
+    let url = `keluhan?perpage=${pagination.value}`;
     if (onSearch) {
       pageParse = 1;
       url += `&page=${pageParse}&search=${onSearch}`;
     } else {
       url += `&page=${pageParse}`;
     }
+    const idLogin = LocalUser.idUser;
     axiosFuc({
       axiosInstance: axios,
       method: "GET",
       url: url,
       data: null,
       reqConfig: {
+        params: {
+          id:idLogin,
+          role:LocalUser.role
+        },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
         },
@@ -72,7 +79,7 @@ export default function Index() {
   };
 
   useEffect(() => {
-    getMaintenance();
+    getKeluhan();
   }, [page, pagination]);
 
   const handleEditButton = (data) => {
@@ -93,7 +100,7 @@ export default function Index() {
             axiosFuc({
               axiosInstance: axios,
               method: "DELETE",
-              url: `maintenance/${id}`,
+              url: `keluhan/${id}`,
               data: null,
               reqConfig: {
                 headers: {
@@ -132,32 +139,31 @@ export default function Index() {
       setAxiosHandle(false);
     }
 
-    if (maintenances && !validation && !error && !loading) {
-      console.log('save');
+    if (keluhans && !validation && !error && !loading) {
       toast.update(toastId.current, {
         render: "Successfuly deleted",
         type: "success",
         isLoading: false,
         autoClose: 1500,
       });
-      getMaintenance();
+      getKeluhan();
       setAxiosHandle(false);
     }
   };
 
   useEffect(() => {
     axiosHandle && handleAxios();
-  }, [maintenances, error]);
+  }, [keluhans, error]);
 
   const handleDetail = (data) => {
-    localStorage.setItem("detailMaintenance", JSON.stringify(data));
-    navigasi("detail");
-  };
+    localStorage.setItem('detailKeluhan',JSON.stringify(data))
+    navigasi('detail')
+  }
 
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
-        <h3 className="mb-0">Data Maintenance</h3>
+        <h3 className="mb-0">Data Keluhan</h3>
         <Link to={`add`} className="btn btn-success mb-0">
           <FontAwesomeIcon icon={faPlus} />
           &nbsp; Tambah
@@ -176,10 +182,7 @@ export default function Index() {
           </div>
           <div className="col-md-10 d-flex flex-row-reverse">
             <>
-              <button
-                className="btn btn-primary"
-                onClick={() => getMaintenance()}
-              >
+              <button className="btn btn-primary" onClick={() => getKeluhan()}>
                 <FontAwesomeIcon icon={faSearch} />
               </button>
               &nbsp;
@@ -198,55 +201,99 @@ export default function Index() {
                 <thead className="bg-white text-center fw-bold">
                   <tr>
                     <th className="w-5">#</th>
-                    <th>Tiket Maintenance</th>
-                    {/* <th>Teknisi</th> */}
-                    {/* <th>Tiket Keluhan</th> */}
+                    <th>Tiket</th>
+                    <th>Nama Pelanggan</th>
                     <th>Dibuat</th>
-                    <th>Masa Berlaku</th>
-                    <th>Status</th>
-                    {/* <th>Note</th> */}
+                    {LocalUser.role == "4" ? (
+                      <>
+                        <th>Kategori</th>
+                        <th>Komentar</th>
+                        <th>Status</th>
+                      </>
+                    ) : (
+                      false
+                    )}
                     <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {maintenances?.data ? (
-                    maintenances.data.length > 0 ? (
-                      maintenances.data.map((data, index) => (
+                  {keluhans?.data ? (
+                    keluhans.data.length > 0 ? (
+                      keluhans.data.map((data, index) => (
                         <tr key={index}>
                           <td className="text-center">
-                            {maintenances.pagination.from + index}
+                            {keluhans.pagination.from + index}
                           </td>
-                          <td>{data.tiket_maintenance}</td>
-                          {/* <td>{data.teknisi.nama_pegawai}</td> */}
-                          {/* <td>{data.tiket_keluhan}</td> */}
-                          <td>{ToDate(data.created_at, "full")}</td>
-                          <td>{ToDate(data.expired_date, "full")}</td>
-                          <td>{data.status_desc}</td>
-                          {/* <td>{data.note}</td> */}
+                          <td>{data.tiket}</td>
+                          <td>{data.pelanggan.nama_pelanggan}</td>
+                          <td>{data.created_at2}</td>
+                          {LocalUser.role == "4" ? (
+                            <>
+                              <td>{data.kategori.nama_kategori}</td>
+                              <td>{data.comment}</td>
+                              <td>
+                                {data.status === 0
+                                  ? "Open"
+                                  : data.status === 2
+                                  ? "On Proccess"
+                                  : "Solve"}
+                              </td>
+                            </>
+                          ) : (
+                            false
+                          )}
                           <td className="text-center w-15">
-                            <button
-                              onClick={() => handleDetail(data)}
+                            {/* {LocalUser.role == "2" || LocalUser.role == "5" ? (
+                              <>
+                                
+                                <button
+                                  className="btn btn-success"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <FontAwesomeIcon icon={faCheckDouble} />
+                                  &nbsp; Solve
+                                </button>
+                                &nbsp;
+                                <button
+                                  className="btn btn-info"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <FontAwesomeIcon icon={faCheckDouble} />
+                                  &nbsp; Maintenance
+                                </button>
+                                &nbsp;
+                              </>
+                            ) : (
+                              false
+                            )} */}
+                            <button onClick={()=>handleDetail(data)}
                               className="btn btn-success mb-0"
                             >
                               <FontAwesomeIcon icon={faSearch} />
                               &nbsp; Detail
                             </button>
                             &nbsp;
-                            <button
-                              className="btn btn-warning"
-                              onClick={() => handleEditButton(data)}
-                            >
-                              <FontAwesomeIcon icon={faPencilAlt} />
-                              &nbsp; Edit
-                            </button>
-                            &nbsp;
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => confirm(data.id)}
-                            >
-                              <FontAwesomeIcon icon={faTrashAlt} />
-                              &nbsp; Delete
-                            </button>
+                            {LocalUser.idUser === data.created_user ? (
+                              <>
+                                <button
+                                  className="btn btn-warning"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <FontAwesomeIcon icon={faPencilAlt} />
+                                  &nbsp; Edit
+                                </button>
+                                &nbsp;
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => confirm(data.id)}
+                                >
+                                  <FontAwesomeIcon icon={faTrashAlt} />
+                                  &nbsp; Delete
+                                </button>
+                              </>
+                            ) : (
+                              <></>
+                            )}
                           </td>
                         </tr>
                       ))
@@ -263,17 +310,17 @@ export default function Index() {
                 </tbody>
               </table>
             </div>
-            {maintenances?.data ? (
+            {keluhans?.data ? (
               <div className="row d-flex justify-content-between align-items-center">
                 <div className="col-12 col-xl-6">
-                  show {maintenances?.pagination.count} data of{" "}
-                  {maintenances?.pagination.total} data
+                  show {keluhans?.pagination.count} data of{" "}
+                  {keluhans?.pagination.total} data
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
                   <Pagging
-                    total={maintenances?.pagination.total}
-                    itemsPerPage={maintenances?.pagination.perPage}
-                    currentPage={maintenances?.pagination.currentPage}
+                    total={keluhans?.pagination.total}
+                    itemsPerPage={keluhans?.pagination.perPage}
+                    currentPage={keluhans?.pagination.currentPage}
                     onPageChange={(page) => setPage(page)}
                   />
                 </div>

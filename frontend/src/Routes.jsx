@@ -23,8 +23,13 @@ const Keluhan = React.lazy(() => import("./components/pages/keluhan/Index"));
 const KeluhanDetail = React.lazy(() => import("./components/pages/keluhan/Detail"));
 const KeluhanAdd = React.lazy(() => import("./components/pages/keluhan/Add"));
 const KeluhanEdit = React.lazy(() => import("./components/pages/keluhan/Edit"));
+const KeluhanAddPelanggan = React.lazy(() => import("./components/pages/keluhan/AddForPelanggan"));
+const KeluhanEditPelanggan = React.lazy(() => import("./components/pages/keluhan/EditForPelanggan"));
+const KeluhanPelanggan = React.lazy(() => import("./components/pages/keluhan/IndexPelanggan"));
 const Maintenance = React.lazy(() => import("./components/pages/maintenance/Index"));
-const MaintenanceAdd = React.lazy(() => import("./components/pages/maintenance/Add"));
+const MaintenanceAdd = React.lazy(() => import("./components/pages/maintenance/FormAdd"));
+const MaintenanceEdit = React.lazy(() => import("./components/pages/maintenance/FormEdit"));
+const MaintenanceDetail = React.lazy(() => import("./components/pages/maintenance/Detail"));
 
 export default [
   {
@@ -130,10 +135,26 @@ export default [
         ),
       },
       {
+        path: `${base_url}/keluhan/pelanggan`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <KeluhanPelanggan />
+          </Suspense>
+        ),
+      },
+      {
         path: `${base_url}/keluhan/add`,
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
             <KeluhanAdd />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/keluhan/pelanggan/add`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <KeluhanAddPelanggan />
           </Suspense>
         ),
       },
@@ -154,6 +175,14 @@ export default [
         ),
       },
       {
+        path: `${base_url}/keluhan/pelanggan/edit`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <KeluhanEditPelanggan />
+          </Suspense>
+        ),
+      },
+      {
         path: `${base_url}/maintenance`,
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
@@ -166,6 +195,22 @@ export default [
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
             <MaintenanceAdd />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/maintenance/edit`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <MaintenanceEdit />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/maintenance/detail`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <MaintenanceDetail />
           </Suspense>
         ),
       },

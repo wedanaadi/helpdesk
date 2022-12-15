@@ -18,9 +18,10 @@ class ComplaintController extends Controller
    *
    * @return void
    */
-  public function index()
+  public function index(Request $request)
   {
-    $data = Keluhan::filter(request(['search']))
+    if($request->role === '4') {
+      $data = Keluhan::filter(request(['search']))
       ->with('pelanggan', 'kategori',
       'pelanggan.kelurahan',
       'pelanggan.kelurahan.kecamatan',
@@ -28,7 +29,25 @@ class ComplaintController extends Controller
       'pelanggan.kelurahan.kecamatan.kabkot.provinsi',
       'files')
       ->select('*', DB::raw('date_format(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d %H:%i:%s") as created_at2'),
-      DB::raw('IF(status = "0","ON",IF(status= "1","SOLVE",IF(unix_timestamp(DATE_FORMAT(date_add(FROM_UNIXTIME(created_at/1000),INTERVAL 3 day),"%Y-%m-%d %H:%i:%s"))*1000<UNIX_TIMESTAMP(NOW()),"ON PROSESS","EXPIRED"))) as status_keluhan'),
+      DB::raw('IF(status = "0","ON",IF(status= "1","SOLVE","ON PROSES")) as status_keluhan'),
+      DB::raw('DATE_FORMAT(date_add(FROM_UNIXTIME(created_at/1000),INTERVAL 3 day),"%Y-%m-%d %H:%i:%s") as expired_date')
+      )
+      // ->selectRaw('*, created_at AS "tanggal_tiket"')
+      ->where('is_aktif', '1')
+      ->where('pelanggan_id', $request->id)
+      ->OrderBy('status', 'ASC')
+      ->OrderBy('tiket', 'ASC')
+      ->paginate(request('perpage'));
+    } else {
+      $data = Keluhan::filter(request(['search']))
+      ->with('pelanggan', 'kategori',
+      'pelanggan.kelurahan',
+      'pelanggan.kelurahan.kecamatan',
+      'pelanggan.kelurahan.kecamatan.kabkot',
+      'pelanggan.kelurahan.kecamatan.kabkot.provinsi',
+      'files')
+      ->select('*', DB::raw('date_format(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d %H:%i:%s") as created_at2'),
+      DB::raw('IF(status = "0","ON",IF(status= "1","SOLVE","ON PROSES")) as status_keluhan'),
       DB::raw('DATE_FORMAT(date_add(FROM_UNIXTIME(created_at/1000),INTERVAL 3 day),"%Y-%m-%d %H:%i:%s") as expired_date')
       )
       // ->selectRaw('*, created_at AS "tanggal_tiket"')
@@ -36,6 +55,7 @@ class ComplaintController extends Controller
       ->OrderBy('status', 'ASC')
       ->OrderBy('tiket', 'ASC')
       ->paginate(request('perpage'));
+    }
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
   /**
@@ -60,11 +80,19 @@ class ComplaintController extends Controller
 
     DB::beginTransaction();
     try {
-      $date = date('y') . date('m');
-      $lastKode = Keluhan::select(DB::raw('MAX(tiket) AS kode'))
-        ->where(DB::raw('SUBSTR(tiket,2,4)'), $date)
-        ->first();
-      $newTiket = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'K', $date);
+      $prevTicket = Keluhan::where('kategori_id',$request->kategori)
+                    ->where('pelanggan_id',$request->pelanggan)
+                    ->where('is_aktif',"0")
+                    ->where('status','!=',"1");
+      if($prevTicket->count() > 0) {
+        $newTiket = $prevTicket->get()->tiket;
+      } else {
+        $date = date('y') . date('m');
+        $lastKode = Keluhan::select(DB::raw('MAX(tiket) AS kode'))
+          ->where(DB::raw('SUBSTR(tiket,2,4)'), $date)
+          ->first();
+        $newTiket = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'K', $date);
+      }
       $payload = [
         'tiket' => $newTiket,
         'pelanggan_id' => $request->pelanggan,
@@ -96,7 +124,13 @@ class ComplaintController extends Controller
           ]);
         }
       }
-      Keluhan::create($payload);
+
+      if($prevTicket->count() > 0) {
+        $prevTicket->update($payload);
+      } else {
+        Keluhan::create($payload);
+      }
+
       if (count($dataFile) > 0) {
         FileKeluhan::insert($dataFile);
       }
@@ -213,5 +247,30 @@ class ComplaintController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'fail update status', "data" => [], 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function select(Request $request)
+  {
+    $data = [];
+    $pro = DB::select('SELECT k.*, p.`nama_pelanggan` FROM keluhans k INNER JOIN pelanggans p ON p.`id` = k.`pelanggan_id`  WHERE k.`status`="0" AND k.`is_aktif`="1"');
+    foreach ($pro as $d) {
+      array_push($data, [
+        'label' => $d->tiket.'|'.$d->nama_pelanggan,
+        'value' => $d->tiket
+      ]);
+    }
+    return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
+  }
+  public function selectOnlyId($id)
+  {
+    $data = [];
+    $pro = DB::select('SELECT k.*, p.`nama_pelanggan` FROM keluhans k INNER JOIN pelanggans p ON p.`id` = k.`pelanggan_id`  WHERE k.`is_aktif`="1" AND k.`status`="0" OR k.`tiket`="'.$id.'"');
+    foreach ($pro as $d) {
+      array_push($data, [
+        'label' => $d->tiket.'|'.$d->nama_pelanggan,
+        'value' => $d->tiket
+      ]);
+    }
+    return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 }
