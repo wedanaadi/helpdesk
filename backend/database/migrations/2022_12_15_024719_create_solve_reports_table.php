@@ -14,8 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('solve_reports', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+          $table->uuid('id')->primary();
+          $table->string('keluhan_id',100);
+          $table->bigInteger('created_at');
+          $table->bigInteger('updated_at');
         });
     }
 

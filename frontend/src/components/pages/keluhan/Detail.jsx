@@ -19,6 +19,7 @@ const ModalMaintenance = React.lazy(() =>
 export default function Detail() {
   const detailLokal = JSON.parse(localStorage.getItem("detailKeluhan"));
   const [mapDetect, setMapDetect] = useState(false);
+  const [logs, errorlogs, loadinglogs, logsAxios] = useHookAxios();
   const [response, error, loading, actionAxios] = useHookAxios();
   const [axiosHandle, setAxiosHandle] = useState(false);
   const toastId = useRef(null);
@@ -71,6 +72,30 @@ export default function Detail() {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  const getLogs = () => {
+    logsAxios({
+      axiosInstance: axios,
+      method: "GET",
+      url: `log-keluhan`,
+      data: null,
+      reqConfig: {
+        params: {
+          idKeluhan: detailLokal.tiket,
+        },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth")}`,
+        },
+      },
+    });
+  };
+
+  useEffect(() => {
+    const invt = setTimeout(() => {
+      getLogs();
+    }, 1);
+    return () => clearInterval(invt);
+  }, []);
+
   return (
     <div className="row g-4">
       <Suspense fallback={<>Loading....</>}>
@@ -79,7 +104,7 @@ export default function Detail() {
       <div className="col-12 mx-0">
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
-            <h3 className="pb-1 mb-0">Detail TICKET Keluhan</h3>
+            <h3 className="pb-1 mb-0">Detail Ticket Keluhan</h3>
             <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
               <FontAwesomeIcon icon={faArrowLeft} />
               &nbsp; Kembali
@@ -184,7 +209,9 @@ export default function Detail() {
                     <td>Keluhan Text / Deskripsi</td>
                     <td>:</td>
                     <td>
-                      <p style={{ whiteSpace:'pre-line' }}><b>{detailLokal.comment}</b></p>
+                      <p style={{ whiteSpace: "pre-line" }}>
+                        <b>{detailLokal.comment}</b>
+                      </p>
                     </td>
                   </tr>
                   <tr>
@@ -234,6 +261,29 @@ export default function Detail() {
                 lng: detailLokal.pelanggan.long,
               }}
             />
+          </div>
+        </div>
+      </div>
+      <div className="col-12 mx-0">
+        <div className="bg-light rounded">
+          <div className="p-3 border-bottom">
+            <h5>Riwayat Penanganan</h5>
+          </div>
+          <div className="p-3 border-bottom">
+            <section className="py-2">
+              <ul className="timeline">
+                {logs.length > 0 && logs.map((log,index)=>(
+                  <div key={index}>
+                    <li className="timeline-item mb-5">
+                      <div className="d-flex justify-content-between align-items-center">
+                        <h5 className="fw-bold">{log.deskripsi}</h5>
+                      </div>
+                      <p className="text-muted mb-2 fw-bold">{ToDate(log.created_at,'full')}</p>
+                    </li>
+                  </div>
+                ))}
+              </ul>
+            </section>
           </div>
         </div>
       </div>

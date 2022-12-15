@@ -37,6 +37,36 @@ export default function Sidebar({sidebarOpen}) {
               <FontAwesomeIcon icon={faTachometerAlt} className="me-2" />
               Dashboard
             </a>
+            <Link to={`${base_url}/kategori`} className="nav-item nav-link">
+              {/* <i className="fa fa-th me-2" /> */}
+              <FontAwesomeIcon icon={faTh} className="me-2" />
+              Kategori
+            </Link>
+            <Link to={`${base_url}/pegawai`} className="nav-item nav-link">
+              {/* <i className="fa fa-th me-2" /> */}
+              <FontAwesomeIcon icon={faKeyboard} className="me-2" />
+              Pegawai
+            </Link>
+            <Link to={`${base_url}/pelanggan`} className="nav-item nav-link">
+              {/* <i className="fa fa-th me-2" /> */}
+              <FontAwesomeIcon icon={faTable} className="me-2" />
+              Pelanggan
+            </Link>
+            <Link to={`${base_url}/keluhan/pelanggan`} className="nav-item nav-link">
+              {/* <i className="fa fa-th me-2" /> */}
+              <FontAwesomeIcon icon={faTable} className="me-2" />
+              Komplain Pelanggan
+            </Link>
+            <Link to={`${base_url}/keluhan`} className="nav-item nav-link">
+              {/* <i className="fa fa-th me-2" /> */}
+              <FontAwesomeIcon icon={faTable} className="me-2" />
+              Keluhan
+            </Link>
+            <Link to={`${base_url}/maintenance`} className="nav-item nav-link">
+              {/* <i className="fa fa-th me-2" /> */}
+              <FontAwesomeIcon icon={faTable} className="me-2" />
+              Maintenance
+            </Link>
             <div className="nav-item dropdown">
               <a
                 href="#"
@@ -59,26 +89,6 @@ export default function Sidebar({sidebarOpen}) {
                 </a>
               </div>
             </div>
-            <Link to={`${base_url}/kategori`} className="nav-item nav-link">
-              {/* <i className="fa fa-th me-2" /> */}
-              <FontAwesomeIcon icon={faTh} className="me-2" />
-              Kategori
-            </Link>
-            <Link to={`${base_url}/pegawai`} className="nav-item nav-link">
-              {/* <i className="fa fa-th me-2" /> */}
-              <FontAwesomeIcon icon={faKeyboard} className="me-2" />
-              Pegawai
-            </Link>
-            <Link to={`${base_url}/pegawai`} className="nav-item nav-link">
-              {/* <i className="fa fa-th me-2" /> */}
-              <FontAwesomeIcon icon={faTable} className="me-2" />
-              Pelanggan
-            </Link>
-            <a href="chart.html" className="nav-item nav-link">
-              {/* <i className="fa fa-chart-bar me-2" /> */}
-              <FontAwesomeIcon icon={faChartBar} className="me-2" />
-              Charts
-            </a>
           </div>
         </nav>
       </aside>

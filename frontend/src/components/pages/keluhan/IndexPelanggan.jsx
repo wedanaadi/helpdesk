@@ -166,7 +166,7 @@ export default function Index() {
         <h3 className="mb-0">Data Keluhan</h3>
         <Link to={`add`} className="btn btn-success mb-0">
           <FontAwesomeIcon icon={faPlus} />
-          &nbsp; Tambah
+          &nbsp; Ajukan Keluhan
         </Link>
       </div>
       <div className="px-3 py-2">
@@ -243,29 +243,6 @@ export default function Index() {
                             false
                           )}
                           <td className="text-center w-15">
-                            {/* {LocalUser.role == "2" || LocalUser.role == "5" ? (
-                              <>
-                                
-                                <button
-                                  className="btn btn-success"
-                                  onClick={() => handleEditButton(data)}
-                                >
-                                  <FontAwesomeIcon icon={faCheckDouble} />
-                                  &nbsp; Solve
-                                </button>
-                                &nbsp;
-                                <button
-                                  className="btn btn-info"
-                                  onClick={() => handleEditButton(data)}
-                                >
-                                  <FontAwesomeIcon icon={faCheckDouble} />
-                                  &nbsp; Maintenance
-                                </button>
-                                &nbsp;
-                              </>
-                            ) : (
-                              false
-                            )} */}
                             <button onClick={()=>handleDetail(data)}
                               className="btn btn-success mb-0"
                             >
@@ -273,7 +250,7 @@ export default function Index() {
                               &nbsp; Detail
                             </button>
                             &nbsp;
-                            {LocalUser.idUser === data.created_user ? (
+                            {LocalUser.idUser === data.created_user && data.status != '1' ? (
                               <>
                                 <button
                                   className="btn btn-warning"

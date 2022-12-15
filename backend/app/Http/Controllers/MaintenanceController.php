@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Libraries\Fungsi;
 use App\Models\Keluhan;
+use App\Models\Log;
 use App\Models\Maintenance;
 use Exception;
 use Illuminate\Http\Request;
@@ -24,9 +25,11 @@ class MaintenanceController extends Controller
       ->select('*',DB::raw("IF(status='0','ON',IF(status='1','SOLVED','PENDING')) AS status_desc"),
       DB::raw('DATE_FORMAT(FROM_UNIXTIME(expired_date/1000),"%Y-%m-%d %H:%i:%s") as expired_date'))
       ->OrderBy('status', 'ASC')
-      ->OrderBy('tiket_maintenance', 'ASC')
-      ->paginate(request('perpage'));
-    return response()->json(['msg' => 'Get Maintenance', "data" => $data, 'error' => []], 200);
+      ->OrderBy('tiket_maintenance', 'ASC');
+    if(request('role')==='3') {
+      $data->where('pegawai_id',request('idUser'));
+    }
+    return response()->json(['msg' => 'Get Maintenance', "data" => $data->paginate(request('perpage')), 'error' => []], 200);
   }
 
   public function store(Request $request)
@@ -67,6 +70,16 @@ class MaintenanceController extends Controller
       Keluhan::where('tiket', $request->ticket_keluhan)->update([
         'status' => '2'
       ]);
+      $dataLog = [
+        'keluhan_id' => $request->ticket_keluhan,
+        'relasi_log' => $newTiket,
+        'user_id' => $request->teknisi,
+        'deskripsi' => 'Ticket Maintenance dibuat".',
+        'type' => '2',
+        'created_at' => round(microtime(true) * 1000),
+        'updated_at' => round(microtime(true) * 1000),
+      ];
+      Log::create($dataLog);
       if($prevTicket->count() > 0 AND (int)$expired_date < round(microtime(true) * 1000)) {
         $prevTicket->update($payload);
       } else {
@@ -111,7 +124,20 @@ class MaintenanceController extends Controller
       Keluhan::where('tiket', $request->ticket_keluhan)->update([
         'status' => '2'
       ]);
+      $prevLog = Log::where('relasi_log',$find->tiket_maintenance)
+                  ->where('type','2')
+                  ->firstOrFail();
+      $dataLog = [
+        'keluhan_id' => $request->ticket_keluhan,
+        'relasi_log' => $find->tiket_maintenance,
+        'user_id' => $request->teknisi,
+        'deskripsi' => 'Ticket Maintenance dibuat".',
+        'type' => '2',
+        'created_at' => round(microtime(true) * 1000),
+        'updated_at' => round(microtime(true) * 1000),
+      ];
       $find->update($payload);
+      $prevLog->update($dataLog);
       DB::commit();
       return response()->json(['msg' => 'Successfuly update data maintenance', "data" => $payload, 'error' => null], 201);
     } catch (\Exception $e) {
@@ -126,6 +152,8 @@ class MaintenanceController extends Controller
     DB::beginTransaction();
     try {
       Keluhan::where('tiket',$find->tiket_keluhan)->update(['status'=>'0']);
+      Log::where('keluhan_id',$find->tiket_keluhan)
+          ->where('type','!=','1')->delete();
       $find->delete();
       DB::commit();
       return response()->json(['msg' => 'Successfuly delete data maintenance', "data" => [], 'error' => null], 201);
@@ -144,10 +172,23 @@ class MaintenanceController extends Controller
         'status' => $request->status
       ];
 
+      $dataLog = [
+        'keluhan_id' => $maintenance->tiket_keluhan,
+        'relasi_log' => $maintenance->tiket_maintenance,
+        'user_id' => $maintenance->pegawai_id,
+        'type' => '3',
+        'created_at' => round(microtime(true) * 1000),
+        'updated_at' => round(microtime(true) * 1000),
+      ];
+
       $maintenance->update($payload);
       if($request->status == "1") {
         Keluhan::where('tiket',$maintenance->tiket_keluhan)->update(['status'=>'1']);
+        $dataLog['deskripsi'] = 'Status ticket dirubah menjadi solved.';
+      } else {
+        $dataLog['deskripsi'] = 'Status ticket dirubah menjadi pending.';
       }
+      Log::create($dataLog);
       DB::commit();
       return response()->json(['msg' => 'Successfuly update status', "data" => $payload, 'error' => []], 200);
     } catch (Exception $e) {

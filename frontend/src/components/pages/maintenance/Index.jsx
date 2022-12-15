@@ -64,6 +64,10 @@ export default function Index() {
       url: url,
       data: null,
       reqConfig: {
+        params: {
+          role: LocalUser.role,
+          idUser: LocalUser.idUser,
+        },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
         },
@@ -133,7 +137,7 @@ export default function Index() {
     }
 
     if (maintenances && !validation && !error && !loading) {
-      console.log('save');
+      console.log("save");
       toast.update(toastId.current, {
         render: "Successfuly deleted",
         type: "success",
@@ -231,22 +235,26 @@ export default function Index() {
                               <FontAwesomeIcon icon={faSearch} />
                               &nbsp; Detail
                             </button>
-                            &nbsp;
-                            <button
-                              className="btn btn-warning"
-                              onClick={() => handleEditButton(data)}
-                            >
-                              <FontAwesomeIcon icon={faPencilAlt} />
-                              &nbsp; Edit
-                            </button>
-                            &nbsp;
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => confirm(data.id)}
-                            >
-                              <FontAwesomeIcon icon={faTrashAlt} />
-                              &nbsp; Delete
-                            </button>
+                            {LocalUser.role != "3" && data.status != "1" && (
+                              <>
+                                &nbsp;
+                                <button
+                                  className="btn btn-warning"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <FontAwesomeIcon icon={faPencilAlt} />
+                                  &nbsp; Edit
+                                </button>
+                                &nbsp;
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => confirm(data.id)}
+                                >
+                                  <FontAwesomeIcon icon={faTrashAlt} />
+                                  &nbsp; Delete
+                                </button>
+                              </>
+                            )}
                           </td>
                         </tr>
                       ))

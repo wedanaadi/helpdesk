@@ -221,7 +221,7 @@ export default function Index() {
                           </td>
                           <td>{data.tiket}</td>
                           <td>{data.pelanggan.nama_pelanggan}</td>
-                          <td>{data.created_at2}</td>
+                          <td>{ToDate(data.created_at2,'full')}</td>
                           {LocalUser.role == "4" ? (
                             <>
                               <td>{data.kategori.nama_kategori}</td>
@@ -238,29 +238,6 @@ export default function Index() {
                             false
                           )}
                           <td className="text-center w-15">
-                            {/* {LocalUser.role == "2" || LocalUser.role == "5" ? (
-                              <>
-                                
-                                <button
-                                  className="btn btn-success"
-                                  onClick={() => handleEditButton(data)}
-                                >
-                                  <FontAwesomeIcon icon={faCheckDouble} />
-                                  &nbsp; Solve
-                                </button>
-                                &nbsp;
-                                <button
-                                  className="btn btn-info"
-                                  onClick={() => handleEditButton(data)}
-                                >
-                                  <FontAwesomeIcon icon={faCheckDouble} />
-                                  &nbsp; Maintenance
-                                </button>
-                                &nbsp;
-                              </>
-                            ) : (
-                              false
-                            )} */}
                             <button onClick={()=>handleDetail(data)}
                               className="btn btn-success mb-0"
                             >
@@ -268,7 +245,7 @@ export default function Index() {
                               &nbsp; Detail
                             </button>
                             &nbsp;
-                            {LocalUser.idUser === data.created_user ? (
+                            {LocalUser.idUser === data.created_user || LocalUser.idUser === '0' && data.status != '1'  ? (
                               <>
                                 <button
                                   className="btn btn-warning"

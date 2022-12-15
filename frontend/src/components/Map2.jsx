@@ -12,7 +12,7 @@ import "leaflet/dist/leaflet.css";
 export default function Map2({ aksi, statePosition, stateProps = null }) {
   const [stateLatLng, setLatLng] = useState(stateProps);
   // Berlin coordinates
-  const position = [-8.409518, 115.188919];
+  const position = stateLatLng;
 
   // --- (6) Create a custom marker ---
   const customIcon = new Icon({
@@ -26,7 +26,7 @@ export default function Map2({ aksi, statePosition, stateProps = null }) {
     <section className="map-component">
       {/* --- (5) Add leaflet map container --- */}
       <div className="map">
-        <MapContainer center={position} zoom={10} scrollWheelZoom={true}>
+        <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
