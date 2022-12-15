@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
 class AuthController extends Controller
 {
   public function login(Request $request)
@@ -89,10 +88,26 @@ class AuthController extends Controller
 
   public function sendEmail(Request $request)
   {
-    $data = $request->all();
+    $validator = Validator::make($request->all(), [
+      'subject' => 'required',
+      'body' => 'required'
+    ], [
+      'required' => 'Input :attribute harus diisi!'
+    ]);
 
-    dispatch(new SendMailJob($data));
-    return redirect()->route('kirim-email')->with('status', 'Email berhasil dikirim');
+    if ($validator->fails()) {
+      return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
+    }
+
+    try {
+      $data = $request->all();
+      dispatch(new SendMailJob($data));
+      // return redirect()->route('kirim-email')->with('status', 'Email berhasil dikirim');
+      return response()->json(['msg' => 'Successfuly Login', "data" => $data, 'error' => null], 200);
+    } catch (\Exception $e) {
+      return response()->json(['msg' => 'Failed Login', "data" => null, 'error' => $e->getMessage()], 500);
+    }
+
   }
 
   public function logout()

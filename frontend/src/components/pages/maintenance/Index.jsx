@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import axios from "../../util/jsonApi";
 import LoadingPage from "../../LoadingPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faEnvelope,
+  faMessage,
   faPencilAlt,
   faPlus,
   faSearch,
@@ -15,6 +17,7 @@ import useHookAxios from "../../hook/useHookAxios";
 import { confirmAlert } from "react-confirm-alert";
 import { toast } from "react-toastify";
 import ToDate from "../../util/ToDate";
+import SendEmail from "./SendEmail";
 
 export default function Index() {
   const LocalUser = JSON.parse(localStorage.getItem("userData"));
@@ -158,8 +161,19 @@ export default function Index() {
     navigasi("detail");
   };
 
+  const [show, setShow] = useState(false);
+  const [dataModal, setDataModal] = useState(null);
+
+  const handleModal = (data) => {
+    setShow(true);
+    setDataModal(data);
+  };
+
   return (
     <div className="row bg-light rounded mx-0">
+      <Suspense>
+        <SendEmail toggleModal={show} setState={setShow} data={dataModal} type="toTeknisi" />
+      </Suspense>
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Data Maintenance</h3>
         <Link to={`add`} className="btn btn-success mb-0">
@@ -228,6 +242,18 @@ export default function Index() {
                           <td>{data.status_desc}</td>
                           {/* <td>{data.note}</td> */}
                           <td className="text-center w-15">
+                            {LocalUser.role != "3" && (
+                              <>
+                                <button
+                                  className="btn btn-info mb-0"
+                                  onClick={() => handleModal(data)}
+                                >
+                                  <FontAwesomeIcon icon={faEnvelope} />
+                                  &nbsp; Send Email
+                                </button>
+                                &nbsp;
+                              </>
+                            )}
                             <button
                               onClick={() => handleDetail(data)}
                               className="btn btn-success mb-0"

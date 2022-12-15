@@ -98,7 +98,8 @@ export default function DetailMaintenance() {
               NOMOR: <b>{detailLokal.tiket_maintenance}</b> - STATUS:{" "}
               <b>{detailLokal.status_desc}</b> <br />
               EXPIRED DATE TICKET:{" "}
-              <b>{ToDate(detailLokal.expired_date, "full")}</b>
+              <b>{ToDate(detailLokal.expired_date, "full")}</b><br/>
+              Ditangani oleh : <b>{detailLokal.teknisi.nama_pegawai}</b>
             </div>
             <div>
               {parseInt(detailLokal.status) !== 1 && checkExp() ? (

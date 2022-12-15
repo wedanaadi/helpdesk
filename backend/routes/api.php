@@ -30,6 +30,7 @@ Route::post('/register', [AuthController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
   Route::post('/logout', [AuthController::class, 'logout']);
+  Route::post('/sendEmail', [AuthController::class, 'sendEmail']);
 
   Route::get('/kategori', [KategoriController::class, 'index']);
   Route::post('/kategori', [KategoriController::class, 'store']);

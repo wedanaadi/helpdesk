@@ -6,6 +6,7 @@ use App\Libraries\Fungsi;
 use App\Models\Keluhan;
 use App\Models\Log;
 use App\Models\Maintenance;
+use App\Models\MaintenanceReport;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -180,6 +181,20 @@ class MaintenanceController extends Controller
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
       ];
+
+      $reportSolve = [
+        'keluhan_id' => $maintenance->tiket_keluhan,
+        'status' => $request->status,
+        'created_at' => round(microtime(true) * 1000),
+        'updated_at' => round(microtime(true) * 1000),
+      ];
+
+      $isExist = MaintenanceReport::where('keluhan_id',$maintenance->tiket_keluhan);
+      if($isExist->count() > 0) {
+        $isExist->first()->update($reportSolve);
+      } else {
+        MaintenanceReport::create($reportSolve);
+      }
 
       $maintenance->update($payload);
       if($request->status == "1") {
