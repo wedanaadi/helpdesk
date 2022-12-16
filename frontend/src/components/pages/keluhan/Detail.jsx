@@ -25,6 +25,8 @@ export default function Detail() {
   const toastId = useRef(null);
   const [validation, setValidation] = useState(null);
   const navigasi = useNavigate();
+  const LokalUser = JSON.parse(localStorage.getItem("userData"));
+  const hk = LokalUser.role;
 
   const handleSolve = () => {
     setAxiosHandle(true);
@@ -105,10 +107,23 @@ export default function Detail() {
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
             <h3 className="pb-1 mb-0">Detail Ticket Keluhan</h3>
-            <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
-              <FontAwesomeIcon icon={faArrowLeft} />
-              &nbsp; Kembali
-            </Link>
+            {hk == "4" ? (
+              <Link
+                to={`${baseUrl}/keluhan/pelanggan`}
+                className="btn btn-secondary mb-0"
+              >
+                <FontAwesomeIcon icon={faArrowLeft} />
+                &nbsp; Kembali
+              </Link>
+            ) : (
+              <Link
+                to={`${baseUrl}/keluhan`}
+                className="btn btn-secondary mb-0"
+              >
+                <FontAwesomeIcon icon={faArrowLeft} />
+                &nbsp; Kembali
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -121,28 +136,34 @@ export default function Detail() {
               EXPIRED DATE TICKET:{" "}
               <b>{ToDate(detailLokal.expired_date, "full")}</b>
             </div>
-            <div>
-              {detailLokal.status === 0 &&
-              detailLokal.status_keluhan === "ON" ? (
-                <>
-                  <button className="btn btn-success" onClick={handleSolve}>
-                    <FontAwesomeIcon icon={faCheckDouble} />
-                    &nbsp; Ubah Status menjadi Solve
-                  </button>{" "}
-                  &nbsp;{" "}
-                  <button
-                    className="btn btn-info"
-                    data-bs-toggle="modal"
-                    data-bs-target="#commentModal"
-                  >
-                    <FontAwesomeIcon icon={faWrench} />
-                    &nbsp; Tambahkan ke Maintenance
-                  </button>
-                </>
-              ) : (
-                false
-              )}
-            </div>
+            {hk == "4" ? (
+              false
+            ) : (
+              <>
+                <div>
+                  {detailLokal.status === 0 &&
+                  detailLokal.status_keluhan === "ON" ? (
+                    <>
+                      <button className="btn btn-success" onClick={handleSolve}>
+                        <FontAwesomeIcon icon={faCheckDouble} />
+                        &nbsp; Ubah Status menjadi Solve
+                      </button>{" "}
+                      &nbsp;{" "}
+                      <button
+                        className="btn btn-info"
+                        data-bs-toggle="modal"
+                        data-bs-target="#commentModal"
+                      >
+                        <FontAwesomeIcon icon={faWrench} />
+                        &nbsp; Tambahkan ke Maintenance
+                      </button>
+                    </>
+                  ) : (
+                    false
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -272,16 +293,19 @@ export default function Detail() {
           <div className="p-3 border-bottom">
             <section className="py-2">
               <ul className="timeline">
-                {logs.length > 0 && logs.map((log,index)=>(
-                  <div key={index}>
-                    <li className="timeline-item mb-5">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <h5 className="fw-bold">{log.deskripsi}</h5>
-                      </div>
-                      <p className="text-muted mb-2 fw-bold">{ToDate(log.created_at,'full')}</p>
-                    </li>
-                  </div>
-                ))}
+                {logs.length > 0 &&
+                  logs.map((log, index) => (
+                    <div key={index}>
+                      <li className="timeline-item mb-5">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h5 className="fw-bold">{log.deskripsi}</h5>
+                        </div>
+                        <p className="text-muted mb-2 fw-bold">
+                          {ToDate(log.created_at, "full")}
+                        </p>
+                      </li>
+                    </div>
+                  ))}
               </ul>
             </section>
           </div>

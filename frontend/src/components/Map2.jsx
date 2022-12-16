@@ -16,8 +16,8 @@ export default function Map2({ aksi, statePosition, stateProps = null }) {
 
   // --- (6) Create a custom marker ---
   const customIcon = new Icon({
-    iconUrl: "/icons8-select-24.png",
-    iconSize: [20, 20],
+    iconUrl: `${import.meta.env.VITE_BASE_ASSETS}/images/marker-icon.png`,
+    // iconSize: [20, 20],
     // iconAnchor: [1, 1],
     // popupAnchor: [-0, -76]
   });

@@ -141,40 +141,40 @@ export default function DetailMaintenance() {
                   <tr>
                     <td>Nama Pelanggan</td>
                     <td>:</td>
-                    <td>{detailLokal.keluhan.pelanggan.nama_pelanggan}</td>
+                    <td>{detailLokal.keluhans.pelanggan.nama_pelanggan}</td>
                   </tr>
                   <tr>
                     <td>Telepon</td>
                     <td>:</td>
-                    <td>{detailLokal.keluhan.pelanggan.telepon}</td>
+                    <td>{detailLokal.keluhans.pelanggan.telepon}</td>
                   </tr>
                   <tr>
                     <td>Email</td>
                     <td>:</td>
-                    <td>{detailLokal.keluhan.pelanggan.email}</td>
+                    <td>{detailLokal.keluhans.pelanggan.email}</td>
                   </tr>
                   <tr>
                     <td>Alamat</td>
                     <td>:</td>
                     <td>
-                      <b>{detailLokal.keluhan.pelanggan.alamat}</b>, Kelurahan{" "}
-                      <b>{detailLokal.keluhan.pelanggan.kelurahan.name}</b>,
+                      <b>{detailLokal.keluhans.pelanggan.alamat}</b>, Kelurahan{" "}
+                      <b>{detailLokal.keluhans.pelanggan.kelurahan.name}</b>,
                       Kecamatan{" "}
                       <b>
                         {" "}
-                        {detailLokal.keluhan.pelanggan.kelurahan.kecamatan.name}
+                        {detailLokal.keluhans.pelanggan.kelurahan.kecamatan.name}
                       </b>
                       , Kabupaten{" "}
                       <b>
                         {
-                          detailLokal.keluhan.pelanggan.kelurahan.kecamatan
+                          detailLokal.keluhans.pelanggan.kelurahan.kecamatan
                             .kabkot.name
                         }
                       </b>
                       , Provinsi{" "}
                       <b>
                         {
-                          detailLokal.keluhan.pelanggan.kelurahan.kecamatan
+                          detailLokal.keluhans.pelanggan.kelurahan.kecamatan
                             .kabkot.provinsi.name
                         }
                       </b>
@@ -199,14 +199,14 @@ export default function DetailMaintenance() {
                     <td>Nomor Ticket</td>
                     <td>:</td>
                     <td>
-                      <b>{detailLokal.keluhan.tiket}</b>
+                      <b>{detailLokal.keluhans.tiket}</b>
                     </td>
                   </tr>
                   <tr>
                     <td>Dibuat</td>
                     <td>:</td>
                     <td>
-                      <b>{ToDate(detailLokal.keluhan.created_at, "full")}</b>
+                      <b>{ToDate(detailLokal.keluhans.created_at, "full")}</b>
                     </td>
                   </tr>
                   <tr>
@@ -214,7 +214,7 @@ export default function DetailMaintenance() {
                     <td>:</td>
                     <td>
                       <p style={{ whiteSpace: "pre-line" }}>
-                        <b>{detailLokal.keluhan.comment}</b>
+                        <b>{detailLokal.keluhans.comment}</b>
                       </p>
                     </td>
                   </tr>
@@ -222,10 +222,10 @@ export default function DetailMaintenance() {
                     <td>File</td>
                     <td>:</td>
                     <td>
-                      {detailLokal.keluhan.files.length > 0 ? (
+                      {detailLokal.keluhans.files.length > 0 ? (
                         <>
                           <ul>
-                            {detailLokal.keluhan.files.map((file, index) => (
+                            {detailLokal.keluhans.files.map((file, index) => (
                               <div key={index}>
                                 <li>
                                   <a
@@ -261,8 +261,8 @@ export default function DetailMaintenance() {
             <Map2
               aksi={mapDetect}
               stateProps={{
-                lat: detailLokal.keluhan.pelanggan.lat,
-                lng: detailLokal.keluhan.pelanggan.long,
+                lat: detailLokal.keluhans.pelanggan.lat,
+                lng: detailLokal.keluhans.pelanggan.long,
               }}
             />
           </div>

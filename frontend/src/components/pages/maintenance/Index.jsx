@@ -21,6 +21,7 @@ import SendEmail from "./SendEmail";
 
 export default function Index() {
   const LocalUser = JSON.parse(localStorage.getItem("userData"));
+  const hk = LocalUser.role;
   const [maintenances, error, loading, axiosFuc] = useHookAxios();
   const [onSearch, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -172,14 +173,23 @@ export default function Index() {
   return (
     <div className="row bg-light rounded mx-0">
       <Suspense>
-        <SendEmail toggleModal={show} setState={setShow} data={dataModal} type="toTeknisi" />
+        <SendEmail
+          toggleModal={show}
+          setState={setShow}
+          data={dataModal}
+          type="toTeknisi"
+        />
       </Suspense>
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Data Maintenance</h3>
-        <Link to={`add`} className="btn btn-success mb-0">
-          <FontAwesomeIcon icon={faPlus} />
-          &nbsp; Tambah
-        </Link>
+        {hk == "1" ||
+          hk == "2" ||
+          (hk == "5" && (
+            <Link to={`add`} className="btn btn-success mb-0">
+              <FontAwesomeIcon icon={faPlus} />
+              &nbsp; Tambah
+            </Link>
+          ))}
       </div>
       <div className="px-3 py-2">
         {loading && <LoadingPage text={"Loading data"} />}

@@ -4,7 +4,7 @@
 @import url(./assets/style.css);
 @import url(./assets/timeline.css);
 
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@100;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Heebo:wght@100;400;500;600;700&display=swap");
 
 .w-5 {
   width: 5%;
@@ -28,6 +28,12 @@
   z-index: 1000 !important;
 }
 
-.leaflet-top,.leaflet-left {
+.leaflet-top,
+.leaflet-left {
   z-index: 999 !important;
 }
+
+/* for build */
+/* .leaflet-default-icon-path {
+  background-image: url(../../helpdesk/images/marker-icon.png) !important;
+} */

@@ -7,7 +7,7 @@ import Test from "./components/test";
 const base_url = import.meta.env.VITE_bASE_ROUTE;
 const Home = React.lazy(() => import("./components/pages/Home"));
 const Login = React.lazy(() => import("./components/pages/Login"));
-const Blank = React.lazy(() => import("./components/pages/Blank"));
+const Dashboard = React.lazy(() => import("./components/pages/Dahboard"));
 const LoadingPage = React.lazy(() => import("./components/LoadingPage"));
 const Kategori = React.lazy(() => import("./components/pages/kategori/Index"));
 const KategoriAdd = React.lazy(() => import("./components/pages/kategori/Add"));
@@ -54,7 +54,7 @@ export default [
     children: [
       {
         index: true,
-        element: <Blank />,
+        element: <Dashboard />,
       },
       {
         path: `${base_url}/kategori`,

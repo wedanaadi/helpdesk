@@ -151,9 +151,9 @@ export default function Index() {
   }, [keluhans, error]);
 
   const handleDetail = (data) => {
-    localStorage.setItem('detailKeluhan',JSON.stringify(data))
-    navigasi('detail')
-  }
+    localStorage.setItem("detailKeluhan", JSON.stringify(data));
+    navigasi("detail");
+  };
 
   return (
     <div className="row bg-light rounded mx-0">
@@ -221,7 +221,7 @@ export default function Index() {
                           </td>
                           <td>{data.tiket}</td>
                           <td>{data.pelanggan.nama_pelanggan}</td>
-                          <td>{ToDate(data.created_at2,'full')}</td>
+                          <td>{ToDate(data.created_at2, "full")}</td>
                           {LocalUser.role == "4" ? (
                             <>
                               <td>{data.kategori.nama_kategori}</td>
@@ -238,33 +238,40 @@ export default function Index() {
                             false
                           )}
                           <td className="text-center w-15">
-                            <button onClick={()=>handleDetail(data)}
+                            <button
+                              onClick={() => handleDetail(data)}
                               className="btn btn-success mb-0"
                             >
                               <FontAwesomeIcon icon={faSearch} />
                               &nbsp; Detail
                             </button>
                             &nbsp;
-                            {LocalUser.idUser === data.created_user || LocalUser.idUser === '0' && data.status != '1'  ? (
-                              <>
-                                <button
-                                  className="btn btn-warning"
-                                  onClick={() => handleEditButton(data)}
-                                >
-                                  <FontAwesomeIcon icon={faPencilAlt} />
-                                  &nbsp; Edit
-                                </button>
-                                &nbsp;
-                                <button
-                                  className="btn btn-danger"
-                                  onClick={() => confirm(data.id)}
-                                >
-                                  <FontAwesomeIcon icon={faTrashAlt} />
-                                  &nbsp; Delete
-                                </button>
-                              </>
+                            {data.status != "1" ? (
+                              LocalUser.idUser === data.created_user ||
+                              (LocalUser.idUser === "0" &&
+                                data.status != "1") ? (
+                                <>
+                                  <button
+                                    className="btn btn-warning"
+                                    onClick={() => handleEditButton(data)}
+                                  >
+                                    <FontAwesomeIcon icon={faPencilAlt} />
+                                    &nbsp; Edit
+                                  </button>
+                                  &nbsp;
+                                  <button
+                                    className="btn btn-danger"
+                                    onClick={() => confirm(data.id)}
+                                  >
+                                    <FontAwesomeIcon icon={faTrashAlt} />
+                                    &nbsp; Delete
+                                  </button>
+                                </>
+                              ) : (
+                                <></>
+                              )
                             ) : (
-                              <></>
+                              false
                             )}
                           </td>
                         </tr>

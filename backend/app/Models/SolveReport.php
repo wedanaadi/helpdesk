@@ -19,7 +19,8 @@ class SolveReport extends Model
   {
     $query->when($filters['periode'] ?? false, function ($query, $params)  {
       $periode = explode(',',$params);
-      return $query->whereRaw("created_at >= '".$periode[0]."' AND created_at <= '".$periode[1]."' ");
+      return $query->whereRaw("created_at >= '".$periode[0]."' AND created_at < '".$periode[1]."' ");
+      // return $query->whereRaw("created_at between '".$periode[0]."' AND '".$periode[1]."' ");
     });
     $query->when($filters['provinsi'] ?? false, function ($query, $params)  {
       return $query->whereHas('keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi', function ($query) use ($params) {

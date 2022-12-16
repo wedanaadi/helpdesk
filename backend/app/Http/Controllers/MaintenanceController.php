@@ -17,12 +17,12 @@ class MaintenanceController extends Controller
   public function index()
   {
     $data = Maintenance::filter(request(['search']))
-      ->with('teknisi', 'keluhan','keluhan.pelanggan',
-      'keluhan.pelanggan.kelurahan',
-      'keluhan.pelanggan.kelurahan.kecamatan',
-      'keluhan.pelanggan.kelurahan.kecamatan.kabkot',
-      'keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi',
-      'keluhan.files')
+      ->with('teknisi', 'keluhans','keluhans.pelanggan',
+      'keluhans.pelanggan.kelurahan',
+      'keluhans.pelanggan.kelurahan.kecamatan',
+      'keluhans.pelanggan.kelurahan.kecamatan.kabkot',
+      'keluhans.pelanggan.kelurahan.kecamatan.kabkot.provinsi',
+      'keluhans.files')
       ->select('*',DB::raw("IF(status='0','ON',IF(status='1','SOLVED','PENDING')) AS status_desc"),
       DB::raw('DATE_FORMAT(FROM_UNIXTIME(expired_date/1000),"%Y-%m-%d %H:%i:%s") as expired_date'))
       ->OrderBy('status', 'ASC')

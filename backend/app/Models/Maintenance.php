@@ -31,22 +31,22 @@ class Maintenance extends Model
       return $query->whereRaw("created_at >= '".$periode[0]."' AND created_at <= '".$periode[1]."' ");
     });
     $query->when($filters['provinsi'] ?? false, function ($query, $params)  {
-      return $query->whereHas('keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi', function ($query) use ($params) {
+      return $query->whereHas('keluhans.pelanggan.kelurahan.kecamatan.kabkot.provinsi', function ($query) use ($params) {
           $query->where('id', $params);
         });
     });
     $query->when($filters['kabkot'] ?? false, function ($query, $params)  {
-      return $query->whereHas('keluhan.pelanggan.kelurahan.kecamatan.kabkot', function ($query) use ($params) {
+      return $query->whereHas('keluhans.pelanggan.kelurahan.kecamatan.kabkot', function ($query) use ($params) {
           $query->where('id', $params);
         });
     });
     $query->when($filters['kecamatan'] ?? false, function ($query, $params)  {
-      return $query->whereHas('keluhan.pelanggan.kelurahan.kecamatan', function ($query) use ($params) {
+      return $query->whereHas('keluhans.pelanggan.kelurahan.kecamatan', function ($query) use ($params) {
           $query->where('id', $params);
         });
     });
     $query->when($filters['kelurahan'] ?? false, function ($query, $params)  {
-      return $query->whereHas('keluhan.pelanggan.kelurahan', function ($query) use ($params) {
+      return $query->whereHas('keluhans.pelanggan.kelurahan', function ($query) use ($params) {
           $query->where('id', $params);
         });
     });
@@ -56,8 +56,13 @@ class Maintenance extends Model
     return $this->belongsTo(Pegawai::class, 'pegawai_id', 'id');
   }
 
+  public function keluhans()
+  {
+    return $this->belongsTo(Keluhan::class,'tiket_keluhan','tiket')->orderBy('status','ASC');
+  }
+
   public function keluhan()
   {
-    return $this->belongsTo(Keluhan::class, 'tiket_keluhan', 'tiket');
+    return $this->belongsTo(Keluhan::class,'keluhan_id','tiket')->orderBy('status','ASC');
   }
 }

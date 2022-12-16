@@ -10,6 +10,25 @@ import { baseUrl } from "../util/BaseUrl";
 import axios from "../util/jsonApi";
 
 export default function Navbar({ sidebarOpen, setSidebar }) {
+  const LokalUser = JSON.parse(localStorage.getItem('userData'))
+  let name="";
+  let role=""
+  if(LokalUser.role == '5') {
+    name = LokalUser.relasi.nama;
+    role = "Super User"
+  } else if(LokalUser.role == '4') {
+    name = LokalUser.relasi.nama_pelanggan
+    role = "Pelanggan"
+  } else {
+    name = LokalUser.relasi.nama_pegawai
+    if(LokalUser.role == '1') {
+      role = "Admin"
+    }else if(LokalUser.role == '2') {
+      role = 'Helpdesk'
+    } else {
+      role = "Teknisi"
+    }
+  }
   const [response, error, loading, axiosFuc] = useHookAxios();
   const [validation, setValidation] = useState(null);
   const [reload, setReload] = useState(false);
@@ -162,37 +181,7 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
             </a>
           </div>
         </div>
-        <div className="nav-item dropdown">
-          <a
-            href="#"
-            className="nav-link dropdown-toggle"
-            data-bs-toggle="dropdown"
-          >
-            {/* <i className="fa fa-bell me-lg-2" /> */}
-            <FontAwesomeIcon icon={faBell} className="me-lg-2" />
-            <span className="d-none d-lg-inline-flex">Notificatin</span>
-          </a>
-          <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-            <a href="#" className="dropdown-item">
-              <h6 className="fw-normal mb-0">Profile updated</h6>
-              <small>15 minutes ago</small>
-            </a>
-            <hr className="dropdown-divider" />
-            <a href="#" className="dropdown-item">
-              <h6 className="fw-normal mb-0">New user added</h6>
-              <small>15 minutes ago</small>
-            </a>
-            <hr className="dropdown-divider" />
-            <a href="#" className="dropdown-item">
-              <h6 className="fw-normal mb-0">Password changed</h6>
-              <small>15 minutes ago</small>
-            </a>
-            <hr className="dropdown-divider" />
-            <a href="#" className="dropdown-item text-center">
-              See all notifications
-            </a>
-          </div>
-        </div>
+        
         <div className="nav-item dropdown">
           <a
             href="#"
@@ -205,7 +194,7 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
               alt="image"
               style={{ width: 40, height: 40 }}
             />
-            <span className="d-none d-lg-inline-flex">John Doe</span>
+            <span className="d-none d-lg-inline-flex">{name}</span>
           </a>
           <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
             {/* <a href="#" className="dropdown-item">

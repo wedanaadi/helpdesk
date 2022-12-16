@@ -109,7 +109,6 @@ class ReportController extends Controller
   public function report_maintenance()
   {
     $pending = Maintenance::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
-      ->filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
       ->select(
         DB::raw('tiket_keluhan as keluhan_id'),
         'created_at',
@@ -139,5 +138,209 @@ class ReportController extends Controller
       ->orderBy('status', 'DESC')
       ->paginate(request('perpage'));
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
+  }
+
+  public function chart_solved()
+  {
+    // return SolveReport::select('*',DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'))->get();
+    $data = SolveReport::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
+      ->with(
+        'keluhan',
+        'keluhan.kategori',
+        'keluhan.pelanggan',
+        'keluhan.pelanggan.kelurahan',
+        'keluhan.pelanggan.kelurahan.kecamatan',
+        'keluhan.pelanggan.kelurahan.kecamatan.kabkot',
+        'keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi'
+      );
+    if (request('type') == "1") {
+      $data->select(DB::raw('"day" as type'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'), DB::raw('count(id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day'));
+      $data->groupBy('month', 'day');
+    } else if (request('type') == "2") {
+      $data->select(DB::raw('"month" as type'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) label'), DB::raw('count(id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day'));
+      $data->groupBy('year', 'month');
+    } else {
+      $data->select(DB::raw('"day" as type'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'), DB::raw('count(id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day'));
+      $data->groupBy('day');
+    }
+    return response()->json(['msg' => 'Get pegawais', "data" => $data->get(), 'error' => []], 200);
+  }
+
+  public function chart_maintenance()
+  {
+    $pending = Maintenance::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']));
+    $pending->where('status', '2');
+    if (request('type') == '2') {
+      $pending->select(
+        'id',
+        'status',
+        DB::raw('"month" as type'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      );
+    } else {
+      $pending->select(
+        'id',
+        'status',
+        DB::raw('"day" as type'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      );
+    }
+
+    $report = MaintenanceReport::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']));
+    if (request('type') == '2') {
+      $report->select(
+        'id',
+        'status',
+        DB::raw('"month" as type'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      );
+    } else {
+      $report->select(
+        'id',
+        'status',
+        DB::raw('"day" as type'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      );
+    }
+    $report->union($pending);
+    $data = DB::table(DB::raw("({$report->toSql()}) as sub"))
+      ->mergeBindings($report->getQuery());
+    if (request('type') == "1") {
+      $data->select('*', DB::raw('count(jumlah) as jumlah'));
+      $data->groupBy('month', 'day');
+    } else if (request('type') == "2") {
+      $data->select('*', DB::raw('count(jumlah) as jumlah'));
+      $data->groupBy('month', 'year');
+    } else {
+      $data->select('*', DB::raw('count(jumlah) as jumlah'));
+      $data->groupBy('day');
+    }
+    return response()->json(['msg' => 'Get pegawais', "data" => $data->get(), 'error' => []], 200);
+  }
+
+  public function chart_maintenance_2()
+  {
+    return $pending = Maintenance::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']));
+    $pending->with(
+      'keluhans',
+      'keluhans.kategori',
+      'keluhans.pelanggan',
+      'keluhans.pelanggan.kelurahan',
+      'keluhans.pelanggan.kelurahan.kecamatan',
+      'keluhans.pelanggan.kelurahan.kecamatan.kabkot',
+      'keluhans.pelanggan.kelurahan.kecamatan.kabkot.provinsi'
+    );
+    if (request('type') === '2') {
+      $pending->select(
+        'id',
+        'status',
+        DB::raw('"month" as type'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      );
+    } else {
+      $pending->select(
+        'id',
+        'status',
+        DB::raw('"day" as type'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      );
+    }
+    $pending->where('status', '=', '2')->get();
+
+    $mentah = MaintenanceReport::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
+      ->union($pending)
+      ->with(
+        'keluhan',
+        'keluhan.kategori',
+        'keluhan.pelanggan',
+        'keluhan.pelanggan.kelurahan',
+        'keluhan.pelanggan.kelurahan.kecamatan',
+        'keluhan.pelanggan.kelurahan.kecamatan.kabkot',
+        'keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi'
+      );
+    if (request('type') == "1") {
+      $mentah->select(
+        'id',
+        'status',
+        DB::raw('"day" as type'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      );
+      $mentah->groupBy('month', 'day');
+    } else if (request('type') == "2") {
+      $mentah->select(
+        'id',
+        'status',
+        DB::raw('"month" as type'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      );
+      $mentah->groupBy('year', 'month');
+    } else {
+      $mentah->select(
+        'id',
+        'status',
+        DB::raw('"day" as type'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      );
+      $mentah->groupBy('day');
+    }
+    $data = DB::table(DB::raw("({$mentah->toSql()}) as sub"))
+      ->mergeBindings($mentah->getQuery());
+    if (request('type') == "1") {
+      $data->select('*', DB::raw('count(jumlah) as jumlah'));
+      $data->groupBy('month', 'day');
+    } else if (request('type') == "2") {
+      $data->select('*', DB::raw('count(jumlah) as jumlah'));
+    } else {
+      $data->select('*', DB::raw('count(jumlah) as jumlah'));
+      $data->groupBy('day');
+    }
+
+    return response()->json(['msg' => 'Get pegawais', "data" => $data->get(), 'error' => []], 200);
+    // return $data->get();
   }
 }

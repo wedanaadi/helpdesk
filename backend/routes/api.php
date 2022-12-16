@@ -82,6 +82,8 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 Route::get('solved-report',[ReportController::class, 'report_solved']);
 Route::get('maintenance-report',[ReportController::class, 'report_maintenance']);
+Route::get('solved-chart',[ReportController::class, 'chart_solved']);
+Route::get('maintenance-chart',[ReportController::class, 'chart_maintenance']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return $request->user();

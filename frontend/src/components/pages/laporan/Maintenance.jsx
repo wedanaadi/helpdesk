@@ -149,7 +149,8 @@ export default function Solved() {
   const handleView = () => {
     let url = `maintenance-report?perpage=${pagination.value}&&type=${type.value}`;
     if(type.value==='3') {
-      url+=`&periode=${[ConvertToEpoch(startDateRange),ConvertToEpoch(endDateRange)]}`
+      let last = new Date(endDateRange);
+      url+=`&periode=${[ConvertToEpoch(startDateRange),ConvertToEpoch(last.setDate(last.getDate() + 1))]}`
     } else if(type.value==='2') {
       const y = startDate.getFullYear();
       const m = startDate.getMonth();
