@@ -274,7 +274,7 @@ export default function Blank() {
       <div className="row bg-light rounded mx-0 mb-4">
         <div className="mb-3 col-12 mb-4">
           <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
-            <h3 className="mb-0">Chart Solved</h3>
+            <h3 className="mb-0">Grafik Solved</h3>
             <div>
               <button className="btn btn-info" onClick={handleView}>
                 <FontAwesomeIcon icon={faSync} />
@@ -397,7 +397,7 @@ export default function Blank() {
       </div>
       <div className="row bg-light rounded mx-0">
         <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
-          <h3 className="mb-0">Chart Maintenance</h3>
+          <h3 className="mb-0">Grafik Maintenance</h3>
           <div>
             <button className="btn btn-info" onClick={handleView2}>
               <FontAwesomeIcon icon={faSync} />

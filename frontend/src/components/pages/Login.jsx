@@ -18,6 +18,7 @@ export default function Login() {
   const toastId = useRef(null);
   const navigasi = useNavigate();
   const [authed, dispatch] = AuthConsumer();
+  const [waiting, setWaiting] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,6 +27,7 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setAxiosHandle(true);
+    setWaiting(true);
     toastId.current = toast.loading("Please wait...");
     axiosFuc({
       axiosInstance: axios,
@@ -57,6 +59,7 @@ export default function Login() {
         autoClose: 1500,
       });
       setAxiosHandle(false);
+      setWaiting(false);
     }
 
     if (response && !error && !validation && !loading) {
@@ -72,6 +75,7 @@ export default function Login() {
       setTimeout(() => {
         setReload(true);
         setAxiosHandle(false);
+        setWaiting(false);
         navigasi(`${baseUrl}/`, { replace: true });
       }, 1500);
     }
@@ -100,7 +104,7 @@ export default function Login() {
               <Link to={`${baseUrl}/`}>
                 <h3 className="text-primary">
                   <i className="fa fa-hashtag me-2" />
-                  DASHMIN
+                  HELPDESK
                 </h3>
               </Link>
               <h3>Sign In</h3>
@@ -148,7 +152,7 @@ export default function Login() {
                     </div>
                   ))}
               </div>
-              <button type="submit" className="btn btn-primary py-3 w-100 mb-4">
+              <button type="submit" className={`btn btn-primary py-3 w-100 mb-4 ${waiting ? 'disabled' : ''}`}>
                 Sign In
               </button>
             </form>

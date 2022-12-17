@@ -181,4 +181,17 @@ class PegawaiController extends Controller
     }
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
+
+  public function select_sender(Request $request)
+  {
+    $pro = DB::select('SELECT * FROM pegawais WHERE id != "'.$request->idUser.'"');
+    $data = [];
+    foreach ($pro as $d) {
+      array_push($data, [
+        'label' => $d->nama_pegawai,
+        'value' => $d->id
+      ]);
+    }
+    return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
+  }
 }

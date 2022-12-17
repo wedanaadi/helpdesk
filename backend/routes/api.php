@@ -29,6 +29,10 @@ Route::get('/hello', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'store']);
 
+Route::get('/notifikasi', [AuthController::class, 'notifikasi']);
+Route::post('/sendChat', [AuthController::class, 'save_pesan']);
+Route::get('/getNotif', [AuthController::class, 'getData']);
+
 Route::middleware('auth:sanctum')->group(function () {
   Route::post('/logout', [AuthController::class, 'logout']);
   Route::post('/sendEmail', [AuthController::class, 'sendEmail']);
@@ -63,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/kategori-select',[KategoriController::class, 'select']);
   Route::get('/teknisi-select',[PegawaiController::class, 'select']);
   Route::get('/ticket-select',[ComplaintController::class, 'select']);
+  Route::get('/sender-select',[PegawaiController::class, 'select_sender']);
   Route::get('/ticket-select2/{id}',[ComplaintController::class, 'selectOnlyId']);
 
   Route::get('keluhan', [ComplaintController::class, 'index']);

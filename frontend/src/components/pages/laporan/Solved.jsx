@@ -1,3 +1,5 @@
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { Pagging } from "../../datatable";
@@ -195,7 +197,8 @@ export default function Solved() {
         <h3 className="mb-0">Laporan Solved</h3>
         <div>
           <button className="btn btn-info" onClick={handleView}>
-            Pilih
+            <FontAwesomeIcon icon={faEye} />
+            &nbsp; Lihat
           </button>
         </div>
       </div>

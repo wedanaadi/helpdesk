@@ -207,7 +207,7 @@ export default function Pegawai() {
                           <td>{data.nama_pegawai}</td>
                           <td>{data.email}</td>
                           <td>{data.telepon}</td>
-                          <td>{data.role === '1' ? 'Admin' : data.role === '2' ? 'Helpdesk' : 'Teknisi' }</td>
+                          <td>{data.role == '1' ? 'Admin' : data.role == '2' ? 'Helpdesk' : 'Teknisi' }</td>
                           <td>{data.alamat}</td>
                           <td className="text-center w-15">
                             <button

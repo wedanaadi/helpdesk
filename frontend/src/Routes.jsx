@@ -32,6 +32,8 @@ const MaintenanceEdit = React.lazy(() => import("./components/pages/maintenance/
 const MaintenanceDetail = React.lazy(() => import("./components/pages/maintenance/Detail"));
 const ReportSolved = React.lazy(() => import("./components/pages/laporan/Solved"));
 const ReportMaintenance = React.lazy(() => import("./components/pages/laporan/Maintenance"));
+const Pesan = React.lazy(() => import("./components/pages/Notifikasi"));
+const ViewPesan = React.lazy(() => import("./components/pages/ViewNotif"));
 
 export default [
   {
@@ -229,6 +231,22 @@ export default [
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
             <ReportMaintenance />
+          </Suspense>
+        )
+      },
+      {
+        path: `${base_url}/pesan`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <Pesan />
+          </Suspense>
+        )
+      },
+      {
+        path: `${base_url}/viewNotif/:id`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <ViewPesan />
           </Suspense>
         )
       }

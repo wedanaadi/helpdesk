@@ -1,11 +1,10 @@
 import {
-  faChartBar,
-  faFileAlt,
+  faFileLines,
   faHashtag,
-  faKeyboard,
-  faLaptop,
-  faTable,
-  faTachometer,
+  faListCheck,
+  faPeopleGroup,
+  faPerson,
+  faScrewdriverWrench,
   faTachometerAlt,
   faTh,
 } from "@fortawesome/free-solid-svg-icons";
@@ -45,21 +44,21 @@ export default function Sidebar({ sidebarOpen }) {
           <h3 className="text-primary">
             {/* <i className="fa fa-hashtag me-2" /> */}
             <FontAwesomeIcon icon={faHashtag} className="me-2" />
-            DASHMIN
+            DASHAPP
           </h3>
         </Link>
         <div className="d-flex align-items-center ms-4 mb-4">
           <div className="position-relative">
             <img
               className="rounded-circle"
-              src={`${base_url}/img/user.jpg`}
+              src={`${base_url}/img/userlogo.png`}
               alt="image"
               style={{ width: 40, height: 40 }}
             />
             <div className="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1" />
           </div>
           <div className="ms-3">
-            <h6 className="mb-0">Jhon Doe</h6>
+            <h6 className="mb-0"></h6>
             <span>{role}</span>
           </div>
         </div>
@@ -101,7 +100,7 @@ export default function Sidebar({ sidebarOpen }) {
                 }`}
               >
                 {/* <i className="fa fa-th me-2" /> */}
-                <FontAwesomeIcon icon={faKeyboard} className="me-2" />
+                <FontAwesomeIcon icon={faPerson} className="me-2" />
                 Pegawai
               </Link>
               <Link
@@ -115,7 +114,7 @@ export default function Sidebar({ sidebarOpen }) {
                 }`}
               >
                 {/* <i className="fa fa-th me-2" /> */}
-                <FontAwesomeIcon icon={faTable} className="me-2" />
+                <FontAwesomeIcon icon={faPeopleGroup} className="me-2" />
                 Pelanggan
               </Link>
             </>
@@ -135,7 +134,7 @@ export default function Sidebar({ sidebarOpen }) {
                 }`}
               >
                 {/* <i className="fa fa-th me-2" /> */}
-                <FontAwesomeIcon icon={faTable} className="me-2" />
+                <FontAwesomeIcon icon={faListCheck} className="me-2" />
                 Keluhan
               </Link>
             </>
@@ -155,14 +154,14 @@ export default function Sidebar({ sidebarOpen }) {
                 }`}
               >
                 {/* <i className="fa fa-th me-2" /> */}
-                <FontAwesomeIcon icon={faTable} className="me-2" />
+                <FontAwesomeIcon icon={faListCheck} className="me-2" />
                 Keluhan
               </Link>
             </>
           ) : (
             false
           )}
-          {hk == "3" || hk == "5" ? (
+          {hk != '4' ? (
             <>
               <Link
                 to={`${base_url}/maintenance`}
@@ -175,7 +174,7 @@ export default function Sidebar({ sidebarOpen }) {
                 }`}
               >
                 {/* <i className="fa fa-th me-2" /> */}
-                <FontAwesomeIcon icon={faTable} className="me-2" />
+                <FontAwesomeIcon icon={faScrewdriverWrench} className="me-2" />
                 Maintenance
               </Link>
             </>
@@ -201,7 +200,7 @@ export default function Sidebar({ sidebarOpen }) {
                 }`}
               >
                 {/* <i className="fa fa-laptop me-2" /> */}
-                <FontAwesomeIcon icon={faLaptop} className="me-2" />
+                <FontAwesomeIcon icon={faFileLines} className="me-2" />
                 Laporan
               </a>
               <div className={`dropdown-menu bg-transparent border-0 ${
