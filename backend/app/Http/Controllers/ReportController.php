@@ -114,10 +114,11 @@ class ReportController extends Controller
         'created_at',
         'status',
         DB::raw('"maintenance_tb" as type'),
-        DB::raw('IF(status="1","SOLVED","PENDING") as status_desc')
+        DB::raw('IF(status="1","SOLVED",IF(status="2","PENDING","ON")) as status_desc')
       )
       ->where('status', '!=', '1');
     $data = MaintenanceReport::union($pending)
+      ->where('status','1')
       ->filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
       ->with(
         'keluhan',
@@ -133,7 +134,7 @@ class ReportController extends Controller
         'created_at',
         'status',
         DB::raw('"table_report" as type'),
-        DB::raw('IF(status="1","SOLVED","PENDING") as status_desc')
+        DB::raw('IF(status="1","SOLVED",IF(status="2","PENDING","ON")) as status_desc')
       )
       ->orderBy('status', 'DESC')
       ->paginate(request('perpage'));
@@ -169,7 +170,7 @@ class ReportController extends Controller
   public function chart_maintenance()
   {
     $pending = Maintenance::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']));
-    $pending->where('status', '2');
+    $pending->where('status','!=','2');
     if (request('type') == '2') {
       $pending->select(
         'id',
@@ -196,7 +197,8 @@ class ReportController extends Controller
       );
     }
 
-    $report = MaintenanceReport::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']));
+    $report = MaintenanceReport::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
+              ->where('status','1');
     if (request('type') == '2') {
       $report->select(
         'id',

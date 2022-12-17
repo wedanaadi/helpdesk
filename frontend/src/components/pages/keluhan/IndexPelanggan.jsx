@@ -235,7 +235,7 @@ export default function Index() {
                                 {data.status === 0
                                   ? "Open"
                                   : data.status === 2
-                                  ? "On Proccess"
+                                  ? "On Process"
                                   : "Solve"}
                               </td>
                             </>

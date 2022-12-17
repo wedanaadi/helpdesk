@@ -1,11 +1,14 @@
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { Pagging } from "../../datatable";
+import { ExportToExcel } from "../../ExportToExcel";
 import useHookAxios from "../../hook/useHookAxios";
 import LoadingPage from "../../LoadingPage";
 import Select from "../../Select";
 import axios from "../../util/jsonApi";
-import { ConvertToEpoch } from "../../util/ToDate";
+import ToDate, { ConvertToEpoch } from "../../util/ToDate";
 
 export default function Solved() {
   const [dateRange, setDateRange] = useState([null, null]);
@@ -61,6 +64,7 @@ export default function Solved() {
     value: "all",
   });
   const [response, error, loading, axiosFunc] = useHookAxios();
+  const [dataExcel, setExcel] = useState([]);
 
   const getProvinces = () => {
     provincesFunc({
@@ -210,6 +214,31 @@ export default function Solved() {
     });
   };
 
+  useEffect(() => {
+    const inv = setTimeout(() => {
+      setExcel([]);
+      const status = response?.data ? "true" : "false";
+      const dataExcel = [];
+      status == "true" &&
+        response.data.map((data) => {
+          dataExcel.push({
+            "Nomor Keluhan": data.keluhan.tiket,
+            Pelanggan: data.keluhan.pelanggan.nama_pelanggan,
+            Dibuat: ToDate(data.created_at, "full"),
+            Status: data.status_desc,
+            Provinsi:
+              data.keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi.name,
+            "Kabupaten/Kota":
+              data.keluhan.pelanggan.kelurahan.kecamatan.kabkot.name,
+            Kecamatan: data.keluhan.pelanggan.kelurahan.kecamatan.name,
+            Kelurahan: data.keluhan.pelanggan.kelurahan.name,
+          });
+        });
+      setExcel(dataExcel);
+    }, 1);
+    return () => clearInterval(inv);
+  }, [response]);
+
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
@@ -329,27 +358,9 @@ export default function Solved() {
       <div className="px-3 py-2">
         {loading && <LoadingPage text={"Loading data"} />}
         <div className="row mb-2 mt-2">
-          {/* <div className="col-md-2">
-            <Select
-              options={optionsPage}
-              placeHolder={"Page"}
-              getter={pagination}
-              setter={setPagination}
-            />
-          </div> */}
-          {/* <div className="col-md-10 d-flex flex-row-reverse">
-            <>
-              <button className="btn btn-primary" onClick={() => getPegawai()}>
-                <FontAwesomeIcon icon={faSearch} />
-              </button>
-              &nbsp;
-              <Search
-                onSearch={(value) => {
-                  setSearch(value);
-                }}
-              />
-            </>
-          </div> */}
+          <div className="col-12 d-flex flex-row-reverse">
+            <ExportToExcel apiData={dataExcel} fileName={`Maintenance-report-${ToDate(new Date())}`} />
+          </div>
         </div>
         {!loading && !error && (
           <>

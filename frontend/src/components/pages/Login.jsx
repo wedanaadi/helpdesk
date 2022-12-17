@@ -77,7 +77,7 @@ export default function Login() {
         setAxiosHandle(false);
         setWaiting(false);
         navigasi(`${baseUrl}/`, { replace: true });
-      }, 1500);
+      }, 10);
     }
   };
 

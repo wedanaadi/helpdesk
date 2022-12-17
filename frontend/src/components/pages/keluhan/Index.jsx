@@ -199,15 +199,15 @@ export default function Index() {
                     <th>Tiket</th>
                     <th>Nama Pelanggan</th>
                     <th>Dibuat</th>
-                    {LocalUser.role == "4" ? (
+                    <th>Status</th>
+                    {/* {LocalUser.role == "4" ? (
                       <>
                         <th>Kategori</th>
                         <th>Komentar</th>
-                        <th>Status</th>
                       </>
                     ) : (
                       false
-                    )}
+                    )} */}
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -222,21 +222,21 @@ export default function Index() {
                           <td>{data.tiket}</td>
                           <td>{data.pelanggan.nama_pelanggan}</td>
                           <td>{ToDate(data.created_at2, "full")}</td>
-                          {LocalUser.role == "4" ? (
+                          <td>
+                            {data.status === 0
+                              ? "Open"
+                              : data.status === 2
+                              ? "On Proccess"
+                              : "Solved"}
+                          </td>
+                          {/* {LocalUser.role == "4" ? (
                             <>
                               <td>{data.kategori.nama_kategori}</td>
                               <td>{data.comment}</td>
-                              <td>
-                                {data.status === 0
-                                  ? "Open"
-                                  : data.status === 2
-                                  ? "On Proccess"
-                                  : "Solve"}
-                              </td>
                             </>
                           ) : (
                             false
-                          )}
+                          )} */}
                           <td className="text-center w-15">
                             <button
                               onClick={() => handleDetail(data)}

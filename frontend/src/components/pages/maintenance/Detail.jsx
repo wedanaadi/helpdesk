@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 
 export default function DetailMaintenance() {
   const detailLokal = JSON.parse(localStorage.getItem("detailMaintenance"));
+  const lokalUser = JSON.parse(localStorage.getItem('userData'));
   const [mapDetect, setMapDetect] = useState(false);
   const [response, error, loading, axiosFunction] = useHookAxios()
   const [axiosHandle, setAxiosHandle] = useState(false);
@@ -102,7 +103,7 @@ export default function DetailMaintenance() {
               Ditangani oleh : <b>{detailLokal.teknisi.nama_pegawai}</b>
             </div>
             <div>
-              {parseInt(detailLokal.status) !== 1 && checkExp() ? (
+              {parseInt(detailLokal.status) !== 1 && checkExp() && lokalUser.role == '3' ? (
                 <>
                   <span>Update Ticket: </span>&nbsp;
                   <button className="btn btn-success" onClick={()=>handlePenanganan('1')}>

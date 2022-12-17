@@ -6,8 +6,9 @@ import { Pagging } from "../../datatable";
 import useHookAxios from "../../hook/useHookAxios";
 import LoadingPage from "../../LoadingPage";
 import Select from "../../Select";
-import axios from "../../util/jsonApi"
-import { ConvertToEpoch } from "../../util/ToDate";
+import axios from "../../util/jsonApi";
+import ToDate, { ConvertToEpoch } from "../../util/ToDate";
+import { ExportToExcel } from "../../ExportToExcel";
 
 export default function Solved() {
   const [dateRange, setDateRange] = useState([null, null]);
@@ -46,11 +47,24 @@ export default function Solved() {
     useHookAxios();
   const [villages, errorvillages, loadingvillages, villagesFunc] =
     useHookAxios();
-  const [selectProvinsi, setSelectProvinsi] = useState({label:"SEMUA",value:'all'});
-  const [selectRegencies, setSelectRegencies] = useState({label:"SEMUA",value:'all'});
-  const [selectDistrict, setSelectDistrict] = useState({label:"SEMUA",value:'all'});
-  const [selectVillage, setSelectVillage] = useState({label:"SEMUA",value:'all'});
+  const [selectProvinsi, setSelectProvinsi] = useState({
+    label: "SEMUA",
+    value: "all",
+  });
+  const [selectRegencies, setSelectRegencies] = useState({
+    label: "SEMUA",
+    value: "all",
+  });
+  const [selectDistrict, setSelectDistrict] = useState({
+    label: "SEMUA",
+    value: "all",
+  });
+  const [selectVillage, setSelectVillage] = useState({
+    label: "SEMUA",
+    value: "all",
+  });
   const [response, error, loading, axiosFunc] = useHookAxios();
+  const [dataExcel, setExcel] = useState([]);
 
   const getProvinces = () => {
     provincesFunc({
@@ -117,66 +131,75 @@ export default function Solved() {
     });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const invt = setTimeout(() => {
       getProvinces();
     }, 1);
-    return () => clearInterval(invt)
-  },[]);
+    return () => clearInterval(invt);
+  }, []);
 
   useEffect(() => {
-    const inv = selectProvinsi.value !== 'all' && setTimeout(() => {
-      getKabupatenKota();
-      setSelectRegencies({label:"SEMUA",value:'all'});
-    }, 1);
+    const inv =
+      selectProvinsi.value !== "all" &&
+      setTimeout(() => {
+        getKabupatenKota();
+        setSelectRegencies({ label: "SEMUA", value: "all" });
+      }, 1);
     return () => clearInterval(inv);
   }, [selectProvinsi]);
 
   useEffect(() => {
-    const inv = selectRegencies.value !== 'all' && setTimeout(() => {
-      getKecamatan();
-      setSelectDistrict({label:"SEMUA",value:'all'});
-    }, 1);
+    const inv =
+      selectRegencies.value !== "all" &&
+      setTimeout(() => {
+        getKecamatan();
+        setSelectDistrict({ label: "SEMUA", value: "all" });
+      }, 1);
     return () => clearInterval(inv);
   }, [selectRegencies]);
 
   useEffect(() => {
-    const inv = selectDistrict.value !== 'all' && setTimeout(() => {
-      setSelectVillage({label:"SEMUA",value:'all'});
-      getKelurahan();
-    }, 1);
+    const inv =
+      selectDistrict.value !== "all" &&
+      setTimeout(() => {
+        setSelectVillage({ label: "SEMUA", value: "all" });
+        getKelurahan();
+      }, 1);
     return () => clearInterval(inv);
   }, [selectDistrict]);
 
   const handleView = () => {
     let url = `solved-report?perpage=${pagination.value}&&type=${type.value}`;
-    if(type.value==='3') {
+    if (type.value === "3") {
       let last = new Date(endDateRange);
-      url+=`&periode=${[ConvertToEpoch(startDateRange),ConvertToEpoch(last.setDate(last.getDate() + 1))]}`
-    } else if(type.value==='2') {
+      url += `&periode=${[
+        ConvertToEpoch(startDateRange),
+        ConvertToEpoch(last.setDate(last.getDate() + 1)),
+      ]}`;
+    } else if (type.value === "2") {
       const y = startDate.getFullYear();
       const m = startDate.getMonth();
       const first = new Date(y, 0, 1);
-      const last = new Date(y, 11+1, 0);
-      url+=`&periode=${[ConvertToEpoch(first),ConvertToEpoch(last)]}`
+      const last = new Date(y, 11 + 1, 0);
+      url += `&periode=${[ConvertToEpoch(first), ConvertToEpoch(last)]}`;
     } else {
       const y = startDate.getFullYear();
       const m = startDate.getMonth();
       const first = new Date(y, m, 1);
-      const last = new Date(y, m+1, 0);
-      url+=`&periode=${[ConvertToEpoch(first),ConvertToEpoch(last)]}`
+      const last = new Date(y, m + 1, 0);
+      url += `&periode=${[ConvertToEpoch(first), ConvertToEpoch(last)]}`;
     }
-    if(selectProvinsi.value !== 'all') {
-      url+=`&provinsi=${selectProvinsi.value}`
+    if (selectProvinsi.value !== "all") {
+      url += `&provinsi=${selectProvinsi.value}`;
     }
-    if(selectRegencies.value !== 'all') {
-      url+=`&kabkot=${selectRegencies.value}`
+    if (selectRegencies.value !== "all") {
+      url += `&kabkot=${selectRegencies.value}`;
     }
-    if(selectDistrict.value !== 'all') {
-      url+=`&kecamatan=${selectDistrict.value}`
+    if (selectDistrict.value !== "all") {
+      url += `&kecamatan=${selectDistrict.value}`;
     }
-    if(selectVillage.value !== 'all') {
-      url+=`&kelurahan=${selectVillage.value}`
+    if (selectVillage.value !== "all") {
+      url += `&kelurahan=${selectVillage.value}`;
     }
     axiosFunc({
       axiosInstance: axios,
@@ -189,7 +212,32 @@ export default function Solved() {
         },
       },
     });
-  }
+  };
+
+  useEffect(() => {
+    const inv = setTimeout(() => {
+      setExcel([]);
+      const status = response?.data ? "true" : "false";
+      const dataExcel = [];
+      status == "true" &&
+        response.data.map((data) => {
+          dataExcel.push({
+            "Nomor Keluhan": data.keluhan.tiket,
+            Pelanggan: data.keluhan.pelanggan.nama_pelanggan,
+            Dibuat: ToDate(data.created_at, "full"),
+            Status: data.keluhan.status == "1" ? "Solved" : "Pending",
+            Provinsi:
+              data.keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi.name,
+            "Kabupaten/Kota":
+              data.keluhan.pelanggan.kelurahan.kecamatan.kabkot.name,
+            Kecamatan: data.keluhan.pelanggan.kelurahan.kecamatan.name,
+            Kelurahan: data.keluhan.pelanggan.kelurahan.name,
+          });
+        });
+      setExcel(dataExcel);
+    }, 1);
+    return () => clearInterval(inv);
+  }, [response]);
 
   return (
     <div className="row bg-light rounded mx-0">
@@ -310,27 +358,9 @@ export default function Solved() {
       <div className="px-3 py-2">
         {loading && <LoadingPage text={"Loading data"} />}
         <div className="row mb-2 mt-2">
-          {/* <div className="col-md-2">
-            <Select
-              options={optionsPage}
-              placeHolder={"Page"}
-              getter={pagination}
-              setter={setPagination}
-            />
-          </div> */}
-          {/* <div className="col-md-10 d-flex flex-row-reverse">
-            <>
-              <button className="btn btn-primary" onClick={() => getPegawai()}>
-                <FontAwesomeIcon icon={faSearch} />
-              </button>
-              &nbsp;
-              <Search
-                onSearch={(value) => {
-                  setSearch(value);
-                }}
-              />
-            </>
-          </div> */}
+          <div className="col-12 d-flex flex-row-reverse">
+              <ExportToExcel apiData={dataExcel} fileName={`Solved-report-${ToDate(new Date())}`} />
+          </div>
         </div>
         {!loading && !error && (
           <>
@@ -359,11 +389,25 @@ export default function Solved() {
                           </td>
                           <td>{data.keluhan.tiket}</td>
                           <td>{data.keluhan.pelanggan.nama_pelanggan}</td>
-                          <td>{data.created_at}</td>
-                          <td>{data.keluhan.status == '1' ? 'Solved' : 'Pending' }</td>
-                          <td>{data.keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi.name}</td>
-                          <td>{data.keluhan.pelanggan.kelurahan.kecamatan.kabkot.name}</td>
-                          <td>{data.keluhan.pelanggan.kelurahan.kecamatan.name}</td>
+                          <td>{ToDate(data.created_at, "full")}</td>
+                          <td>
+                            {data.keluhan.status == "1" ? "Solved" : "Pending"}
+                          </td>
+                          <td>
+                            {
+                              data.keluhan.pelanggan.kelurahan.kecamatan.kabkot
+                                .provinsi.name
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.keluhan.pelanggan.kelurahan.kecamatan.kabkot
+                                .name
+                            }
+                          </td>
+                          <td>
+                            {data.keluhan.pelanggan.kelurahan.kecamatan.name}
+                          </td>
                           <td>{data.keluhan.pelanggan.kelurahan.name}</td>
                         </tr>
                       ))
