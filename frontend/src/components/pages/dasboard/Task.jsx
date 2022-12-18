@@ -17,6 +17,7 @@ export default function Task() {
       reqConfig: {
         params: {
           role: roleId,
+          idUser: LokalData.idUser,
         },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
@@ -42,8 +43,8 @@ export default function Task() {
             </tr>
           </thead>
           <tbody>
-            {response.length > 0 ? (
-              response.map((data, index) => (
+            {response?.data?.length > 0 ? (
+              response.data.map((data, index) => (
                 <>
                   {data.status != "1" ? (
                     <tr key={index}>

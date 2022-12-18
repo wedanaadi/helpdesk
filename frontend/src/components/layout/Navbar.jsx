@@ -89,11 +89,11 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
         autoClose: 1500,
       });
       // localStorage.setItem("auth", response?.access_token);
-      localStorage.clear();
       setReload(true);
       setAxiosHandle(false);
       dispatch({ type: "logout" });
       navigasi(`${baseUrl}/login`, { replace: true });
+      localStorage.clear();
     }
   };
 
@@ -101,11 +101,11 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
     axiosHandle && handleAxios();
   }, [response, error]);
 
-  const { data, mutate } = useNotifikasi();
+  // const { data, mutate } = useNotifikasi();
 
-  const handleNotif = () => {
-    mutate("notifikasi");
-  };
+  // const handleNotif = () => {
+  //   mutate("notifikasi");
+  // };
 
   return (
     <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
@@ -136,14 +136,13 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
                 className="nav-link dropdown-toggle"
                 data-bs-toggle="dropdown"
               >
-                {/* <i className="fa fa-envelope me-lg-2" /> */}
                 <FontAwesomeIcon icon={faEnvelope} className="me-lg-2" />
-                <span className="d-none d-lg-inline-flex">
+                {/* <span className="d-none d-lg-inline-flex">
                   Pesan {data?.length > 0 ? `(${data.length})` : false}
-                </span>
+                </span> */}
               </a>
               <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                {data &&
+                {/* {data &&
                   data.length > 0 &&
                   data.map((data, index) => (
                     <>
@@ -163,16 +162,15 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
                             <h6 className="fw-normal mb-0">
                               {data.sender.nama_pegawai}
                             </h6>
-                            {/* <small>{data.}</small> */}
                           </div>
                         </div>
                       </Link>
                       <hr className="dropdown-divider" />
                     </>
-                  ))}
-                <Link to={`/pesan`} className="dropdown-item text-center">
+                  ))} */}
+                {/* <Link to={`${baseUrl}/pesan`} className="dropdown-item text-center">
                   Kirim Pesan
-                </Link>
+                </Link> */}
               </div>
             </div>
           </>

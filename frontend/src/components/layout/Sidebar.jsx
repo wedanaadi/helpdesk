@@ -103,21 +103,25 @@ export default function Sidebar({ sidebarOpen }) {
                 <FontAwesomeIcon icon={faPerson} className="me-2" />
                 Pegawai
               </Link>
-              <Link
-                to={`${base_url}/pelanggan`}
-                className={`nav-item nav-link ${
-                  location.pathname == base_url + "/pelanggan" ||
-                  location.pathname == base_url + "/pelanggan/add" ||
-                  location.pathname == base_url + "/pelanggan/edit"
-                    ? "active"
-                    : ""
-                }`}
-              >
-                {/* <i className="fa fa-th me-2" /> */}
-                <FontAwesomeIcon icon={faPeopleGroup} className="me-2" />
-                Pelanggan
-              </Link>
             </>
+          ) : (
+            false
+          )}
+          {hk == "1" || hk == "2" || hk == "5" ? (
+            <Link
+              to={`${base_url}/pelanggan`}
+              className={`nav-item nav-link ${
+                location.pathname == base_url + "/pelanggan" ||
+                location.pathname == base_url + "/pelanggan/add" ||
+                location.pathname == base_url + "/pelanggan/edit"
+                  ? "active"
+                  : ""
+              }`}
+            >
+              {/* <i className="fa fa-th me-2" /> */}
+              <FontAwesomeIcon icon={faPeopleGroup} className="me-2" />
+              Pelanggan
+            </Link>
           ) : (
             false
           )}
@@ -161,7 +165,7 @@ export default function Sidebar({ sidebarOpen }) {
           ) : (
             false
           )}
-          {hk != '4' ? (
+          {hk != "4" ? (
             <>
               <Link
                 to={`${base_url}/maintenance`}
@@ -203,21 +207,31 @@ export default function Sidebar({ sidebarOpen }) {
                 <FontAwesomeIcon icon={faFileLines} className="me-2" />
                 Laporan
               </a>
-              <div className={`dropdown-menu bg-transparent border-0 ${
+              <div
+                className={`dropdown-menu bg-transparent border-0 ${
                   location.pathname == base_url + "/laporan/solved" ||
                   location.pathname == base_url + "/laporan/maintenance"
                     ? "show"
                     : ""
-                }`}>
+                }`}
+              >
                 <Link
                   to={`${base_url}/laporan/solved`}
-                  className={`dropdown-item ${location.pathname == base_url +"/laporan/solved" ? 'active' : ''}`}
+                  className={`dropdown-item ${
+                    location.pathname == base_url + "/laporan/solved"
+                      ? "active"
+                      : ""
+                  }`}
                 >
                   Laporan Solved
                 </Link>
                 <Link
                   to={`${base_url}/laporan/maintenance`}
-                  className={`dropdown-item ${location.pathname == base_url+"laporan/maintenance" ? 'maintenance' : ''}`}
+                  className={`dropdown-item ${
+                    location.pathname == base_url + "laporan/maintenance"
+                      ? "maintenance"
+                      : ""
+                  }`}
                 >
                   Laporan Maintenance
                 </Link>

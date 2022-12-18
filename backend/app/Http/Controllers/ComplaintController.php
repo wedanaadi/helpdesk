@@ -7,6 +7,7 @@ use App\Models\File as FileKeluhan;
 use App\Models\Keluhan;
 use App\Models\Log;
 use App\Models\SolveReport;
+use App\Models\UpdateComplaint;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -59,7 +60,7 @@ class ComplaintController extends Controller
         ->select(
           '*',
           DB::raw('date_format(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d %H:%i:%s") as created_at2'),
-          DB::raw('IF(status = "0","ON",IF(status= "1","SOLVE","ON PROSES")) as status_keluhan'),
+          DB::raw('IF(status = "0","ON",IF(status= "1","SOLVED","ON PROSES")) as status_keluhan'),
           DB::raw('DATE_FORMAT(date_add(FROM_UNIXTIME(created_at/1000),INTERVAL 3 day),"%Y-%m-%d %H:%i:%s") as expired_date')
         )
         // ->selectRaw('*, created_at AS "tanggal_tiket"')
@@ -271,6 +272,17 @@ class ComplaintController extends Controller
 
   public function solve(Request $request, $id)
   {
+    $validator = Validator::make($request->all(), [
+      'keluhan_id' => 'required',
+      'deskripsi' => 'required',
+    ], [
+      'required' => 'Input :attribute harus diisi!',
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
+    }
+
     $keluhanFind = Keluhan::findOrFail($id);
     DB::beginTransaction();
     try {
@@ -282,21 +294,22 @@ class ComplaintController extends Controller
         'keluhan_id' => $keluhanFind->tiket,
         'relasi_log' => $keluhanFind->tiket,
         'user_id' => $keluhanFind->pelanggan_id,
-        'deskripsi' => 'Status ticket Keluhan dirubah menjadi "Solved".',
+        'deskripsi' => 'Ticket keluhan telah terselesaikan (solved by sistem).'.PHP_EOL. $request->deskripsi,
         'type' => '1',
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
       ];
 
-      $reportSolve = [
-        'keluhan_id' => $keluhanFind->tiket,
-        'created_at' => round(microtime(true) * 1000),
-        'updated_at' => round(microtime(true) * 1000),
-      ];
+      // $updateKeluhan = [
+      //   'keluhan_id' => $keluhanFind->tiket,
+      //   'deskripsi' => $request->deskripsi,
+      //   'created_at' => round(microtime(true) * 1000),
+      //   'updated_at' => round(microtime(true) * 1000),
+      // ];
 
       $keluhanFind->update($payload);
       Log::create($dataLog);
-      SolveReport::create($reportSolve);
+      // UpdateComplaint::create($updateKeluhan);
       DB::commit();
       return response()->json(['msg' => 'Successfuly update status', "data" => $payload, 'error' => []], 200);
     } catch (Exception $e) {
@@ -332,20 +345,23 @@ class ComplaintController extends Controller
 
   public function log(Request $request)
   {
-    $sql = "SELECT logs.created_at, logs.deskripsi from logs
-            INNER join pelanggans on pelanggans.id = logs.user_id
-            WHERE logs.type = '1' AND logs.`keluhan_id` = '$request->idKeluhan'
-            UNION
-            SELECT logs.created_at, concat(logs.deskripsi, ' Teknisi yang menangani adalah ', pegawais.`nama_pegawai`) from logs
-            INNER join pegawais on pegawais.`id` = logs.user_id
-            WHERE logs.type = '2' AND logs.`keluhan_id` = '$request->idKeluhan'
-            UNION
-            select created_at, deskripsi from(
-            SELECT logs.created_at, deskripsi from logs
-            INNER join pegawais on pegawais.`id` = logs.user_id
-            WHERE logs.type = '3' AND logs.`keluhan_id` = '$request->idKeluhan'
-            ORDER BY created_at
-            ) AS pivot";
+    $sql = "SELECT * FROM (
+              SELECT logs.created_at, logs.deskripsi from logs
+              INNER join pelanggans on pelanggans.id = logs.user_id
+              WHERE logs.type = '1' AND logs.`keluhan_id` = '$request->idKeluhan'
+              UNION
+              SELECT logs.created_at, concat(logs.deskripsi, ' Teknisi yang menangani adalah ', pegawais.`nama_pegawai`) from logs
+              INNER join pegawais on pegawais.`id` = logs.user_id
+              WHERE logs.type = '2' AND logs.`keluhan_id` = '$request->idKeluhan'
+              UNION
+              select created_at, deskripsi from(
+              SELECT logs.created_at, deskripsi from logs
+              INNER join pegawais on pegawais.`id` = logs.user_id
+              WHERE logs.type = '3' AND logs.`keluhan_id` = '$request->idKeluhan'
+              ORDER BY created_at
+              ) AS pivot
+    ) AS tbfix
+    ORDER BY created_at DESC";
     $data = DB::select($sql);
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }

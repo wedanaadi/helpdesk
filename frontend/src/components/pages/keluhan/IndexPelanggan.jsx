@@ -157,7 +157,7 @@ export default function Index() {
 
   const handleDetail = (data) => {
     localStorage.setItem('detailKeluhan',JSON.stringify(data))
-    navigasi('/keluhan/detail')
+    navigasi(`${baseUrl}/keluhan/detail`)
   }
 
   return (

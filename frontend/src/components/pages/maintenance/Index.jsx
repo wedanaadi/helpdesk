@@ -229,9 +229,9 @@ export default function Index() {
                     <th>Tiket Maintenance</th>
                     {/* <th>Teknisi</th> */}
                     {/* <th>Tiket Keluhan</th> */}
-                    <th>Dibuat</th>
+                    {/* <th>Dibuat</th>
                     <th>Masa Berlaku</th>
-                    <th>Status</th>
+                    <th>Status</th> */}
                     {/* <th>Note</th> */}
                     <th>Aksi</th>
                   </tr>
@@ -247,9 +247,9 @@ export default function Index() {
                           <td>{data.tiket_maintenance}</td>
                           {/* <td>{data.teknisi.nama_pegawai}</td> */}
                           {/* <td>{data.tiket_keluhan}</td> */}
-                          <td>{ToDate(data.created_at, "full")}</td>
-                          <td>{ToDate(data.expired_date, "full")}</td>
-                          <td>{data.status_desc}</td>
+                          {/* <td>{ToDate(data.created_at, "full")}</td>
+                          <td>{ToDate(data.expired_date, "full")}</td> */}
+                          {/* <td>{data.status_desc}</td> */}
                           {/* <td>{data.note}</td> */}
                           <td className="text-center w-15">
                             {LocalUser.role != "3" && (

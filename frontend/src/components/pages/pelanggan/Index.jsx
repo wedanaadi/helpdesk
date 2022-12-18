@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { baseUrl } from "../../util/BaseUrl";
 
 export default function Index() {
+  const UserLogin = JSON.parse(localStorage.getItem("userData"));
   const [pelanggans, error, loading, axiosFuc] = useHookAxios();
   const [onSearch, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -147,14 +148,23 @@ export default function Index() {
     axiosHandle && handleAxios();
   }, [pelanggans, error]);
 
+  const handleKeluhanButton = (data) => {
+    localStorage.setItem("dataAddKeluhan", btoa(JSON.stringify(data)));
+    navigasi(`${baseUrl}/keluhan/addSystem`, { replace: true });
+  };
+
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Pelanggan</h3>
-        <Link to={`add`} className="btn btn-success mb-0">
-          <FontAwesomeIcon icon={faPlus} />
-          &nbsp; Tambah
-        </Link>
+        {UserLogin.role == "1" ? (
+          <Link to={`add`} className="btn btn-success mb-0">
+            <FontAwesomeIcon icon={faPlus} />
+            &nbsp; Tambah
+          </Link>
+        ) : (
+          false
+        )}
       </div>
       <div className="px-3 py-2">
         {loading && <LoadingPage text={"Loading data"} />}
@@ -169,7 +179,10 @@ export default function Index() {
           </div>
           <div className="col-md-10 d-flex flex-row-reverse">
             <>
-              <button className="btn btn-primary" onClick={() => getPelanggan()}>
+              <button
+                className="btn btn-primary"
+                onClick={() => getPelanggan()}
+              >
                 <FontAwesomeIcon icon={faSearch} />
               </button>
               &nbsp;
@@ -187,6 +200,7 @@ export default function Index() {
               <table className="table table-bordered text-nowrap">
                 <thead className="bg-white text-center fw-bold">
                   <tr>
+                    <th>Keluhan</th>
                     <th className="w-5">#</th>
                     <th>Nama Pelanggan</th>
                     <th>Email</th>
@@ -196,7 +210,7 @@ export default function Index() {
                     <th>Kabupaten/Kota</th>
                     <th>Kecamatan</th>
                     <th>Kelurahan</th>
-                    <th>Aksi</th>
+                    {UserLogin.role == "1" ? <th>Aksi</th> : false}
                   </tr>
                 </thead>
                 <tbody>
@@ -204,6 +218,15 @@ export default function Index() {
                     pelanggans.data.length > 0 ? (
                       pelanggans.data.map((data, index) => (
                         <tr key={index}>
+                          <td>
+                            <button
+                              className="btn btn-success"
+                              onClick={() => handleKeluhanButton(data)}
+                            >
+                              <FontAwesomeIcon icon={faPlus} />
+                              &nbsp; Tambah
+                            </button>
+                          </td>
                           <td className="text-center">
                             {pelanggans.pagination.from + index}
                           </td>
@@ -211,27 +234,35 @@ export default function Index() {
                           <td>{data.email}</td>
                           <td>{data.telepon}</td>
                           <td>{data.alamat}</td>
-                          <td>{data.kelurahan?.kecamatan?.kabkot?.provinsi?.name}</td>
+                          <td>
+                            {data.kelurahan?.kecamatan?.kabkot?.provinsi?.name}
+                          </td>
                           <td>{data.kelurahan?.kecamatan?.kabkot?.name}</td>
                           <td>{data.kelurahan?.kecamatan?.name}</td>
                           <td>{data.kelurahan?.name}</td>
-                          <td className="text-center w-15">
-                            <button
-                              className="btn btn-warning"
-                              onClick={() => handleEditButton(data)}
-                            >
-                              <FontAwesomeIcon icon={faPencilAlt} />
-                              &nbsp; Edit
-                            </button>
-                            &nbsp;
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => confirm(data.id)}
-                            >
-                              <FontAwesomeIcon icon={faTrashAlt} />
-                              &nbsp; Delete
-                            </button>
-                          </td>
+                          {UserLogin.role == "1" ? (
+                            <>
+                              <td className="text-center w-15">
+                                <button
+                                  className="btn btn-warning"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <FontAwesomeIcon icon={faPencilAlt} />
+                                  &nbsp; Edit
+                                </button>
+                                &nbsp;
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => confirm(data.id)}
+                                >
+                                  <FontAwesomeIcon icon={faTrashAlt} />
+                                  &nbsp; Delete
+                                </button>
+                              </td>
+                            </>
+                          ) : (
+                            false
+                          )}
                         </tr>
                       ))
                     ) : (
@@ -269,5 +300,5 @@ export default function Index() {
         )}
       </div>
     </div>
-  )
+  );
 }

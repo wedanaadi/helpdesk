@@ -33,6 +33,7 @@ export default function Add() {
   const navigasi = useNavigate();
   const [axiosHandle, setAxiosHandle] = useState(false);
   const [response, error, loading, AxiosFuc] = useHookAxios();
+  const [kordinat, setKordinat] = useState("");
 
   const getProvinces = () => {
     provincesFunc({
@@ -238,6 +239,29 @@ export default function Add() {
   useEffect(() => {
     axiosHandle && handleAxios();
   }, [response, error]);
+
+  useEffect(() => {
+    const inv =
+      kordinat &&
+      setTimeout(() => {
+        const kordinatPisah = kordinat.replace(" ", "").split(",");
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "lat",
+            value: kordinatPisah[0],
+          },
+        });
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "long",
+            value: kordinatPisah[1],
+          },
+        });
+      }, 1);
+    return () => clearInterval(inv);
+  }, [kordinat]);
 
   return (
     <div className="row col-12 bg-light rounded mx-0">
@@ -448,6 +472,29 @@ export default function Add() {
                   </div>
                 ))}
             </div>
+            <div className="row">
+              <div className="col-12">
+                <div className="mb-3">
+                  <label htmlFor="alamat" className="form-label">
+                    Kordinat
+                  </label>
+                  <input
+                    name="lat"
+                    type="text"
+                    className="form-control"
+                    value={kordinat}
+                    onChange={(e) => setKordinat(e.target.value)}
+                  />
+                  {(error && validation?.lat) || (error && validation?.long) ? (
+                    <div id="alamatHelp" className="form-text text-danger">
+                      Kordinat Harus Diisi!
+                    </div>
+                  ) : (
+                    false
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
           <div className="col-12 col-xl-8">
             <div className="mb-3">
@@ -466,14 +513,11 @@ export default function Add() {
                   {!mapDetect ? "Manual Deteksi" : "Deteksi dari Internet"}
                 </button>
               </div>
-              <Map aksi={mapDetect} statePosition={dispatch} />
-              {(error && validation?.lat) || (error && validation?.long) ? (
-                <div id="alamatHelp" className="form-text text-danger">
-                  Kordinat Harus Diisi!
-                </div>
-              ) : (
-                false
-              )}
+              <Map
+                aksi={mapDetect}
+                statePosition={setKordinat}
+                stateProps={kordinat}
+              />
             </div>
           </div>
         </div>

@@ -34,6 +34,8 @@ const ReportSolved = React.lazy(() => import("./components/pages/laporan/Solved"
 const ReportMaintenance = React.lazy(() => import("./components/pages/laporan/Maintenance"));
 const Pesan = React.lazy(() => import("./components/pages/Notifikasi"));
 const ViewPesan = React.lazy(() => import("./components/pages/ViewNotif"));
+const KeluhanAddSystem = React.lazy(() => import("./components/pages/keluhan/AddSystem"));
+const Tracking = React.lazy(() => import("./components/pages/keluhan/Tracking"));
 
 export default [
   {
@@ -155,6 +157,14 @@ export default [
         ),
       },
       {
+        path: `${base_url}/keluhan/addSystem`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <KeluhanAddSystem />
+          </Suspense>
+        ),
+      },
+      {
         path: `${base_url}/keluhan/pelanggan/add`,
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
@@ -167,6 +177,14 @@ export default [
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
             <KeluhanDetail />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/keluhan/track/:id`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <Tracking />
           </Suspense>
         ),
       },

@@ -33,43 +33,60 @@ export default function Edit() {
   const navigasi = useNavigate();
   const [axiosHandle, setAxiosHandle] = useState(false);
   const [response, error, loading, AxiosFuc] = useHookAxios();
+  const [kordinat, setKordinat] = useState("");
   const dataEdit = JSON.parse(atob(localStorage.getItem("dataEdit")));
   const [mapEdit, setMapEdit] = useState({
     position: null,
-    loaded:false
+    loaded: false,
   });
 
   useEffect(() => {
-    const inv = provinces.length > 0 && setTimeout(() => {
-      const selected = provinces.filter(({value})=>value == dataEdit.provinsi)
+    const inv =
+      provinces.length > 0 &&
+      setTimeout(() => {
+        const selected = provinces.filter(
+          ({ value }) => value == dataEdit.provinsi
+        );
         setSelectProvinsi(selected[0]);
-    }, 1);
-    return () => clearInterval(inv)
-  },[provinces])
+      }, 1);
+    return () => clearInterval(inv);
+  }, [provinces]);
 
   useEffect(() => {
-    const inv = regencies.length > 0 && setTimeout(() => {
-      const selected = regencies.filter(({value})=>value == dataEdit.kabkot)
+    const inv =
+      regencies.length > 0 &&
+      setTimeout(() => {
+        const selected = regencies.filter(
+          ({ value }) => value == dataEdit.kabkot
+        );
         setSelectRegencies(selected[0]);
-    }, 1);
-    return () => clearInterval(inv)
-  },[regencies])
-  
-  useEffect(() => {
-    const inv = districts.length > 0 && setTimeout(() => {
-      const selected = districts.filter(({value})=>value == dataEdit.kecamatan)
-        setSelectDistrict(selected[0]);
-    }, 1);
-    return () => clearInterval(inv)
-  },[districts])
+      }, 1);
+    return () => clearInterval(inv);
+  }, [regencies]);
 
   useEffect(() => {
-    const inv = villages.length > 0 && setTimeout(() => {
-      const selected = villages.filter(({value})=>value == dataEdit.kelurahan.id)
+    const inv =
+      districts.length > 0 &&
+      setTimeout(() => {
+        const selected = districts.filter(
+          ({ value }) => value == dataEdit.kecamatan
+        );
+        setSelectDistrict(selected[0]);
+      }, 1);
+    return () => clearInterval(inv);
+  }, [districts]);
+
+  useEffect(() => {
+    const inv =
+      villages.length > 0 &&
+      setTimeout(() => {
+        const selected = villages.filter(
+          ({ value }) => value == dataEdit.kelurahan.id
+        );
         setSelectVillage(selected[0]);
-    }, 1);
-    return () => clearInterval(inv)
-  },[villages])
+      }, 1);
+    return () => clearInterval(inv);
+  }, [villages]);
 
   const getProvinces = () => {
     provincesFunc({
@@ -82,7 +99,7 @@ export default function Edit() {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
         },
       },
-    })
+    });
   };
 
   const getKabupatenKota = () => {
@@ -145,10 +162,13 @@ export default function Edit() {
           value: dataEdit[key],
         },
       });
-      setMapEdit({
-        position:{lat:dataEdit.lat,lng:dataEdit.long},
-        loaded:true
-      })
+      
+      const arrayPositionMap = [dataEdit.lat, dataEdit.long];
+      setKordinat(arrayPositionMap.join())
+      // setMapEdit({
+      //   position: {  },
+      //   loaded: true,
+      // });
     }
   };
 
@@ -169,26 +189,32 @@ export default function Edit() {
   }, []);
 
   useEffect(() => {
-    const inv = provinces.length > 0 && setTimeout(() => {
-      setSelectRegencies(null);
-      getKabupatenKota();
-    }, 1);
+    const inv =
+      provinces.length > 0 &&
+      setTimeout(() => {
+        setSelectRegencies(null);
+        getKabupatenKota();
+      }, 1);
     return () => clearInterval(inv);
   }, [selectProvinsi]);
 
   useEffect(() => {
-    const inv = regencies.length > 0 && setTimeout(() => {
-      setSelectDistrict(null);
-      getKecamatan();
-    }, 1);
+    const inv =
+      regencies.length > 0 &&
+      setTimeout(() => {
+        setSelectDistrict(null);
+        getKecamatan();
+      }, 1);
     return () => clearInterval(inv);
   }, [selectRegencies]);
 
   useEffect(() => {
-    const inv = districts.length > 0 && setTimeout(() => {
-      setSelectVillage(null);
-      getKelurahan();
-    }, 1);
+    const inv =
+      districts.length > 0 &&
+      setTimeout(() => {
+        setSelectVillage(null);
+        getKelurahan();
+      }, 1);
     return () => clearInterval(inv);
   }, [selectDistrict]);
 
@@ -300,6 +326,29 @@ export default function Edit() {
   useEffect(() => {
     axiosHandle && handleAxios();
   }, [response, error]);
+
+  useEffect(() => {
+    const inv =
+      kordinat &&
+      setTimeout(() => {
+        const kordinatPisah = kordinat.replace(" ", "").split(",");
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "lat",
+            value: kordinatPisah[0],
+          },
+        });
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "long",
+            value: kordinatPisah[1],
+          },
+        });
+      }, 1);
+    return () => clearInterval(inv);
+  }, [kordinat]);
 
   return (
     <div className="row col-12 bg-light rounded mx-0">
@@ -510,6 +559,29 @@ export default function Edit() {
                   </div>
                 ))}
             </div>
+            <div className="row">
+              <div className="col-12">
+                <div className="mb-3">
+                  <label htmlFor="alamat" className="form-label">
+                    Kordinat
+                  </label>
+                  <input
+                    name="lat"
+                    type="text"
+                    className="form-control"
+                    value={kordinat}
+                    onChange={(e) => setKordinat(e.target.value)}
+                  />
+                  {(error && validation?.lat) || (error && validation?.long) ? (
+                    <div id="alamatHelp" className="form-text text-danger">
+                      Kordinat Harus Diisi!
+                    </div>
+                  ) : (
+                    false
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
           <div className="col-12 col-xl-8">
             <div className="mb-3">
@@ -528,14 +600,11 @@ export default function Edit() {
                   {!mapDetect ? "Manual Deteksi" : "Deteksi dari Internet"}
                 </button>
               </div>
-              {mapEdit.loaded && <Map aksi={mapDetect} statePosition={dispatch} stateProps={mapEdit.position} />}
-              {(error && validation?.lat) || (error && validation?.long) ? (
-                <div id="alamatHelp" className="form-text text-danger">
-                  Kordinat Harus Diisi!
-                </div>
-              ) : (
-                false
-              )}
+              <Map
+                  aksi={mapDetect}
+                  statePosition={setKordinat}
+                  stateProps={kordinat}
+                />
             </div>
           </div>
         </div>

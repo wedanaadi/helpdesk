@@ -10,7 +10,28 @@ import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 export default function Map({ aksi, statePosition, stateProps = null }) {
-  const [stateLatLng, setLatLng] = useState(stateProps);
+  const [stateLatLng, setLatLng] = useState({lat:null, lng:null});
+
+  useEffect(() => {
+    const inv = setTimeout(() => {
+      if (stateProps) {
+        const kordinatMerge = stateProps.replace(" ", "").split(",");
+        if(kordinatMerge.length > 1) {
+          setLatLng({
+            lat: kordinatMerge[0],
+            lng: kordinatMerge[1],
+          });
+        } else {
+          setLatLng({
+            lat: null,
+            lng: null,
+          });
+        }
+      }
+    }, 1);
+    return () => clearInterval(inv);
+  }, [stateProps]);
+
   // Berlin coordinates
   const position = [-8.409518, 115.188919];
 
@@ -50,23 +71,14 @@ export default function Map({ aksi, statePosition, stateProps = null }) {
     return false;
   }
 
-  useEffect(()=>{
-    if(stateLatLng!==null) {
-      const inv = setTimeout(() => {
-        statePosition({
-          type: "CHANGE_INPUT",
-          payload: { name: "lat", value: stateLatLng?.lat },
-        })
-        statePosition({
-          type: "CHANGE_INPUT",
-          payload: { name: "long", value: stateLatLng?.lng },
-        })
-      }, 1);
-      return () => {
-        clearInterval(inv)
-      }
+  useEffect(() => {
+    const merge = [stateLatLng.lat, stateLatLng.lng];
+    if(merge[0] || merge[1]) {
+      statePosition(merge.join());
+    } else {
+      statePosition("");
     }
-  },[stateLatLng])
+  }, [stateLatLng]);
 
   return (
     <section className="map-component">

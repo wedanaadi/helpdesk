@@ -11,14 +11,15 @@ import useHookAxios from "../../hook/useHookAxios";
 import Map2 from "../../Map2";
 import { baseUrl } from "../../util/BaseUrl";
 import ToDate, { ConvertToEpoch } from "../../util/ToDate";
-import axios from "../../util/jsonApi"
+import axios from "../../util/jsonApi";
 import { toast } from "react-toastify";
+const ModalUpdate = React.lazy(() => import("./ModalUpdate"));
 
 export default function DetailMaintenance() {
   const detailLokal = JSON.parse(localStorage.getItem("detailMaintenance"));
-  const lokalUser = JSON.parse(localStorage.getItem('userData'));
+  const lokalUser = JSON.parse(localStorage.getItem("userData"));
   const [mapDetect, setMapDetect] = useState(false);
-  const [response, error, loading, axiosFunction] = useHookAxios()
+  const [response, error, loading, axiosFunction] = useHookAxios();
   const [axiosHandle, setAxiosHandle] = useState(false);
   const toastId = useRef(null);
   const [validation, setValidation] = useState(null);
@@ -45,7 +46,7 @@ export default function DetailMaintenance() {
       },
     });
     setAxiosHandle(true);
-  }
+  };
 
   const handleAxios = () => {
     let message = "Error";
@@ -76,8 +77,19 @@ export default function DetailMaintenance() {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  const [show, setShow] = useState(false);
+  const [dataModal, setDataModal] = useState(null);
+  const [tipeStatus, setTipeStatus] = useState(null);
+
+  const handleModal = (data, status) => {
+    setShow(true);
+    setDataModal(data);
+    setTipeStatus(status)
+  };
+
   return (
     <div className="row g-4">
+      <ModalUpdate toggleModal={show} setState={setShow} data={dataModal} aksiUpdate={tipeStatus} />
       <div className="col-12 mx-0">
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
@@ -96,17 +108,37 @@ export default function DetailMaintenance() {
         <div className="row p-2">
           <div className="d-flex justify-content-between align-items-center">
             <div>
-              NOMOR: <b>{detailLokal.tiket_maintenance}</b> - STATUS:{" "}
-              <b>{detailLokal.status_desc}</b> <br />
-              EXPIRED DATE TICKET:{" "}
-              <b>{ToDate(detailLokal.expired_date, "full")}</b><br/>
-              Ditangani oleh : <b>{detailLokal.teknisi.nama_pegawai}</b>
+              <b>NOMOR</b>:{" "}
+              <span className="badge text-bg-info">
+                {detailLokal.tiket_maintenance}
+              </span>{" "}
+              - <b>STATUS</b>:{" "}
+              <span className="badge text-bg-info">
+                {detailLokal.status_desc}
+              </span>
+              <br /> <b>CREATED DATE TICKET</b>:{" "}
+              <span className="badge text-bg-success">
+                {ToDate(detailLokal.created_at, "full")}
+              </span>
+              <br /> <b>EXPIRED DATE TICKET</b>:{" "}
+              <span className="badge text-bg-danger">
+                {ToDate(detailLokal.expired_date, "full")}
+              </span>
+              <br /> <b>Ditangani oleh</b> :{" "}
+              <span className="badge text-bg-info">
+                {detailLokal.teknisi.nama_pegawai}
+              </span>
             </div>
             <div>
-              {parseInt(detailLokal.status) !== 1 && checkExp() && lokalUser.role == '3' ? (
+              {parseInt(detailLokal.status) !== 1 &&
+              checkExp() &&
+              lokalUser.role == "3" ? (
                 <>
                   <span>Update Ticket: </span>&nbsp;
-                  <button className="btn btn-success" onClick={()=>handlePenanganan('1')}>
+                  <button
+                    className="btn btn-success"
+                    onClick={() => handleModal(detailLokal,'1')}
+                  >
                     <FontAwesomeIcon icon={faCheckDouble} />
                     &nbsp; Solved
                   </button>{" "}
@@ -114,7 +146,7 @@ export default function DetailMaintenance() {
                   {parseInt(detailLokal.status) !== 2 ? (
                     <button
                       className="btn btn-warning"
-                      onClick={()=>handlePenanganan('2')}
+                      onClick={() => handleModal(detailLokal,'2')}
                     >
                       <FontAwesomeIcon icon={faClock} />
                       &nbsp; Pending
@@ -163,7 +195,10 @@ export default function DetailMaintenance() {
                       Kecamatan{" "}
                       <b>
                         {" "}
-                        {detailLokal.keluhans.pelanggan.kelurahan.kecamatan.name}
+                        {
+                          detailLokal.keluhans.pelanggan.kelurahan.kecamatan
+                            .name
+                        }
                       </b>
                       , Kabupaten{" "}
                       <b>

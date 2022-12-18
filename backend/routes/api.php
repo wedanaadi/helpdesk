@@ -73,6 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('keluhan', [ComplaintController::class, 'index']);
   Route::get('keluhan/files/{id}', [ComplaintController::class, 'files']);
   Route::get('log-keluhan', [ComplaintController::class, 'log']);
+  // Route::get('track/{id}', [ComplaintController::class, 'track']);
   Route::post('keluhan', [ComplaintController::class, 'store']);
   Route::put('keluhan/{id}', [ComplaintController::class, 'update']);
   Route::put('keluhan/status/{id}', [ComplaintController::class, 'solve']);
@@ -80,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('maintenance', [MaintenanceController::class, 'index']);
   Route::post('maintenance', [MaintenanceController::class, 'store']);
+  Route::post('maintenance/sendEmail', [MaintenanceController::class, 'sendEmail']);
   Route::put('maintenance/{id}', [MaintenanceController::class, 'update']);
   Route::put('maintenance/status/{id}', [MaintenanceController::class, 'changeStatus']);
   Route::delete('maintenance/{id}', [MaintenanceController::class, 'destroy']);

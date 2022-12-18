@@ -102,6 +102,7 @@ class ReportController extends Controller
         'keluhan.pelanggan.kelurahan.kecamatan.kabkot',
         'keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi'
       )
+      ->orderBy('created_at', 'ASC')
       ->paginate(request('perpage'));
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }

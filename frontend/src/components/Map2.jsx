@@ -13,6 +13,7 @@ export default function Map2({ aksi, statePosition, stateProps = null }) {
   const [stateLatLng, setLatLng] = useState(stateProps);
   // Berlin coordinates
   const position = stateLatLng;
+  // const position = stateLatLng;
 
   // --- (6) Create a custom marker ---
   const customIcon = new Icon({
