@@ -141,6 +141,17 @@ export default function KeluhanEdit() {
     }
 
     if (response && !error && !validation && !loading) {
+      AxiosFuc({
+        axiosInstance: axios,
+        method: "POST",
+        url: `keluhan/sendEmail`,
+        data: response.email,
+        reqConfig: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        },
+      });
       toast.update(toastId.current, {
         render: "Successfuly created",
         type: "success",

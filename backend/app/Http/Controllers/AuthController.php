@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendEmailPelangganJob;
 use App\Jobs\SendMailJob;
 use App\Models\Notif;
 use App\Models\Pegawai;
@@ -111,6 +112,29 @@ class AuthController extends Controller
     }
   }
 
+  public function sendEmailPelanggan(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'subject' => 'required',
+      'body' => 'required'
+    ], [
+      'required' => 'Input :attribute harus diisi!'
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
+    }
+
+    try {
+      $data = $request->all();
+      dispatch(new SendEmailPelangganJob($data));
+      // return redirect()->route('kirim-email')->with('status', 'Email berhasil dikirim');
+      return response()->json(['msg' => 'Successfuly Login', "data" => $data, 'error' => null], 200);
+    } catch (\Exception $e) {
+      return response()->json(['msg' => 'Failed Login', "data" => null, 'error' => $e->getMessage()], 500);
+    }
+  }
+
   public function logout()
   {
     Auth::user()->tokens()->delete();
@@ -147,6 +171,7 @@ class AuthController extends Controller
       'body' => $request->pesan,
       'created_at' => round(microtime(true) * 1000),
       'updated_at' => round(microtime(true) * 1000),
+      'created_user' => $request->pengirim
     ]);
 
     foreach ($prev as $v) {

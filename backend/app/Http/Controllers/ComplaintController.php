@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendMailKeluhan;
 use App\Libraries\Fungsi;
 use App\Models\File as FileKeluhan;
+use App\Models\Kategori;
 use App\Models\Keluhan;
 use App\Models\Log;
+use App\Models\Pelanggan;
 use App\Models\SolveReport;
 use App\Models\UpdateComplaint;
 use Exception;
@@ -71,6 +74,34 @@ class ComplaintController extends Controller
     }
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
+
+  public function index_pelanggan(Request $request)
+  {
+    $data = Keluhan::filter(request(['search']))
+      ->with(
+        'pelanggan',
+        'kategori',
+        'pelanggan.kelurahan',
+        'pelanggan.kelurahan.kecamatan',
+        'pelanggan.kelurahan.kecamatan.kabkot',
+        'pelanggan.kelurahan.kecamatan.kabkot.provinsi',
+        'files'
+      )
+      ->select(
+        '*',
+        DB::raw('date_format(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d %H:%i:%s") as created_at2'),
+        DB::raw('IF(status = "0","ON",IF(status= "1","SOLVE","ON PROSES")) as status_keluhan'),
+        DB::raw('DATE_FORMAT(date_add(FROM_UNIXTIME(created_at/1000),INTERVAL 3 day),"%Y-%m-%d %H:%i:%s") as expired_date')
+      )
+      // ->selectRaw('*, created_at AS "tanggal_tiket"')
+      ->where('is_aktif', '1')
+      ->where('pelanggan_id', $request->id)
+      ->where('status', '!=', "1")
+      ->OrderBy('status', 'ASC')
+      ->OrderBy('tiket', 'ASC');
+    return response()->json(['msg' => 'Get keluhan', "data" => $data->get(), 'error' => []], 200);
+  }
+
   /**
    * store
    *
@@ -93,6 +124,8 @@ class ComplaintController extends Controller
 
     DB::beginTransaction();
     try {
+      $dataPelanggan  = Pelanggan::find($request->pelanggan);
+      $kategori = Kategori::find($request->kategori);
       $prevTicket = Keluhan::where('kategori_id', $request->kategori)
         ->where('pelanggan_id', $request->pelanggan)
         ->where('is_aktif', "1")
@@ -116,6 +149,13 @@ class ComplaintController extends Controller
         'status' => '0',
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
+      ];
+
+      $dataEmail = [
+        'message' => 'Selamat, Ticket Keluhan Telah dibuat!.',
+        'nomor' => $newTiket,
+        'kategori' => $kategori->nama_kategori,
+        'email' => $dataPelanggan->email,
       ];
 
       // bagin upload file done
@@ -151,8 +191,10 @@ class ComplaintController extends Controller
       if ($prevTicket->count() > 0) {
         $prevTicket->update($payload);
         $dataLog['deskripsi'] = 'Ticket Keluhan di updated.';
+        $dataEmail['subject'] = 'Updated Ticket Complaint';
       } else {
         Keluhan::create($payload);
+        $dataEmail['subject'] = 'Created Ticket Complaint';
         $dataLog['deskripsi'] = 'Ticket Keluhan di buat.';
       }
 
@@ -162,7 +204,7 @@ class ComplaintController extends Controller
         FileKeluhan::insert($dataFile);
       }
       DB::commit();
-      return response()->json(['msg' => 'Successfuly created data keluhan', "data" => $payload, 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly created data keluhan', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => null], 201);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed created data keluhan', "data" => null, 'error' => $e->getMessage()], 500);
@@ -184,6 +226,8 @@ class ComplaintController extends Controller
     }
 
     $find = Keluhan::find($id);
+    $dataPelanggan  = Pelanggan::find($request->pelanggan);
+    $kategori = Kategori::find($request->kategori);
     DB::beginTransaction();
     try {
       $payload = [
@@ -192,6 +236,14 @@ class ComplaintController extends Controller
         'comment' => $request->komentar,
         'created_user' => $request->created_user,
         'updated_at' => round(microtime(true) * 1000),
+      ];
+
+      $dataEmail = [
+        'message' => 'Selamat, Ticket Keluhan berhasil dirubah!.',
+        'nomor' => $find->tiket,
+        'kategori' => $kategori->nama_kategori,
+        'subject' => 'Updated Ticket Complaint',
+        'email' => $dataPelanggan->email,
       ];
 
       // bagin upload file done
@@ -224,8 +276,8 @@ class ComplaintController extends Controller
       }
 
       $dataLog = [
-        'keluhan_id' => $id,
-        'relasi_log' => $id,
+        'keluhan_id' => $find->tiket,
+        'relasi_log' => $find->tiket,
         'deskripsi' => 'Ticket Keluhan di updated.',
         'user_id' => $request->pelanggan,
         'type' => '1',
@@ -239,7 +291,7 @@ class ComplaintController extends Controller
         FileKeluhan::insert($dataFile);
       }
       DB::commit();
-      return response()->json(['msg' => 'Successfuly created data keluhan', "data" => $payload, 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly created data keluhan', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => null], 201);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed created data keluhan', "data" => null, 'error' => $e->getMessage()], 500);
@@ -294,24 +346,27 @@ class ComplaintController extends Controller
         'keluhan_id' => $keluhanFind->tiket,
         'relasi_log' => $keluhanFind->tiket,
         'user_id' => $keluhanFind->pelanggan_id,
-        'deskripsi' => 'Ticket keluhan telah terselesaikan (solved by sistem).'.PHP_EOL. $request->deskripsi,
+        'deskripsi' => 'Ticket keluhan telah terselesaikan (solved by sistem).' . PHP_EOL . $request->deskripsi,
         'type' => '1',
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
       ];
 
-      // $updateKeluhan = [
-      //   'keluhan_id' => $keluhanFind->tiket,
-      //   'deskripsi' => $request->deskripsi,
-      //   'created_at' => round(microtime(true) * 1000),
-      //   'updated_at' => round(microtime(true) * 1000),
-      // ];
+      $dataPelanggan  = Pelanggan::find($keluhanFind->pelanggan_id);
+      $kategori = Kategori::find($keluhanFind->kategori_id);
+      $dataEmail = [
+        'message' => 'Ticket keluhan telah terselesaikan (solved by sistem).' . PHP_EOL . $request->deskripsi,
+        'nomor' => $keluhanFind->tiket,
+        'kategori' => $kategori->nama_kategori,
+        'subject' => 'Updated Penanganan Ticket Complaint',
+        'email' => $dataPelanggan->email,
+      ];
 
       $keluhanFind->update($payload);
       Log::create($dataLog);
       // UpdateComplaint::create($updateKeluhan);
       DB::commit();
-      return response()->json(['msg' => 'Successfuly update status', "data" => $payload, 'error' => []], 200);
+      return response()->json(['msg' => 'Successfuly update status', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => []], 200);
     } catch (Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'fail update status', "data" => [], 'error' => $e->getMessage()], 500);
@@ -364,5 +419,11 @@ class ComplaintController extends Controller
     ORDER BY created_at DESC";
     $data = DB::select($sql);
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
+  }
+
+  public function sendEmail(Request $request)
+  {
+    dispatch(new SendMailKeluhan($request->all()));
+    return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
   }
 }

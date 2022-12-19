@@ -129,8 +129,30 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
       });
       setAxiosHandle(false);
       if (selectTipe.value == "2") {
+        pelFunc({
+          axiosInstance: axios,
+          method: "POST",
+          url: `maintenance/sendEmail`,
+          data: response.email,
+          reqConfig: {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          },
+        });
         navigasi(`${baseUrl}/maintenance`);
       } else {
+        pelFunc({
+          axiosInstance: axios,
+          method: "POST",
+          url: `keluhan/sendEmail`,
+          data: response.email,
+          reqConfig: {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          },
+        });
         navigasi(`${baseUrl}/keluhan`);
       }
     }

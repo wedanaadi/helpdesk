@@ -139,6 +139,17 @@ export default function AddSystem() {
     }
 
     if (response && !error && !validation && !loading) {
+      AxiosFuc({
+        axiosInstance: axios,
+        method: "POST",
+        url: `keluhan/sendEmail`,
+        data: response.email,
+        reqConfig: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        },
+      });
       toast.update(toastId.current, {
         render: "Successfuly created",
         type: "success",
@@ -146,7 +157,7 @@ export default function AddSystem() {
         autoClose: 1500,
       });
       setAxiosHandle(false);
-      navigasi(`${baseUrl}/keluhan/pelanggan`);
+      navigasi(`${baseUrl}/keluhan`);
     }
   };
 

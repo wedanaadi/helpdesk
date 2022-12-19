@@ -239,6 +239,14 @@ export default function Solved() {
     return () => clearInterval(inv);
   }, [response]);
 
+  useEffect(()=>{
+    const inv = setTimeout(() => {
+      handleView()
+    }, 1);
+
+    return () => clearInterval(inv)
+  },[])
+
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
@@ -389,7 +397,7 @@ export default function Solved() {
                           </td>
                           <td>{data.keluhan.tiket}</td>
                           <td>{data.keluhan.pelanggan.nama_pelanggan}</td>
-                          <td>{data.created_at}</td>
+                          <td>{ToDate(data.created_at,'full')}</td>
                           <td>{data.status_desc}</td>
                           <td>
                             {

@@ -34,8 +34,9 @@ Route::post('/sendChat', [AuthController::class, 'save_pesan']);
 Route::get('/getNotif', [AuthController::class, 'getData']);
 
 Route::middleware('auth:sanctum')->group(function () {
-  Route::post('/logout', [AuthController::class, 'logout']);
-  Route::post('/sendEmail', [AuthController::class, 'sendEmail']);
+  Route::post('logout', [AuthController::class, 'logout']);
+  Route::post('sendEmail', [AuthController::class, 'sendEmail']);
+  Route::post('sendEmail/pelanggan', [AuthController::class, 'sendEmailPelanggan']);
 
   Route::get('/kategori', [KategoriController::class, 'index']);
   Route::post('/kategori', [KategoriController::class, 'store']);
@@ -71,10 +72,12 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/ticket-select2/{id}',[ComplaintController::class, 'selectOnlyId']);
 
   Route::get('keluhan', [ComplaintController::class, 'index']);
+  Route::get('keluhan-pelanggan', [ComplaintController::class, 'index_pelanggan']);
   Route::get('keluhan/files/{id}', [ComplaintController::class, 'files']);
   Route::get('log-keluhan', [ComplaintController::class, 'log']);
   // Route::get('track/{id}', [ComplaintController::class, 'track']);
   Route::post('keluhan', [ComplaintController::class, 'store']);
+  Route::post('keluhan/sendEmail', [ComplaintController::class, 'sendEmail']);
   Route::put('keluhan/{id}', [ComplaintController::class, 'update']);
   Route::put('keluhan/status/{id}', [ComplaintController::class, 'solve']);
   Route::delete('keluhan/{id}', [ComplaintController::class, 'destroy']);
@@ -88,8 +91,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 Route::get('solved-report',[ReportController::class, 'report_solved']);
+Route::get('complaint-report',[ReportController::class, 'report_complaint']);
 Route::get('maintenance-report',[ReportController::class, 'report_maintenance']);
 Route::get('solved-chart',[ReportController::class, 'chart_solved']);
+Route::get('complaint-chart',[ReportController::class, 'chart_complaint']);
 Route::get('maintenance-chart',[ReportController::class, 'chart_maintenance']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

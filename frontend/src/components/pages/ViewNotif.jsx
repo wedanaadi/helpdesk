@@ -3,38 +3,38 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import useHookAxios from "../hook/useHookAxios";
-import axios from '../util/jsonApi'
-import ToDate from "../util/ToDate"
+import axios from "../util/jsonApi";
+import ToDate from "../util/ToDate";
 
 export default function ViewNotif() {
-  const {id} = useParams()
+  const { id } = useParams();
   const [response, error, loading, axiosFunction] = useHookAxios();
-  const LokalData = JSON.parse(localStorage.getItem('userData'))
+  const LokalData = JSON.parse(localStorage.getItem("userData"));
 
   const getData = () => {
     axiosFunction({
       axiosInstance: axios,
       method: "GET",
-      url: 'getNotif',
+      url: "getNotif",
       data: null,
       reqConfig: {
         params: {
-          idPengirim:id,
+          idPengirim: id,
           idLogin: LokalData.idUser,
         },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
         },
       },
-    })
-  }
+    });
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     const inv = setTimeout(() => {
-      getData()
+      getData();
     }, 1);
-    return () => clearInterval(inv)
-  },[]);
+    return () => clearInterval(inv);
+  }, []);
 
   return (
     <div className="row bg-light mx-0 rounded">
@@ -48,11 +48,11 @@ export default function ViewNotif() {
       <div className="p-3 border-bottom">
         <section className="py-2">
           <ul className="timeline">
-            {
-              response?.length> 0 && response.map((data,index)=>(<div key={index}>
-                <li className="timeline-item mb-5">
+            {response?.length > 0 &&
+              response.map((data, index) => (
+                <li className="timeline-item mb-5" key={index}>
                   <div className="d-flex justify-content-between align-items-center">
-                    <h5 className="fw-bold">{LokalData.idUser == data.created_user ? data.sender.nama_pegawai : data.getter.nama_pegawai}</h5>
+                    <h5 className="fw-bold">{data.sender.nama_pegawai}</h5>
                   </div>
                   <p className="text-muted mb-2 fw-bold">
                     {data.body}
@@ -62,8 +62,7 @@ export default function ViewNotif() {
                     {ToDate(data.created_at, "full")}
                   </p>
                 </li>
-              </div>))
-            }
+              ))}
           </ul>
         </section>
       </div>

@@ -70,7 +70,6 @@ class MaintenanceController extends Controller
       }
       $payload = [
         'pegawai_id' => $request->teknisi,
-        // 'note' => $request->note,
         'tiket_keluhan' => $request->ticket_keluhan,
         'tiket_maintenance' => $newTiket,
         'expired_date' => strtotime(date("Y-m-d H:i:s") . "+3 days") * 1000,
@@ -82,13 +81,15 @@ class MaintenanceController extends Controller
       ]);
       $datakeluhan = Keluhan::with('pelanggan')->where('tiket', $request->ticket_keluhan)->first();
       $teknisi = Pegawai::where('id', $request->teknisi)->first();
+
       $dataEmail = [
-        'email' => $datakeluhan->pelanggan->email,
+        'message' => 'Ticket Maintenance berhasil dibuat.' . PHP_EOL . 'Teknisi yang ditugaskan: ' . $teknisi->nama_pegawai,
         'ticket_keluhan' => $datakeluhan->tiket,
         'ticket_maintenance' => $newTiket,
-        'teknisi_nama' => $teknisi->nama_pegawai,
-        'subject' => 'Tiket Maintenance'
+        'subject' => 'Updated Penanganan Ticket Complaint',
+        'email' => $datakeluhan->pelanggan->email,
       ];
+
       $dataLog = [
         'keluhan_id' => $request->ticket_keluhan,
         'relasi_log' => $newTiket,
@@ -106,7 +107,7 @@ class MaintenanceController extends Controller
       }
       // $this->sendEmail($dataEmail);
       DB::commit();
-      return response()->json(['msg' => 'Successfuly created data maintenance','data' => $payload, "email" => $dataEmail, 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly created data maintenance', 'data' => ['payload' => $payload, "email" => $dataEmail], 'error' => null], 201);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed created data maintenance', "data" => null, 'error' => $e->getMessage()], 500);
@@ -130,14 +131,9 @@ class MaintenanceController extends Controller
     DB::beginTransaction();
     try {
       Keluhan::where('tiket', $request->_ticket_keluhan)->update(['status' => '0']);
-      // $date = date('y') . date('m');
-      // $lastKode = Maintenance::select(DB::raw('MAX(tiket_maintenance) AS kode'))
-      //   ->where(DB::raw('SUBSTR(tiket_maintenance,2,4)'), $date)
-      //   ->first();
-      // $newTiket = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'M', $date);
       $payload = [
         'pegawai_id' => $request->teknisi,
-        'note' => $request->note,
+        // 'note' => $request->note,
         'tiket_keluhan' => $request->ticket_keluhan,
         'updated_at' => round(microtime(true) * 1000),
       ];
@@ -147,6 +143,16 @@ class MaintenanceController extends Controller
       $prevLog = Log::where('relasi_log', $find->tiket_maintenance)
         ->where('type', '2')
         ->firstOrFail();
+
+      $keluhan = Keluhan::with('pelanggan')->where('tiket',$find->tiket_keluhan)->first();
+      $dataEmail = [
+        'message' => 'Ticket Maintenance berhasil diubah.',
+        'ticket_keluhan' => $find->tiket_keluhan,
+        'ticket_maintenance' => $find->tiket_maintenance,
+        'subject' => 'Updated Penanganan Ticket Complaint',
+        'email' => $keluhan->pelanggan->email,
+      ];
+
       $dataLog = [
         'keluhan_id' => $request->ticket_keluhan,
         'relasi_log' => $find->tiket_maintenance,
@@ -159,7 +165,7 @@ class MaintenanceController extends Controller
       $find->update($payload);
       $prevLog->update($dataLog);
       DB::commit();
-      return response()->json(['msg' => 'Successfuly update data maintenance', "data" => $payload, 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly update data maintenance', "data" => ['payload' => $payload, "email" => $dataEmail], 'error' => null], 201);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed update data maintenance', "data" => null, 'error' => $e->getMessage()], 500);
@@ -214,25 +220,36 @@ class MaintenanceController extends Controller
         MaintenanceReport::create($reportSolve);
       }
 
+      $keluhan = Keluhan::with('pelanggan')->where('tiket',$maintenance->tiket_keluhan)->first();
+      $dataEmail = [
+        // 'message' => 'Ticket Maintenance berhasil diubah.',
+        'ticket_keluhan' => $maintenance->tiket_keluhan,
+        'ticket_maintenance' => $maintenance->tiket_maintenance,
+        'subject' => 'Updated Penanganan Ticket Complaint',
+        'email' => $keluhan->pelanggan->email,
+      ];
+
       $maintenance->update($payload);
       if ($request->status == "1") {
         Keluhan::where('tiket', $maintenance->tiket_keluhan)->update(['status' => '1']);
-        $dataLog['deskripsi'] = 'Status ticket dirubah menjadi solved.'.PHP_EOL. $request->deskripsi;
+        $dataLog['deskripsi'] = 'Status ticket dirubah menjadi solved.' . PHP_EOL . $request->deskripsi;
+        $dataEmail['message'] = 'Status ticket dirubah menjadi solved.' . PHP_EOL . $request->deskripsi;
       } else {
-        $dataLog['deskripsi'] = 'Status ticket dirubah menjadi pending.'.PHP_EOL. $request->deskripsi;
+        $dataLog['deskripsi'] = 'Status ticket dirubah menjadi pending.' . PHP_EOL . $request->deskripsi;
+        $dataEmail['message'] = 'Status ticket dirubah menjadi pending.' . PHP_EOL . $request->deskripsi;
       }
       Log::create($dataLog);
       DB::commit();
-      return response()->json(['msg' => 'Successfuly update status', "data" => $payload, 'error' => []], 200);
+      return response()->json(['msg' => 'Successfuly update status', "data" => ['payload' => $payload, "email" => $dataEmail], 'error' => []], 200);
     } catch (Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'fail update status', "data" => [], 'error' => $e->getMessage()], 500);
     }
   }
 
-  public function sendEmail($data)
+  public function sendEmail(Request $request)
   {
-    dispatch(new SendMailPelanggan($data));
+    dispatch(new SendMailPelanggan($request->all()));
     return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
   }
 }

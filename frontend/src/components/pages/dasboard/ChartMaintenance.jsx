@@ -1,16 +1,14 @@
-import { faEye } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import LineChart2 from "../../LineChart2";
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
-import { Pagging } from "../../datatable";
 import useHookAxios from "../../hook/useHookAxios";
-import LoadingPage from "../../LoadingPage";
 import Select from "../../Select";
 import axios from "../../util/jsonApi";
-import ToDate, { ConvertToEpoch } from "../../util/ToDate";
-import { ExportToExcel } from "../../ExportToExcel";
+import { ConvertToEpoch } from "../../util/ToDate";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSync } from "@fortawesome/free-solid-svg-icons";
 
-export default function Solved() {
+export default function ChartMaintenance() {
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDateRange, endDateRange] = dateRange;
   const [startDate, setStartDate] = useState(new Date());
@@ -63,8 +61,9 @@ export default function Solved() {
     label: "SEMUA",
     value: "all",
   });
-  const [response, error, loading, axiosFunc] = useHookAxios();
-  const [dataExcel, setExcel] = useState([]);
+  const [solved, error, loading, solvedAxios] = useHookAxios();
+  const [maintenance, errormaintenance, loadingmaintenance, maintenanceAxios] =
+    useHookAxios();
 
   const getProvinces = () => {
     provincesFunc({
@@ -131,9 +130,58 @@ export default function Solved() {
     });
   };
 
+  const handleView2 = () => {
+    setShowChartMaintenance(false);
+    let url = `maintenance-chart?type=${type.value}`;
+    if (type.value === "3") {
+      let last = new Date(endDateRange);
+      url += `&periode=${[
+        ConvertToEpoch(startDateRange),
+        ConvertToEpoch(last.setDate(last.getDate() + 1)),
+      ]}`;
+    } else if (type.value === "2") {
+      const y = startDate.getFullYear();
+      const m = startDate.getMonth();
+      const first = new Date(y, 0, 1);
+      const last = new Date(y, 11 + 1, 1);
+      url += `&periode=${[ConvertToEpoch(first), ConvertToEpoch(last)]}`;
+    } else {
+      const y = startDate.getFullYear();
+      const m = startDate.getMonth();
+      const first = new Date(y, m, 1);
+      const last = new Date(y, m + 1, 1);
+      url += `&periode=${[ConvertToEpoch(first), ConvertToEpoch(last)]}`;
+    }
+    if (selectProvinsi.value !== "all") {
+      url += `&provinsi=${selectProvinsi.value}`;
+    }
+    if (selectRegencies.value !== "all") {
+      url += `&kabkot=${selectRegencies.value}`;
+    }
+    if (selectDistrict.value !== "all") {
+      url += `&kecamatan=${selectDistrict.value}`;
+    }
+    if (selectVillage.value !== "all") {
+      url += `&kelurahan=${selectVillage.value}`;
+    }
+    maintenanceAxios({
+      axiosInstance: axios,
+      method: "GET",
+      url: url,
+      data: null,
+      reqConfig: {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth")}`,
+        },
+      },
+    });
+    setShowChartMaintenance(true);
+  };
+
   useEffect(() => {
     const invt = setTimeout(() => {
       getProvinces();
+      handleView2();
     }, 1);
     return () => clearInterval(invt);
   }, []);
@@ -168,93 +216,16 @@ export default function Solved() {
     return () => clearInterval(inv);
   }, [selectDistrict]);
 
-  const handleView = () => {
-    let url = `complaint-report?perpage=${pagination.value}&&type=${type.value}`;
-    if (type.value === "3") {
-      let last = new Date(endDateRange);
-      url += `&periode=${[
-        ConvertToEpoch(startDateRange),
-        ConvertToEpoch(last.setDate(last.getDate() + 1)),
-      ]}`;
-    } else if (type.value === "2") {
-      const y = startDate.getFullYear();
-      const m = startDate.getMonth();
-      const first = new Date(y, 0, 1);
-      const last = new Date(y, 11 + 1, 0);
-      url += `&periode=${[ConvertToEpoch(first), ConvertToEpoch(last)]}`;
-    } else {
-      const y = startDate.getFullYear();
-      const m = startDate.getMonth();
-      const first = new Date(y, m, 1);
-      const last = new Date(y, m + 1, 0);
-      url += `&periode=${[ConvertToEpoch(first), ConvertToEpoch(last)]}`;
-    }
-    if (selectProvinsi.value !== "all") {
-      url += `&provinsi=${selectProvinsi.value}`;
-    }
-    if (selectRegencies.value !== "all") {
-      url += `&kabkot=${selectRegencies.value}`;
-    }
-    if (selectDistrict.value !== "all") {
-      url += `&kecamatan=${selectDistrict.value}`;
-    }
-    if (selectVillage.value !== "all") {
-      url += `&kelurahan=${selectVillage.value}`;
-    }
-    axiosFunc({
-      axiosInstance: axios,
-      method: "GET",
-      url: url,
-      data: null,
-      reqConfig: {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth")}`,
-        },
-      },
-    });
-  };
-
-  useEffect(()=>{
-    const inv = setTimeout(() => {
-      handleView()
-    }, 1);
-
-    return () => clearInterval(inv)
-  },[])
-
-  useEffect(() => {
-    const inv = setTimeout(() => {
-      setExcel([]);
-      const status = response?.data ? "true" : "false";
-      const dataExcel = [];
-      status == "true" &&
-        response.data.map((data) => {
-          dataExcel.push({
-            "Nomor Keluhan": data.tiket,
-            Pelanggan: data.pelanggan.nama_pelanggan,
-            Dibuat: ToDate(data.created_at, "full"),
-            Status: data.status_desc,
-            Provinsi:
-              data.pelanggan.kelurahan.kecamatan.kabkot.provinsi.name,
-            "Kabupaten/Kota":
-              data.pelanggan.kelurahan.kecamatan.kabkot.name,
-            Kecamatan: data.pelanggan.kelurahan.kecamatan.name,
-            Kelurahan: data.pelanggan.kelurahan.name,
-          });
-        });
-      setExcel(dataExcel);
-    }, 1);
-    return () => clearInterval(inv);
-  }, [response]);
+  const [showChartMaintenance, setShowChartMaintenance] = useState(false);
 
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
-        <h3 className="mb-0">Laporan Complaint</h3>
+        <h3 className="mb-0">Grafik Maintenance</h3>
         <div>
-          <button className="btn btn-info" onClick={handleView}>
-            <FontAwesomeIcon icon={faEye} />
-            &nbsp; Lihat
+          <button className="btn btn-info" onClick={handleView2}>
+            <FontAwesomeIcon icon={faSync} />
+            &nbsp; Proses
           </button>
         </div>
       </div>
@@ -363,96 +334,11 @@ export default function Solved() {
         </div>
       </div>
       <hr />
-      <div className="px-3 py-2">
-        {loading && <LoadingPage text={"Loading data"} />}
-        <div className="row mb-2 mt-2">
-          <div className="col-12 d-flex flex-row-reverse">
-              <ExportToExcel apiData={dataExcel} fileName={`Solved-report-${ToDate(new Date())}`} />
-          </div>
+      {showChartMaintenance && (
+        <div className="col-md-12">
+          <LineChart2 dataMentah={maintenance} />
         </div>
-        {!loading && !error && (
-          <>
-            <div className="table-responsive">
-              <table className="table table-bordered text-nowrap">
-                <thead className="bg-white text-center fw-bold">
-                  <tr>
-                    <th className="w-5">#</th>
-                    <th>Nomor Keluhan</th>
-                    <th>Pelanggan</th>
-                    <th>Dibuat</th>
-                    <th>Status</th>
-                    <th>Provinsi</th>
-                    <th>Kabupaten/Kota</th>
-                    <th>Kecamatan</th>
-                    <th>Kelurahan</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {response?.data ? (
-                    response.data.length > 0 ? (
-                      response.data.map((data, index) => (
-                        <tr key={index}>
-                          <td className="text-center">
-                            {response.pagination.from + index}
-                          </td>
-                          <td>{data.tiket}</td>
-                          <td>{data.pelanggan.nama_pelanggan}</td>
-                          <td>{ToDate(data.created_at, "full")}</td>
-                          <td>
-                            {data.status_desc}
-                          </td>
-                          <td>
-                            {
-                              data.pelanggan.kelurahan.kecamatan.kabkot
-                                .provinsi.name
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.pelanggan.kelurahan.kecamatan.kabkot
-                                .name
-                            }
-                          </td>
-                          <td>
-                            {data.pelanggan.kelurahan.kecamatan.name}
-                          </td>
-                          <td>{data.pelanggan.kelurahan.name}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr className="text-center">
-                        <td colSpan={9}>Tidak Ada data</td>
-                      </tr>
-                    )
-                  ) : (
-                    <tr className="text-center">
-                      <td colSpan={9}>Tidak Ada data</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-            {response?.data ? (
-              <div className="row d-flex justify-content-between align-items-center">
-                <div className="col-12 col-xl-6">
-                  show {response?.pagination.count} data of{" "}
-                  {response?.pagination.total} data
-                </div>
-                <div className="col-12 col-xl-6 d-flex flex-row-reverse">
-                  <Pagging
-                    total={response?.pagination.total}
-                    itemsPerPage={response?.pagination.perPage}
-                    currentPage={response?.pagination.currentPage}
-                    onPageChange={(page) => setPage(page)}
-                  />
-                </div>
-              </div>
-            ) : (
-              false
-            )}
-          </>
-        )}
-      </div>
+      )}
     </div>
   );
 }

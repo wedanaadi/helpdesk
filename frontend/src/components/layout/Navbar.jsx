@@ -101,11 +101,11 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
     axiosHandle && handleAxios();
   }, [response, error]);
 
-  // const { data, mutate } = useNotifikasi();
+  const { data, mutate } = useNotifikasi();
 
-  // const handleNotif = () => {
-  //   mutate("notifikasi");
-  // };
+  const handleNotif = () => {
+    mutate("notifikasi");
+  };
 
   return (
     <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
@@ -137,15 +137,15 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
                 data-bs-toggle="dropdown"
               >
                 <FontAwesomeIcon icon={faEnvelope} className="me-lg-2" />
-                {/* <span className="d-none d-lg-inline-flex">
+                <span className="d-none d-lg-inline-flex">
                   Pesan {data?.length > 0 ? `(${data.length})` : false}
-                </span> */}
+                </span>
               </a>
               <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                {/* {data &&
+                {data &&
                   data.length > 0 &&
                   data.map((data, index) => (
-                    <>
+                    <div key={index}>
                       <Link
                         to={`${baseUrl}/viewNotif/${data.send}`}
                         className="dropdown-item"
@@ -154,23 +154,23 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
                         <div className="d-flex align-items-center">
                           <img
                             className="rounded-circle"
-                            src={`${baseUrl}/img/user.jpg`}
+                            src={`${baseUrl}/img/userlogo.png`}
                             alt="image"
                             style={{ width: 40, height: 40 }}
                           />
                           <div className="ms-2">
                             <h6 className="fw-normal mb-0">
-                              {data.sender.nama_pegawai}
+                              {data?.sender?.nama_pegawai}
                             </h6>
                           </div>
                         </div>
                       </Link>
                       <hr className="dropdown-divider" />
-                    </>
-                  ))} */}
-                {/* <Link to={`${baseUrl}/pesan`} className="dropdown-item text-center">
+                    </div>
+                  ))}
+                <Link to={`${baseUrl}/pesan`} className="dropdown-item text-center">
                   Kirim Pesan
-                </Link> */}
+                </Link>
               </div>
             </div>
           </>

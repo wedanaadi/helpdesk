@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import axios from "../../util/jsonApi";
 import LoadingPage from "../../LoadingPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faEnvelope,
   faPencilAlt,
   faPlus,
   faSearch,
@@ -15,6 +16,7 @@ import useHookAxios from "../../hook/useHookAxios";
 import { confirmAlert } from "react-confirm-alert";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../util/BaseUrl";
+import SendEmail from "./SendEmail";
 
 export default function Index() {
   const UserLogin = JSON.parse(localStorage.getItem("userData"));
@@ -29,6 +31,8 @@ export default function Index() {
   const [validation, setValidation] = useState(null);
   const toastId = useRef(null);
   const navigasi = useNavigate();
+  const LocalUser = JSON.parse(localStorage.getItem("userData"));
+  const hk = LocalUser.role;
 
   const optionsPage = [
     {
@@ -153,8 +157,24 @@ export default function Index() {
     navigasi(`${baseUrl}/keluhan/addSystem`, { replace: true });
   };
 
+  const [show, setShow] = useState(false);
+  const [dataModal, setDataModal] = useState(null);
+
+  const handleModal = (data) => {
+    setShow(true);
+    setDataModal(data);
+  };
+
   return (
     <div className="row bg-light rounded mx-0">
+      <Suspense>
+        <SendEmail
+          toggleModal={show}
+          setState={setShow}
+          data={dataModal}
+          type="toTeknisi"
+        />
+      </Suspense>
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Pelanggan</h3>
         {UserLogin.role == "1" ? (
@@ -231,7 +251,20 @@ export default function Index() {
                             {pelanggans.pagination.from + index}
                           </td>
                           <td>{data.nama_pelanggan}</td>
-                          <td>{data.email}</td>
+                          <td>
+                            <div className="d-flex justify-content-between align-items-center mx-0">
+                              <span>{data.email}</span>
+                              &nbsp;
+                                <button
+                                  className="btn btn-info mb-0"
+                                  onClick={() => handleModal(data)}
+                                >
+                                  <FontAwesomeIcon icon={faEnvelope} />
+                                  &nbsp; Kirim
+                                </button>
+                              &nbsp;
+                            </div>
+                          </td>
                           <td>{data.telepon}</td>
                           <td>{data.alamat}</td>
                           <td>

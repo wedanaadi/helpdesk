@@ -28,6 +28,30 @@ class Keluhan extends Model
           $query->where('nama_kategori', $search);
         });
     });
+    $query->when($filters['periode'] ?? false, function ($query, $params) {
+      $periode = explode(',', $params);
+      return $query->whereRaw("keluhans.created_at >= '" . $periode[0] . "' AND keluhans.created_at < '" . $periode[1] . "' ");
+    });
+    $query->when($filters['provinsi'] ?? false, function ($query, $params) {
+      return $query->whereHas('pelanggan.kelurahan.kecamatan.kabkot.provinsi', function ($query) use ($params) {
+        $query->where('id', $params);
+      });
+    });
+    $query->when($filters['kabkot'] ?? false, function ($query, $params) {
+      return $query->whereHas('pelanggan.kelurahan.kecamatan.kabkot', function ($query) use ($params) {
+        $query->where('id', $params);
+      });
+    });
+    $query->when($filters['kecamatan'] ?? false, function ($query, $params) {
+      return $query->whereHas('pelanggan.kelurahan.kecamatan', function ($query) use ($params) {
+        $query->where('id', $params);
+      });
+    });
+    $query->when($filters['kelurahan'] ?? false, function ($query, $params) {
+      return $query->whereHas('pelanggan.kelurahan', function ($query) use ($params) {
+        $query->where('id', $params);
+      });
+    });
   }
 
   public function pelanggan()

@@ -1,13 +1,21 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import useHookAxios from "../../hook/useHookAxios";
-import axios from "../../util/jsonApi"
-import {updateMaintenanceReducer, INITIAL_STATE} from "../../reducer/updateMaintenanceReducer"
+import axios from "../../util/jsonApi";
+import {
+  updateMaintenanceReducer,
+  INITIAL_STATE,
+} from "../../reducer/updateMaintenanceReducer";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../util/BaseUrl";
 
-export default function ModalUpdate({ toggleModal, setState, data, aksiUpdate }) {
+export default function ModalUpdate({
+  toggleModal,
+  setState,
+  data,
+  aksiUpdate,
+}) {
   const [response, error, loading, actionAxios] = useHookAxios();
   const [state, dispatch] = useReducer(updateMaintenanceReducer, INITIAL_STATE);
   const [axiosHandle, setAxiosHandle] = useState(false);
@@ -65,6 +73,17 @@ export default function ModalUpdate({ toggleModal, setState, data, aksiUpdate })
     }
 
     if (response && !error && !validation && !loading) {
+      actionAxios({
+        axiosInstance: axios,
+        method: "POST",
+        url: `maintenance/sendEmail`,
+        data: response.email,
+        reqConfig: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        },
+      });
       toast.update(toastId.current, {
         render: "Successfuly updated Status",
         type: "success",
@@ -88,15 +107,24 @@ export default function ModalUpdate({ toggleModal, setState, data, aksiUpdate })
     // const aksi = type;
     dispatch({
       type: "CHANGE_INPUT",
-      payload: { name: "ticket_keluhan", value: data?.tiket_keluhan ? data.tiket_keluhan : "" },
+      payload: {
+        name: "ticket_keluhan",
+        value: data?.tiket_keluhan ? data.tiket_keluhan : "",
+      },
     });
     dispatch({
       type: "CHANGE_INPUT",
-      payload: { name: "ticket_maintenance", value: data?.tiket_maintenance ? data.tiket_maintenance : "" },
+      payload: {
+        name: "ticket_maintenance",
+        value: data?.tiket_maintenance ? data.tiket_maintenance : "",
+      },
     });
     dispatch({
       type: "CHANGE_INPUT",
-      payload: { name: "pegawai_id", value: data?.pegawai_id ? data?.pegawai_id : "" },
+      payload: {
+        name: "pegawai_id",
+        value: data?.pegawai_id ? data?.pegawai_id : "",
+      },
     });
   }, [toggleModal]);
 

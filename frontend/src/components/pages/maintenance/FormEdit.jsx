@@ -132,6 +132,17 @@ export default function FormEdit() {
     }
 
     if (response && !error && !validation && !loading) {
+      AxiosFuc({
+        axiosInstance: axios,
+        method: "POST",
+        url: `maintenance/sendEmail`,
+        data: response.email,
+        reqConfig: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        },
+      });
       toast.update(toastId.current, {
         render: "Successfuly created",
         type: "success",
@@ -247,7 +258,7 @@ export default function FormEdit() {
                 </div>
               ))}
           </div>
-          <div className="mb-3">
+          {/* <div className="mb-3">
             <label htmlFor="namaTeknisi" className="form-label">
               Note
             </label>
@@ -258,7 +269,7 @@ export default function FormEdit() {
               onChange={handleChange}
               value={state.note}
             ></textarea>
-          </div>
+          </div> */}
         </div>
         <div className="py-3 px-2 border-top d-flex flex-row-reverse">
           <button type="submit" className="btn btn-primary">

@@ -26,13 +26,11 @@ export default function SendEmail({ toggleModal, setState, data, type }) {
     AxiosFuc({
       axiosInstance: axios,
       method: "POST",
-      url: `sendEmail`,
+      url: `sendEmail/pelanggan`,
       data: {
-        email: data?.teknisi?.email,
+        email: data?.email,
         subject,
-        body,
-        ticket: data?.tiket_maintenance,
-        type
+        body
       },
       reqConfig: {
         headers: {
@@ -64,7 +62,7 @@ export default function SendEmail({ toggleModal, setState, data, type }) {
     }
 
     if (response && !error && !validation && !loading) {
-      handleClose();
+      handleClose()
       // closeModal.current.click();
       toast.update(toastId.current, {
         render: "Successfuly send Email",
@@ -73,7 +71,7 @@ export default function SendEmail({ toggleModal, setState, data, type }) {
         autoClose: 1500,
       });
       setAxiosHandle(false);
-      navigasi(`${baseUrl}/maintenance`);
+      navigasi(`${baseUrl}/pelanggan`);
     }
   };
 
@@ -92,14 +90,14 @@ export default function SendEmail({ toggleModal, setState, data, type }) {
             <div className="row p-2">
               <div className="mb-3">
                 <label htmlFor="namaTeknisi" className="form-label">
-                  Email Teknis
+                  Email Pelanggan
                 </label>
                 <input
                   readOnly
                   type="text"
                   name="email"
                   className="form-control"
-                  value={data?.teknisi?.email}
+                  value={data?.email}
                 />
               </div>
               <div className="mb-3">

@@ -9,7 +9,7 @@ export default function Home() {
   const [sidebarOpen, setSidebar] = useState(false);
   return (
     <>
-      {/* <SWRContext> */}
+      <SWRContext>
         <div className="container-xxl position-relative bg-white d-flex p-0">
           <Sidebar sidebarOpen={sidebarOpen} />
           <div className={sidebarOpen ? "content open" : "content"}>
@@ -20,7 +20,7 @@ export default function Home() {
             <Footer />
           </div>
         </div>
-      {/* </SWRContext> */}
+      </SWRContext>
     </>
   );
 }

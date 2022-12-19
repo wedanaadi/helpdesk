@@ -4,8 +4,8 @@
     <title>Helpdesk</title>
 </head>
 <body>
-    <h3>Nomor Ticket Keluhan: {{ $data['ticket_keluhan'] }}</h3>
-    <h6>Nomor Ticket Maintenance: {{ $data['ticket_maintenance'] }}</h6>
+    <h3>Nomor Ticket: {{ $data['nomor'] }}</h3>
+    <h6>Kategori Keluhan: {{ $data['kategori'] }}</h6>
     <p style="white-space:pre-line">{{ $data['message'] }}</p>
     <p>Terimakasih</p>
 </body>
