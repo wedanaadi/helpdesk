@@ -19,11 +19,21 @@ const fetcher = async () => {
   return response.data
 }
 
+const fetcherKeluhan = async () => {
+  const response = await axios.get('keluhan-notifikasi',{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("auth")}`,
+    },
+  });
+  return response.data
+}
+
 const NotifikasiContext = ({children}) => {
   const [notif, setNotif] = useState('ini token awal');
   const {data} = useSWR('notifikasi',fetcher)
+  const {data:keluhan} = useSWR('keluhan',fetcherKeluhan)
   const {mutate} = useSWRConfig()
-  return (<globalToken.Provider value={{ notif, setNotif, data, mutate  }}>
+  return (<globalToken.Provider value={{ notif, setNotif, data, mutate, keluhan  }}>
     {children}
   </globalToken.Provider>)
 }

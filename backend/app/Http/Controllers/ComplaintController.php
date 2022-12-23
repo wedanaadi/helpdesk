@@ -75,6 +75,15 @@ class ComplaintController extends Controller
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
 
+  public function notifikasi_keluhan()
+  {
+    $data = Keluhan::where('status','0')
+    ->select('*',DB::raw('date_format(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d %H:%i:%s") as human_created_at'))
+    ->orderBy('created_at','DESC')
+    ->get();
+    return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
+  }
+
   public function index_pelanggan(Request $request)
   {
     $data = Keluhan::filter(request(['search']))

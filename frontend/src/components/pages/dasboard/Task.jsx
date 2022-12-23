@@ -44,18 +44,16 @@ export default function Task() {
           </thead>
           <tbody>
             {response?.data?.length > 0 ? (
-              response.data.map((data, index) => (
-                <>
-                  {data.status != "1" ? (
-                    <tr key={index}>
-                      <td className="fw-bold">{data.tiket_maintenance}</td>
-                      <td>{data.status_desc}</td>
-                    </tr>
-                  ) : (
-                    false
-                  )}
-                </>
-              ))
+              response.data.map((data, index) =>
+                data.status != "1" ? (
+                  <tr key={index}>
+                    <td className="fw-bold">{data.tiket_maintenance}</td>
+                    <td>{data.status_desc}</td>
+                  </tr>
+                ) : (
+                  false
+                )
+              )
             ) : (
               <>
                 <tr className="text-center">

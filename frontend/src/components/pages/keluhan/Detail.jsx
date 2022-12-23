@@ -13,7 +13,7 @@ import useHookAxios from "../../hook/useHookAxios";
 import Map2 from "../../Map2";
 import { baseUrl } from "../../util/BaseUrl";
 import axios from "../../util/jsonApi";
-import ToDate from "../../util/ToDate";
+import ToDate, { ConvertToEpoch } from "../../util/ToDate";
 const ModalUpdate = React.lazy(() =>
   import("../../pages/keluhan/ModalUpdateKeluhan")
 );
@@ -30,21 +30,27 @@ export default function Detail() {
   const LokalUser = JSON.parse(localStorage.getItem("userData"));
   const hk = LokalUser.role;
 
-  const handleSolve = () => {
-    setAxiosHandle(true);
-    toastId.current = toast.loading("Please wait...");
-    actionAxios({
-      axiosInstance: axios,
-      method: "PUT",
-      url: `keluhan/status/${detailLokal.id}`,
-      data: { status: "1" },
-      reqConfig: {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth")}`,
-        },
-      },
-    });
-    setAxiosHandle(true);
+  // const handleSolve = () => {
+  //   setAxiosHandle(true);
+  //   toastId.current = toast.loading("Please wait...");
+  //   actionAxios({
+  //     axiosInstance: axios,
+  //     method: "PUT",
+  //     url: `keluhan/status/${detailLokal.id}`,
+  //     data: { status: "1" },
+  //     reqConfig: {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("auth")}`,
+  //       },
+  //     },
+  //   });
+  //   setAxiosHandle(true);
+  // };
+
+  const checkExp = () => {
+    const db = ConvertToEpoch(detailLokal.expired_date);
+    const now = ConvertToEpoch(new Date());
+    return db < now ? false : true;
   };
 
   const handleAxios = () => {
@@ -160,8 +166,7 @@ export default function Detail() {
                 false
               ) : (
                 <>
-                  {detailLokal.status === 0 &&
-                  detailLokal.status_keluhan === "ON" ? (
+                  { checkExp() ? (
                     <>
                       <button
                         className="btn btn-info"

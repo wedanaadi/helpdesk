@@ -9,22 +9,23 @@ import AuthConsumer from "../hook/Auth";
 import useHookAxios from "../hook/useHookAxios";
 import { baseUrl } from "../util/BaseUrl";
 import axios from "../util/jsonApi";
+import ToDate from "../util/ToDate";
 
 export default function Navbar({ sidebarOpen, setSidebar }) {
   const LokalUser = JSON.parse(localStorage.getItem("userData"));
   let name = "";
   let role = "";
-  if (LokalUser.role == "5") {
-    name = LokalUser.relasi.nama;
+  if (LokalUser?.role == "5") {
+    name = LokalUser?.relasi?.nama;
     role = "Super User";
-  } else if (LokalUser.role == "4") {
-    name = LokalUser.relasi.nama_pelanggan;
+  } else if (LokalUser?.role == "4") {
+    name = LokalUser?.relasi?.nama_pelanggan;
     role = "Pelanggan";
   } else {
-    name = LokalUser.relasi.nama_pegawai;
-    if (LokalUser.role == "1") {
+    name = LokalUser?.relasi?.nama_pegawai;
+    if (LokalUser?.role == "1") {
       role = "Admin";
-    } else if (LokalUser.role == "2") {
+    } else if (LokalUser?.role == "2") {
       role = "Helpdesk";
     } else {
       role = "Teknisi";
@@ -101,7 +102,7 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
     axiosHandle && handleAxios();
   }, [response, error]);
 
-  const { data, mutate } = useNotifikasi();
+  const { data, mutate, keluhan } = useNotifikasi();
 
   const handleNotif = () => {
     mutate("notifikasi");
@@ -127,9 +128,8 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
         />
       </form> */}
       <div className="navbar-nav align-items-center ms-auto">
-        {LokalUser.role != "4" && (
+        {LokalUser?.role != "4" && (
           <>
-            {" "}
             <div className="nav-item dropdown">
               <a
                 href="#"
@@ -168,12 +168,56 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
                       <hr className="dropdown-divider" />
                     </div>
                   ))}
-                <Link to={`${baseUrl}/pesan`} className="dropdown-item text-center">
+                <Link
+                  to={`${baseUrl}/pesan`}
+                  className="dropdown-item text-center"
+                >
                   Kirim Pesan
                 </Link>
               </div>
             </div>
           </>
+        )}
+
+        {LokalUser?.role == "1" || LokalUser?.role == "2" ? (
+          <>
+            <div className="nav-item dropdown">
+              <a
+                href="#"
+                className="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+              >
+                <i className="fa fa-bell me-lg-2" />
+                <span className="d-none d-lg-inline-flex">
+                  Notifikasi{" "}
+                  {keluhan?.data?.length > 0
+                    ? `(${keluhan.data.length})`
+                    : false}
+                </span>
+              </a>
+              <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                {keluhan?.data &&
+                  keluhan?.data?.length > 0 &&
+                  keluhan.data.map((data, index) => (
+                    <div key={index}>
+                      <div className="dropdown-item">
+                        <h6 className="fw-normal mb-0">{data.tiket}</h6>
+                        <small>{ToDate(data.human_created_at)}</small>
+                      </div>
+                      <hr className="dropdown-divider" />
+                    </div>
+                  ))}
+                <Link
+                  to={`${baseUrl}/keluhan`}
+                  className="dropdown-item text-center"
+                >
+                  Lihat keluhan
+                </Link>
+              </div>
+            </div>
+          </>
+        ) : (
+          false
         )}
 
         <div className="nav-item dropdown">

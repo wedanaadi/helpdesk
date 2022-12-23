@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/ticket-select2/{id}',[ComplaintController::class, 'selectOnlyId']);
 
   Route::get('keluhan', [ComplaintController::class, 'index']);
+  Route::get('keluhan-notifikasi', [ComplaintController::class, 'notifikasi_keluhan']);
   Route::get('keluhan-pelanggan', [ComplaintController::class, 'index_pelanggan']);
   Route::get('keluhan/files/{id}', [ComplaintController::class, 'files']);
   Route::get('log-keluhan', [ComplaintController::class, 'log']);

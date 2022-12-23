@@ -9,6 +9,7 @@ import { baseUrl } from "../../util/BaseUrl";
 import oriAxios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useNotifikasi } from "../../context/Chat";
 
 export default function KeluhanAddPelanggan() {
   const [pelanggan, errPelanggan, loadingPelanggan, pelFunc] = useHookAxios();
@@ -22,6 +23,8 @@ export default function KeluhanAddPelanggan() {
   const [axiosHandle, setAxiosHandle] = useState(false);
   const [response, error, loading, AxiosFuc] = useHookAxios();
   const LocalUser = JSON.parse(localStorage.getItem("userData"));
+
+  const {mutate} = useNotifikasi()
 
   const handleChange = (e) => {
     dispatch({
@@ -147,6 +150,7 @@ export default function KeluhanAddPelanggan() {
     }
 
     if (response && !error && !validation && !loading) {
+      mutate("keluhan");
       AxiosFuc({
         axiosInstance: axios,
         method: "POST",

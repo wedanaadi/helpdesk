@@ -10,6 +10,7 @@ import {
   updateKelurahanReducer,
   INITIAL_STATE,
 } from "../../reducer/updateKeluhanReducer";
+import { useNotifikasi } from "../../context/Chat";
 
 export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
   const [teknisi, errTeknisi, loadingTeknisi, pelFunc] = useHookAxios();
@@ -23,6 +24,7 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
   const [response, error, loading, actionAxios] = useHookAxios();
   const [state, dispatch] = useReducer(updateKelurahanReducer, INITIAL_STATE);
   const dataLogin = JSON.parse(localStorage.getItem('userData'));
+  const {mutate} = useNotifikasi()
 
   const optionTipes = [
     {
@@ -138,6 +140,7 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
     }
 
     if (response && !error && !validation && !loading) {
+      mutate('keluhan')
       toast.update(toastId.current, {
         render: "Successfuly updated Status",
         type: "success",

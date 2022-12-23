@@ -222,10 +222,10 @@ class ReportController extends Controller
   public function chart_maintenance()
   {
     $pending = Maintenance::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']));
-    $pending->where('status', '!=', '2');
+    $pending->where('status', '!=', '1');
     if (request('type') == '2') {
       $pending->select(
-        'id',
+        DB::raw("tiket_keluhan AS id"),
         'status',
         DB::raw('"month" as type'),
         DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) label'),
@@ -237,7 +237,7 @@ class ReportController extends Controller
       );
     } else {
       $pending->select(
-        'id',
+        DB::raw("tiket_keluhan AS id"),
         'status',
         DB::raw('"day" as type'),
         DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'),
@@ -253,7 +253,7 @@ class ReportController extends Controller
       ->where('status', '1');
     if (request('type') == '2') {
       $report->select(
-        'id',
+        DB::raw("keluhan_id AS id"),
         'status',
         DB::raw('"month" as type'),
         DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) label'),
@@ -265,7 +265,7 @@ class ReportController extends Controller
       );
     } else {
       $report->select(
-        'id',
+        DB::raw("keluhan_id AS id"),
         'status',
         DB::raw('"day" as type'),
         DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'),
@@ -278,7 +278,7 @@ class ReportController extends Controller
     }
     $report->union($pending);
     $data = DB::table(DB::raw("({$report->toSql()}) as sub"))
-      ->mergeBindings($report->getQuery());
+    ->mergeBindings($report->getQuery());
     if (request('type') == "1") {
       $data->select('*', DB::raw('count(jumlah) as jumlah'));
       $data->groupBy('month', 'day');

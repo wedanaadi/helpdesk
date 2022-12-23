@@ -15,20 +15,20 @@ import { Link, useLocation } from "react-router-dom";
 export default function Sidebar({ sidebarOpen }) {
   const base_url = import.meta.env.VITE_bASE_ROUTE;
   const LokalUser = JSON.parse(localStorage.getItem("userData"));
-  const hk = LokalUser.role;
+  const hk = LokalUser?.role;
   let name = "";
   let role = "";
-  if (LokalUser.role == "5") {
-    name = LokalUser.relasi.name;
+  if (LokalUser?.role == "5") {
+    name = LokalUser?.relasi?.name;
     role = "Super User";
-  } else if (LokalUser.role == "4") {
-    name = LokalUser.relasi.nama_pelanggan;
+  } else if (LokalUser?.role == "4") {
+    name = LokalUser?.relasi?.nama_pelanggan;
     role = "Pelanggan";
   } else {
-    name = LokalUser.relasi.nama_pegawai;
-    if (LokalUser.role == "1") {
+    name = LokalUser?.relasi?.nama_pegawai;
+    if (LokalUser?.role == "1") {
       role = "Admin";
-    } else if (LokalUser.role == "2") {
+    } else if (LokalUser?.role == "2") {
       role = "Helpdesk";
     } else {
       role = "Teknisi";
