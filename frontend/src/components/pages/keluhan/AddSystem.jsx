@@ -22,6 +22,7 @@ export default function AddSystem() {
   const navigasi = useNavigate();
   const [axiosHandle, setAxiosHandle] = useState(false);
   const [response, error, loading, AxiosFuc] = useHookAxios();
+  const LocalUser = JSON.parse(localStorage.getItem("userData"));
 
   const handleChange = (e) => {
     dispatch({
@@ -84,6 +85,14 @@ export default function AddSystem() {
     const inv = setTimeout(() => {
       getKategori();
       getPelanggan();
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: { name: 'created_user', value: LocalUser.idUser },
+      });
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: { name: 'updated_user', value: LocalUser.idUser },
+      });
     }, 1);
     return () => clearInterval(inv);
   }, []);

@@ -145,6 +145,7 @@ class ComplaintController extends Controller
         'kategori_id' => $request->kategori,
         'comment' => $request->komentar,
         'created_user' => $request->created_user,
+        'updated_user' => $request->updated_user,
         'expired_date' => strtotime(date("Y-m-d H:i:s") . "+3 days") * 1000,
         'status' => '0',
         'created_at' => round(microtime(true) * 1000),
@@ -152,7 +153,7 @@ class ComplaintController extends Controller
       ];
 
       $dataEmail = [
-        'message' => 'Selamat, Ticket Keluhan Telah dibuat!.',
+        'message' => ['Selamat, Ticket Keluhan Telah dibuat!.'],
         'nomor' => $newTiket,
         'kategori' => $kategori->nama_kategori,
         'email' => $dataPelanggan->email,
@@ -235,11 +236,12 @@ class ComplaintController extends Controller
         'kategori_id' => $request->kategori,
         'comment' => $request->komentar,
         'created_user' => $request->created_user,
+        'updated_user' => $request->updated_user,
         'updated_at' => round(microtime(true) * 1000),
       ];
 
       $dataEmail = [
-        'message' => 'Selamat, Ticket Keluhan berhasil dirubah!.',
+        'message' => ['Selamat, Ticket Keluhan berhasil dirubah!.'],
         'nomor' => $find->tiket,
         'kategori' => $kategori->nama_kategori,
         'subject' => 'Updated Ticket Complaint',
@@ -306,14 +308,15 @@ class ComplaintController extends Controller
 
   public function destroy($id)
   {
-    $pegawaiFind = Keluhan::findOrFail($id);
+    $keluhan = Keluhan::findOrFail($id);
     DB::beginTransaction();
     try {
       $payload = [
         'is_aktif' => "0"
       ];
 
-      $pegawaiFind->update($payload);
+      $keluhan->update($payload);
+      Log::where('keluhan_id',$keluhan->tiket)->delete();
       DB::commit();
       return response()->json(['msg' => 'Successfuly delete data keluhan', "data" => $payload, 'error' => []], 200);
     } catch (Exception $e) {
@@ -339,13 +342,15 @@ class ComplaintController extends Controller
     DB::beginTransaction();
     try {
       $payload = [
-        'status' => $request->status
+        'status' => $request->status,
+        'updated_user' =>  $request->user_update,
       ];
 
       $dataLog = [
         'keluhan_id' => $keluhanFind->tiket,
         'relasi_log' => $keluhanFind->tiket,
         'user_id' => $keluhanFind->pelanggan_id,
+        'updated_by' => $request->user_update,
         'deskripsi' => 'Ticket keluhan telah terselesaikan (solved by sistem).' . PHP_EOL . $request->deskripsi,
         'type' => '1',
         'created_at' => round(microtime(true) * 1000),
@@ -355,7 +360,62 @@ class ComplaintController extends Controller
       $dataPelanggan  = Pelanggan::find($keluhanFind->pelanggan_id);
       $kategori = Kategori::find($keluhanFind->kategori_id);
       $dataEmail = [
-        'message' => 'Ticket keluhan telah terselesaikan (solved by sistem).' . PHP_EOL . $request->deskripsi,
+        'message' => ['Ticket keluhan telah terselesaikan (solved by sistem).',$request->deskripsi],
+        // 'message' => 'Ticket keluhan telah terselesaikan (solved by sistem).' . PHP_EOL . $request->deskripsi,
+        'nomor' => $keluhanFind->tiket,
+        'kategori' => $kategori->nama_kategori,
+        'subject' => 'Updated Penanganan Ticket Complaint',
+        'email' => $dataPelanggan->email,
+      ];
+
+      $keluhanFind->update($payload);
+      Log::create($dataLog);
+      // UpdateComplaint::create($updateKeluhan);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly update status', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail update status', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
+  public function onProccess(Request $request, $id)
+  {
+    $validator = Validator::make($request->all(), [
+      'keluhan_id' => 'required',
+      'deskripsi' => 'required',
+    ], [
+      'required' => 'Input :attribute harus diisi!',
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
+    }
+
+    $keluhanFind = Keluhan::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $payload = [
+        'status' => '2',
+        'updated_user' =>  $request->user_update,
+      ];
+
+      $dataLog = [
+        'keluhan_id' => $keluhanFind->tiket,
+        'relasi_log' => $keluhanFind->tiket,
+        'user_id' => $keluhanFind->pelanggan_id,
+        'updated_by' => $request->user_update,
+        'deskripsi' => 'Status ticket menjadi ON PROCCESS.' . PHP_EOL . $request->deskripsi,
+        'type' => '1',
+        'created_at' => round(microtime(true) * 1000),
+        'updated_at' => round(microtime(true) * 1000),
+      ];
+
+      $dataPelanggan  = Pelanggan::find($keluhanFind->pelanggan_id);
+      $kategori = Kategori::find($keluhanFind->kategori_id);
+      $dataEmail = [
+        'message' => ['Status ticket menjadi ON PROCCESS.',$request->deskripsi],
+        // 'message' => 'Status ticket menjadi ON PROCCESS.' . PHP_EOL . $request->deskripsi,
         'nomor' => $keluhanFind->tiket,
         'kategori' => $kategori->nama_kategori,
         'subject' => 'Updated Penanganan Ticket Complaint',
@@ -401,17 +461,21 @@ class ComplaintController extends Controller
   public function log(Request $request)
   {
     $sql = "SELECT * FROM (
-              SELECT logs.created_at, logs.deskripsi from logs
+              SELECT logs.created_at, logs.deskripsi, IFNULL(nama_pegawai,'Sistem') AS 'updated_by' from logs
               INNER join pelanggans on pelanggans.id = logs.user_id
+              LEFT join pegawais on pegawais.id = logs.updated_by
               WHERE logs.type = '1' AND logs.`keluhan_id` = '$request->idKeluhan'
               UNION
-              SELECT logs.created_at, concat(logs.deskripsi, ' Teknisi yang menangani adalah ', pegawais.`nama_pegawai`) from logs
+              SELECT logs.created_at, concat(logs.deskripsi, ' Teknisi yang menangani adalah ', pegawais.`nama_pegawai`),
+              IFNULL(up.nama_pegawai,'Sistem') AS 'updated_by' from logs
               INNER join pegawais on pegawais.`id` = logs.user_id
+              LEFT join pegawais up on up.id = logs.updated_by
               WHERE logs.type = '2' AND logs.`keluhan_id` = '$request->idKeluhan'
               UNION
-              select created_at, deskripsi from(
-              SELECT logs.created_at, deskripsi from logs
+              SELECT created_at, deskripsi, IFNULL(nama_pegawai,'Sistem') AS 'updated_by' from(
+              SELECT logs.created_at, deskripsi, up.`nama_pegawai` from logs
               INNER join pegawais on pegawais.`id` = logs.user_id
+              LEFT join pegawais up on up.`id` = logs.updated_by
               WHERE logs.type = '3' AND logs.`keluhan_id` = '$request->idKeluhan'
               ORDER BY created_at
               ) AS pivot

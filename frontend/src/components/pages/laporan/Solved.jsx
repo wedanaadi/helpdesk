@@ -214,13 +214,13 @@ export default function Solved() {
     });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const inv = setTimeout(() => {
-      handleView()
+      handleView();
     }, 1);
 
-    return () => clearInterval(inv)
-  },[])
+    return () => clearInterval(inv);
+  }, []);
 
   useEffect(() => {
     const inv = setTimeout(() => {
@@ -231,13 +231,13 @@ export default function Solved() {
         response.data.map((data) => {
           dataExcel.push({
             "Nomor Keluhan": data.tiket,
+            "Kategori Keluhan": data.kategori.nama_kategori,
             Pelanggan: data.pelanggan.nama_pelanggan,
             Dibuat: ToDate(data.created_at, "full"),
             Status: data.status_desc,
-            Provinsi:
-              data.pelanggan.kelurahan.kecamatan.kabkot.provinsi.name,
-            "Kabupaten/Kota":
-              data.pelanggan.kelurahan.kecamatan.kabkot.name,
+            Ditangani: data.pegawai.nama_pegawai,
+            Provinsi: data.pelanggan.kelurahan.kecamatan.kabkot.provinsi.name,
+            "Kabupaten/Kota": data.pelanggan.kelurahan.kecamatan.kabkot.name,
             Kecamatan: data.pelanggan.kelurahan.kecamatan.name,
             Kelurahan: data.pelanggan.kelurahan.name,
           });
@@ -367,7 +367,10 @@ export default function Solved() {
         {loading && <LoadingPage text={"Loading data"} />}
         <div className="row mb-2 mt-2">
           <div className="col-12 d-flex flex-row-reverse">
-              <ExportToExcel apiData={dataExcel} fileName={`Solved-report-${ToDate(new Date())}`} />
+            <ExportToExcel
+              apiData={dataExcel}
+              fileName={`Solved-report-${ToDate(new Date())}`}
+            />
           </div>
         </div>
         {!loading && !error && (
@@ -378,9 +381,11 @@ export default function Solved() {
                   <tr>
                     <th className="w-5">#</th>
                     <th>Nomor Keluhan</th>
+                    <th>Kategori Keluhan</th>
                     <th>Pelanggan</th>
                     <th>Dibuat</th>
                     <th>Status</th>
+                    <th>Ditangani</th>
                     <th>Provinsi</th>
                     <th>Kabupaten/Kota</th>
                     <th>Kecamatan</th>
@@ -396,26 +401,21 @@ export default function Solved() {
                             {response.pagination.from + index}
                           </td>
                           <td>{data.tiket}</td>
+                          <td>{data.kategori.nama_kategori}</td>
                           <td>{data.pelanggan.nama_pelanggan}</td>
                           <td>{ToDate(data.created_at, "full")}</td>
-                          <td>
-                            {data.status_desc}
-                          </td>
-                          <td>
-                            {
-                              data.pelanggan.kelurahan.kecamatan.kabkot
-                                .provinsi.name
-                            }
-                          </td>
+                          <td>{data.status_desc}</td>
+                          <td>{data.pegawai.nama_pegawai}</td>
                           <td>
                             {
-                              data.pelanggan.kelurahan.kecamatan.kabkot
+                              data.pelanggan.kelurahan.kecamatan.kabkot.provinsi
                                 .name
                             }
                           </td>
                           <td>
-                            {data.pelanggan.kelurahan.kecamatan.name}
+                            {data.pelanggan.kelurahan.kecamatan.kabkot.name}
                           </td>
+                          <td>{data.pelanggan.kelurahan.kecamatan.name}</td>
                           <td>{data.pelanggan.kelurahan.name}</td>
                         </tr>
                       ))
@@ -439,12 +439,14 @@ export default function Solved() {
                   {response?.pagination.total} data
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
-                  <Pagging
-                    total={response?.pagination.total}
-                    itemsPerPage={response?.pagination.perPage}
-                    currentPage={response?.pagination.currentPage}
-                    onPageChange={(page) => setPage(page)}
-                  />
+                  <div className="table-responsive">
+                    <Pagging
+                      total={response?.pagination.total}
+                      itemsPerPage={response?.pagination.perPage}
+                      currentPage={response?.pagination.currentPage}
+                      onPageChange={(page) => setPage(page)}
+                    />
+                  </div>
                 </div>
               </div>
             ) : (

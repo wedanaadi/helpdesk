@@ -68,4 +68,9 @@ class Keluhan extends Model
   {
     return $this->hasMany(File::class, 'keluhan_id','tiket');
   }
+
+  public function pegawai()
+  {
+    return $this->belongsTo(Pegawai::class, 'updated_user', 'id');
+  }
 }

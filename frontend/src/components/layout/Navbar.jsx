@@ -91,9 +91,9 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
       // localStorage.setItem("auth", response?.access_token);
       setReload(true);
       setAxiosHandle(false);
+      localStorage.clear();
       dispatch({ type: "logout" });
       navigasi(`${baseUrl}/login`, { replace: true });
-      localStorage.clear();
     }
   };
 

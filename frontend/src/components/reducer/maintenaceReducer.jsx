@@ -2,6 +2,7 @@ export const INITIAL_STATE = {
   ticket_keluhan: "",
   teknisi:"",
   note:"-",
+  user_update:"",
 };
 
 export const maintenanceReducer = (state, action) => {

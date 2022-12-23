@@ -24,6 +24,7 @@ export default function FormEdit() {
   const [validation, setValidation] = useState(null);
   const navigasi = useNavigate();
   const dataEdit = JSON.parse(atob(localStorage.getItem("dataEdit")));
+  const LoginData = JSON.parse(localStorage.getItem('userData'))
 
   const handleChange = (e) => {
     dispatch({
@@ -66,6 +67,10 @@ export default function FormEdit() {
       getTeknisi();
       getTicket();
       loadEdit();
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: { name: 'user_update', value: LoginData.idUser },
+      });
     }, 1);
     return () => clearInterval(inv);
   }, []);

@@ -32,7 +32,7 @@ class AuthController extends Controller
     try {
       $user = User::firstWhere('username', $request->username);
       if (!$user || !Hash::check($request->password, $user->password)) {
-        return response()->json(['errors' => 'Bad Credentials'], 403);
+        return response()->json(['errors' => 'Bad Credentials, Cek kembali username atau password!'], 403);
       }
       if ($user->role == "4") {
         $pelanggan = Pelanggan::find($user->relasi_id);

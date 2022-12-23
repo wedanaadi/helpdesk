@@ -207,7 +207,13 @@ export default function Pegawai() {
                           <td>{data.nama_pegawai}</td>
                           <td>{data.email}</td>
                           <td>{data.telepon}</td>
-                          <td>{data.role == '1' ? 'Admin' : data.role == '2' ? 'Helpdesk' : 'Teknisi' }</td>
+                          <td>
+                            {data.role == "1"
+                              ? "Admin"
+                              : data.role == "2"
+                              ? "Helpdesk"
+                              : "Teknisi"}
+                          </td>
                           <td>{data.alamat}</td>
                           <td className="text-center w-15">
                             <button
@@ -248,12 +254,14 @@ export default function Pegawai() {
                   {pegawais?.pagination.total} data
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
-                  <Pagging
-                    total={pegawais?.pagination.total}
-                    itemsPerPage={pegawais?.pagination.perPage}
-                    currentPage={pegawais?.pagination.currentPage}
-                    onPageChange={(page) => setPage(page)}
-                  />
+                  <div className="table-responsive">
+                    <Pagging
+                      total={pegawais?.pagination.total}
+                      itemsPerPage={pegawais?.pagination.perPage}
+                      currentPage={pegawais?.pagination.currentPage}
+                      onPageChange={(page) => setPage(page)}
+                    />
+                  </div>
                 </div>
               </div>
             ) : (
@@ -263,5 +271,5 @@ export default function Pegawai() {
         )}
       </div>
     </div>
-  )
+  );
 }

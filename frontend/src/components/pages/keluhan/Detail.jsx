@@ -148,7 +148,10 @@ export default function Detail() {
               </span>
             </div>
             <div>
-              <Link to={`${baseUrl}/keluhan/track/${detailLokal.tiket}`} className="btn btn-warning">
+              <Link
+                to={`${baseUrl}/keluhan/track/${detailLokal.tiket}`}
+                className="btn btn-warning"
+              >
                 <FontAwesomeIcon icon={faTimeline} />
                 &nbsp; Tracking Penanganan
               </Link>
@@ -236,6 +239,13 @@ export default function Detail() {
             <div className="mt-3">
               <table className="table">
                 <tbody>
+                  <tr>
+                    <td>Kategori Keluhan</td>
+                    <td>:</td>
+                    <td>
+                      <b>{detailLokal?.kategori?.nama_kategori}</b>
+                    </td>
+                  </tr>
                   <tr>
                     <td>Keluhan Text / Deskripsi</td>
                     <td>:</td>

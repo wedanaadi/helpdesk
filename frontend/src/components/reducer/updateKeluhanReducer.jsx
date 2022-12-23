@@ -6,6 +6,7 @@ export const INITIAL_STATE = {
   deskripsi:"",
   status:"1",
   ticket_keluhan:"",
+  user_update:"",
 };
 
 export const updateKelurahanReducer = (state, action) => {

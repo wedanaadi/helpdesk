@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <SWRContext>
-        <div className="container-xxl position-relative bg-white d-flex p-0">
+        <div className="container-fluid position-relative bg-white d-flex p-0">
           <Sidebar sidebarOpen={sidebarOpen} />
           <div className={sidebarOpen ? "content open" : "content"}>
             <Navbar sidebarOpen={sidebarOpen} setSidebar={setSidebar} />

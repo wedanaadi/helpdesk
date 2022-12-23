@@ -80,6 +80,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('keluhan/sendEmail', [ComplaintController::class, 'sendEmail']);
   Route::put('keluhan/{id}', [ComplaintController::class, 'update']);
   Route::put('keluhan/status/{id}', [ComplaintController::class, 'solve']);
+  Route::put('keluhan/status-proccess/{id}', [ComplaintController::class, 'onProccess']);
   Route::delete('keluhan/{id}', [ComplaintController::class, 'destroy']);
 
   Route::get('maintenance', [MaintenanceController::class, 'index']);

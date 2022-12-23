@@ -296,12 +296,14 @@ export default function Index() {
                   {keluhans?.pagination.total} data
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
-                  <Pagging
-                    total={keluhans?.pagination.total}
-                    itemsPerPage={keluhans?.pagination.perPage}
-                    currentPage={keluhans?.pagination.currentPage}
-                    onPageChange={(page) => setPage(page)}
-                  />
+                  <div className="table-responsive">
+                    <Pagging
+                      total={keluhans?.pagination.total}
+                      itemsPerPage={keluhans?.pagination.perPage}
+                      currentPage={keluhans?.pagination.currentPage}
+                      onPageChange={(page) => setPage(page)}
+                    />
+                  </div>
                 </div>
               </div>
             ) : (

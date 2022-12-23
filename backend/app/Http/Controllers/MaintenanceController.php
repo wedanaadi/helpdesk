@@ -77,13 +77,14 @@ class MaintenanceController extends Controller
         'updated_at' => round(microtime(true) * 1000),
       ];
       Keluhan::where('tiket', $request->ticket_keluhan)->update([
-        'status' => '2'
+        'status' => '2',
+        'updated_user' => $request->user_update,
       ]);
       $datakeluhan = Keluhan::with('pelanggan')->where('tiket', $request->ticket_keluhan)->first();
       $teknisi = Pegawai::where('id', $request->teknisi)->first();
 
       $dataEmail = [
-        'message' => 'Ticket Maintenance berhasil dibuat.' . PHP_EOL . 'Teknisi yang ditugaskan: ' . $teknisi->nama_pegawai,
+        'message' => ['Ticket Maintenance berhasil dibuat.' . PHP_EOL . 'Teknisi yang ditugaskan: ' . $teknisi->nama_pegawai],
         'ticket_keluhan' => $datakeluhan->tiket,
         'ticket_maintenance' => $newTiket,
         'subject' => 'Updated Penanganan Ticket Complaint',
@@ -94,6 +95,7 @@ class MaintenanceController extends Controller
         'keluhan_id' => $request->ticket_keluhan,
         'relasi_log' => $newTiket,
         'user_id' => $request->teknisi,
+        'updated_by' => $request->user_update,
         'deskripsi' => 'Ticket Maintenance dibuat".',
         'type' => '2',
         'created_at' => round(microtime(true) * 1000),
@@ -138,15 +140,16 @@ class MaintenanceController extends Controller
         'updated_at' => round(microtime(true) * 1000),
       ];
       Keluhan::where('tiket', $request->ticket_keluhan)->update([
-        'status' => '2'
+        'status' => '2',
+        'updated_user' => $request->user_update,
       ]);
       $prevLog = Log::where('relasi_log', $find->tiket_maintenance)
         ->where('type', '2')
         ->firstOrFail();
 
-      $keluhan = Keluhan::with('pelanggan')->where('tiket',$find->tiket_keluhan)->first();
+      $keluhan = Keluhan::with('pelanggan')->where('tiket', $find->tiket_keluhan)->first();
       $dataEmail = [
-        'message' => 'Ticket Maintenance berhasil diubah.',
+        'message' => ['Ticket Maintenance berhasil diubah.'],
         'ticket_keluhan' => $find->tiket_keluhan,
         'ticket_maintenance' => $find->tiket_maintenance,
         'subject' => 'Updated Penanganan Ticket Complaint',
@@ -202,6 +205,7 @@ class MaintenanceController extends Controller
         'keluhan_id' => $maintenance->tiket_keluhan,
         'relasi_log' => $maintenance->tiket_maintenance,
         'user_id' => $maintenance->pegawai_id,
+        'updated_by' => $maintenance->pegawai_id,
         'type' => '3',
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
@@ -220,7 +224,7 @@ class MaintenanceController extends Controller
         MaintenanceReport::create($reportSolve);
       }
 
-      $keluhan = Keluhan::with('pelanggan')->where('tiket',$maintenance->tiket_keluhan)->first();
+      $keluhan = Keluhan::with('pelanggan')->where('tiket', $maintenance->tiket_keluhan)->first();
       $dataEmail = [
         // 'message' => 'Ticket Maintenance berhasil diubah.',
         'ticket_keluhan' => $maintenance->tiket_keluhan,
@@ -231,12 +235,17 @@ class MaintenanceController extends Controller
 
       $maintenance->update($payload);
       if ($request->status == "1") {
-        Keluhan::where('tiket', $maintenance->tiket_keluhan)->update(['status' => '1']);
+        Keluhan::where('tiket', $maintenance->tiket_keluhan)->update([
+          'status' => '1',
+          'updated_user' => $request->user_update
+        ]);
         $dataLog['deskripsi'] = 'Status ticket dirubah menjadi solved.' . PHP_EOL . $request->deskripsi;
-        $dataEmail['message'] = 'Status ticket dirubah menjadi solved.' . PHP_EOL . $request->deskripsi;
+        // $dataEmail['message'] = 'Status ticket dirubah menjadi solved.' . PHP_EOL . $request->deskripsi;
+        $dataEmail['message'] = ['Status ticket dirubah menjadi solved.', $request->deskripsi];
       } else {
         $dataLog['deskripsi'] = 'Status ticket dirubah menjadi pending.' . PHP_EOL . $request->deskripsi;
-        $dataEmail['message'] = 'Status ticket dirubah menjadi pending.' . PHP_EOL . $request->deskripsi;
+        // $dataEmail['message'] = 'Status ticket dirubah menjadi pending.' . PHP_EOL . $request->deskripsi;
+        $dataEmail['message'] = ['Status ticket dirubah menjadi pending.', $request->deskripsi];
       }
       Log::create($dataLog);
       DB::commit();

@@ -68,6 +68,9 @@ export default function Tracking() {
                         {log.deskripsi}
                       </div>
                     </div>
+                    <p className="text-muted mb-0 fw-bold">
+                      Update By <span className="text-primary">{log.updated_by}</span>
+                    </p>
                     <p className="text-muted mb-2 fw-bold">
                       {ToDate(log.created_at, "full")}
                     </p>
@@ -79,6 +82,9 @@ export default function Tracking() {
                         {log.deskripsi}
                       </div>
                     </div>
+                    <p className="text-muted mb-0">
+                      Update By <span className="fw-bold">{log.updated_by}</span>
+                    </p>
                     <p className="text-muted mb-2">
                       {ToDate(log.created_at, "full")}
                     </p>

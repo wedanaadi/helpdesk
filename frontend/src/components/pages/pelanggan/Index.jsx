@@ -221,7 +221,7 @@ export default function Index() {
                 <thead className="bg-white text-center fw-bold">
                   <tr>
                     <th>Keluhan</th>
-                    <th className="w-5">#</th>
+                    <th className="w-5">ID Pelanggan</th>
                     <th>Nama Pelanggan</th>
                     <th>Email</th>
                     <th>Telepon</th>
@@ -247,12 +247,13 @@ export default function Index() {
                               &nbsp; Tambah
                             </button>
                           </td>
-                          <td className="text-center">
+                          {/* <td className="text-center">
                             {pelanggans.pagination.from + index}
-                          </td>
+                          </td> */}
+                          <td>{data.id}</td>
                           <td>{data.nama_pelanggan}</td>
                           <td>
-                            <div className="d-flex justify-content-between align-items-center mx-0">
+                            <div className="d-flex justify-content-between mx-0">
                               <span>{data.email}</span>
                               &nbsp;
                                 <button
@@ -318,12 +319,14 @@ export default function Index() {
                   {pelanggans?.pagination.total} data
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
+                  <div className="table-responsive">
                   <Pagging
                     total={pelanggans?.pagination.total}
                     itemsPerPage={pelanggans?.pagination.perPage}
                     currentPage={pelanggans?.pagination.currentPage}
                     onPageChange={(page) => setPage(page)}
                   />
+                  </div>
                 </div>
               </div>
             ) : (

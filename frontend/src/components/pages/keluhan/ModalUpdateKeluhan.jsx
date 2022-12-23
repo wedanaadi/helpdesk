@@ -22,8 +22,13 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
   const navigasi = useNavigate();
   const [response, error, loading, actionAxios] = useHookAxios();
   const [state, dispatch] = useReducer(updateKelurahanReducer, INITIAL_STATE);
+  const dataLogin = JSON.parse(localStorage.getItem('userData'));
 
   const optionTipes = [
+    {
+      value: "0",
+      label: "Ubah status ke ON PROSES",
+    },
     {
       value: "1",
       label: "Selesaikan dengan sistem",
@@ -76,6 +81,18 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
         axiosInstance: axios,
         method: "PUT",
         url: `keluhan/status/${data.id}`,
+        data: state,
+        reqConfig: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        },
+      });
+    } else if(selectTipe.value == "0") {
+      actionAxios({
+        axiosInstance: axios,
+        method: "PUT",
+        url: `keluhan/status-proccess/${data.id}`,
         data: state,
         reqConfig: {
           headers: {
@@ -141,6 +158,19 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
           },
         });
         navigasi(`${baseUrl}/maintenance`);
+      } else if(selectTipe.value == "0") {
+        pelFunc({
+          axiosInstance: axios,
+          method: "POST",
+          url: `keluhan/sendEmail`,
+          data: response.email,
+          reqConfig: {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          },
+        });
+        navigasi(`${baseUrl}/keluhan`);
       } else {
         pelFunc({
           axiosInstance: axios,
@@ -175,11 +205,25 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
   useEffect(() => {
     dispatch({
       type: "CHANGE_INPUT",
+      payload: {
+        name: "status",
+        value: selectTipe?.value ? selectTipe.value : "",
+      },
+    });
+  }, [selectTipe]);
+
+  useEffect(() => {
+    dispatch({
+      type: "CHANGE_INPUT",
       payload: { name: "keluhan_id", value: data?.id ? data.id : "" },
     });
     dispatch({
       type: "CHANGE_INPUT",
       payload: { name: "ticket_keluhan", value: data?.tiket ? data.tiket : "" },
+    });
+    dispatch({
+      type: "CHANGE_INPUT",
+      payload: { name: "user_update", value: dataLogin?.idUser ? dataLogin?.idUser : "" },
     });
   }, [toggleModal]);
 
@@ -230,7 +274,7 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
               ) : (
                 false
               )}
-              {selectTipe?.value == "1" ? (
+              {selectTipe?.value == "1" || selectTipe?.value == "0" ? (
                 <>
                   <div className="mb-3">
                     <label htmlFor="namaTeknisi" className="form-label">

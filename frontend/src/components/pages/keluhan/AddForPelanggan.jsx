@@ -84,6 +84,14 @@ export default function KeluhanAddPelanggan() {
     const inv = setTimeout(() => {
       getKategori();
       getPelanggan();
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: { name: 'created_user', value: LocalUser.idUser },
+      });
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: { name: 'updated_user', value: LocalUser.idUser },
+      });
     }, 1);
     return () => clearInterval(inv);
   }, []);

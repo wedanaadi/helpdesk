@@ -96,6 +96,8 @@ class ReportController extends Controller
     $data = Keluhan::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
       ->leftJoin('maintenance_reports', 'keluhan_id', '=', 'tiket')
       ->with(
+        'kategori',
+        'pegawai',
         'pelanggan',
         'pelanggan.kelurahan',
         'pelanggan.kelurahan.kecamatan',
@@ -143,6 +145,7 @@ class ReportController extends Controller
       ->with(
         'keluhan',
         'keluhan.kategori',
+        'keluhan.pegawai',
         'keluhan.pelanggan',
         'keluhan.pelanggan.kelurahan',
         'keluhan.pelanggan.kelurahan.kecamatan',

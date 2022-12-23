@@ -223,9 +223,11 @@ export default function Solved() {
         response.data.map((data) => {
           dataExcel.push({
             "Nomor Keluhan": data.keluhan.tiket,
+            "Kategori Keluhan": data.keluhan.kategori.nama_kategori,
             Pelanggan: data.keluhan.pelanggan.nama_pelanggan,
             Dibuat: ToDate(data.created_at, "full"),
             Status: data.status_desc,
+            Ditangani: data.keluhan.pegawai.nama_pegawai,
             Provinsi:
               data.keluhan.pelanggan.kelurahan.kecamatan.kabkot.provinsi.name,
             "Kabupaten/Kota":
@@ -367,7 +369,10 @@ export default function Solved() {
         {loading && <LoadingPage text={"Loading data"} />}
         <div className="row mb-2 mt-2">
           <div className="col-12 d-flex flex-row-reverse">
-            <ExportToExcel apiData={dataExcel} fileName={`Maintenance-report-${ToDate(new Date())}`} />
+            <ExportToExcel
+              apiData={dataExcel}
+              fileName={`Maintenance-report-${ToDate(new Date())}`}
+            />
           </div>
         </div>
         {!loading && !error && (
@@ -378,9 +383,11 @@ export default function Solved() {
                   <tr>
                     <th className="w-5">#</th>
                     <th>Nomor Keluhan</th>
+                    <th>Kategori Keluhan</th>
                     <th>Pelanggan</th>
                     <th>Dibuat</th>
                     <th>Status</th>
+                    <th>Ditangani</th>
                     <th>Provinsi</th>
                     <th>Kabupaten/Kota</th>
                     <th>Kecamatan</th>
@@ -396,9 +403,11 @@ export default function Solved() {
                             {response.pagination.from + index}
                           </td>
                           <td>{data.keluhan.tiket}</td>
+                          <td>{data.keluhan.kategori.nama_kategori}</td>
                           <td>{data.keluhan.pelanggan.nama_pelanggan}</td>
-                          <td>{ToDate(data.created_at,'full')}</td>
+                          <td>{ToDate(data.created_at, "full")}</td>
                           <td>{data.status_desc}</td>
+                          <td>{data.keluhan.pegawai.nama_pegawai}</td>
                           <td>
                             {
                               data.keluhan.pelanggan.kelurahan.kecamatan.kabkot
@@ -437,12 +446,14 @@ export default function Solved() {
                   {response?.pagination.total} data
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
-                  <Pagging
-                    total={response?.pagination.total}
-                    itemsPerPage={response?.pagination.perPage}
-                    currentPage={response?.pagination.currentPage}
-                    onPageChange={(page) => setPage(page)}
-                  />
+                  <div className="table-responsive">
+                    <Pagging
+                      total={response?.pagination.total}
+                      itemsPerPage={response?.pagination.perPage}
+                      currentPage={response?.pagination.currentPage}
+                      onPageChange={(page) => setPage(page)}
+                    />
+                  </div>
                 </div>
               </div>
             ) : (

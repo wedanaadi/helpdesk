@@ -68,8 +68,8 @@ export default function Index() {
       data: null,
       reqConfig: {
         params: {
-          id:idLogin,
-          role:LocalUser.role
+          id: idLogin,
+          role: LocalUser.role,
         },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
@@ -156,9 +156,9 @@ export default function Index() {
   }, [keluhans, error]);
 
   const handleDetail = (data) => {
-    localStorage.setItem('detailKeluhan',JSON.stringify(data))
-    navigasi(`${baseUrl}/keluhan/detail`)
-  }
+    localStorage.setItem("detailKeluhan", JSON.stringify(data));
+    navigasi(`${baseUrl}/keluhan/detail`);
+  };
 
   return (
     <div className="row bg-light rounded mx-0">
@@ -243,14 +243,16 @@ export default function Index() {
                             false
                           )}
                           <td className="text-center w-15">
-                            <button onClick={()=>handleDetail(data)}
+                            <button
+                              onClick={() => handleDetail(data)}
                               className="btn btn-success mb-0"
                             >
                               <FontAwesomeIcon icon={faSearch} />
                               &nbsp; Detail
                             </button>
                             &nbsp;
-                            {LocalUser.idUser === data.created_user && data.status != '1' ? (
+                            {LocalUser.idUser === data.created_user &&
+                            data.status != "1" ? (
                               <>
                                 <button
                                   className="btn btn-warning"
@@ -294,12 +296,14 @@ export default function Index() {
                   {keluhans?.pagination.total} data
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
-                  <Pagging
-                    total={keluhans?.pagination.total}
-                    itemsPerPage={keluhans?.pagination.perPage}
-                    currentPage={keluhans?.pagination.currentPage}
-                    onPageChange={(page) => setPage(page)}
-                  />
+                  <div className="table-responsive">
+                    <Pagging
+                      total={keluhans?.pagination.total}
+                      itemsPerPage={keluhans?.pagination.perPage}
+                      currentPage={keluhans?.pagination.currentPage}
+                      onPageChange={(page) => setPage(page)}
+                    />
+                  </div>
                 </div>
               </div>
             ) : (

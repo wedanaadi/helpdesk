@@ -132,6 +132,8 @@ export default function Sidebar({ sidebarOpen }) {
                 className={`nav-item nav-link ${
                   location.pathname == base_url + "/keluhan" ||
                   location.pathname == base_url + "/keluhan/add" ||
+                  location.pathname == base_url + "/keluhan/addSystem" ||
+                  location.pathname == base_url + "/keluhan/detail" ||
                   location.pathname == base_url + "/keluhan/edit"
                     ? "active"
                     : ""
@@ -223,13 +225,13 @@ export default function Sidebar({ sidebarOpen }) {
                       : ""
                   }`}
                 >
-                  Laporan Solved
+                  Laporan Complaint
                 </Link>
                 <Link
                   to={`${base_url}/laporan/maintenance`}
                   className={`dropdown-item ${
                     location.pathname == base_url + "laporan/maintenance"
-                      ? "maintenance"
+                      ? "active"
                       : ""
                   }`}
                 >

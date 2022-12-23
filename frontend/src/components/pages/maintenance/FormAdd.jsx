@@ -23,6 +23,7 @@ export default function FormAdd() {
   const toastId = useRef(null);
   const [validation, setValidation] = useState(null);
   const navigasi = useNavigate();
+  const LoginData = JSON.parse(localStorage.getItem('userData'));
 
   const handleChange = (e) => {
     dispatch({
@@ -63,6 +64,10 @@ export default function FormAdd() {
     const inv = setTimeout(() => {
       getTeknisi();
       getTicket();
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: { name: 'user_update', value: LoginData.idUser },
+      });
     }, 1);
     return () => clearInterval(inv);
   }, []);
@@ -208,7 +213,7 @@ export default function FormAdd() {
                 </div>
               ))}
           </div>
-          <div className="mb-3">
+          {/* <div className="mb-3">
             <label htmlFor="namaTeknisi" className="form-label">
               Note
             </label>
@@ -220,7 +225,7 @@ export default function FormAdd() {
               value={state.note}
             >
             </textarea>
-          </div>
+          </div> */}
         </div>
         <div className="py-3 px-2 border-top d-flex flex-row-reverse">
           <button type="submit" className="btn btn-primary">

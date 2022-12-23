@@ -22,6 +22,7 @@ export default function ModalUpdate({
   const toastId = useRef(null);
   const [validation, setValidation] = useState(null);
   const navigasi = useNavigate();
+  const LoginUser = JSON.parse(localStorage.getItem('userData'))
 
   const handleClose = () => {
     setState(false);
@@ -124,6 +125,13 @@ export default function ModalUpdate({
       payload: {
         name: "pegawai_id",
         value: data?.pegawai_id ? data?.pegawai_id : "",
+      },
+    });
+    dispatch({
+      type: "CHANGE_INPUT",
+      payload: {
+        name: "user_update",
+        value: LoginUser.idUser,
       },
     });
   }, [toggleModal]);

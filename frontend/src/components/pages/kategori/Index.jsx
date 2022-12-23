@@ -240,12 +240,14 @@ export default function Kategori() {
                   {kategoris?.pagination.total} data
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
-                  <Pagging
-                    total={kategoris?.pagination.total}
-                    itemsPerPage={kategoris?.pagination.perPage}
-                    currentPage={kategoris?.pagination.currentPage}
-                    onPageChange={(page) => setPage(page)}
-                  />
+                  <div className="table-responsive">
+                    <Pagging
+                      total={kategoris?.pagination.total}
+                      itemsPerPage={kategoris?.pagination.perPage}
+                      currentPage={kategoris?.pagination.currentPage}
+                      onPageChange={(page) => setPage(page)}
+                    />
+                  </div>
                 </div>
               </div>
             ) : (

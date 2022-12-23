@@ -182,14 +182,14 @@ export default function Index() {
       </Suspense>
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Data Maintenance</h3>
-        {hk == "1" ||
-          hk == "2" ||
-          (hk == "5" && (
-            <Link to={`add`} className="btn btn-success mb-0">
-              <FontAwesomeIcon icon={faPlus} />
-              &nbsp; Tambah
-            </Link>
-          ))}
+        {hk == "1" || hk == "2" || hk == "5" ? (
+          <Link to={`add`} className="btn btn-success mb-0">
+            <FontAwesomeIcon icon={faPlus} />
+            &nbsp; Tambah
+          </Link>
+        ) : (
+          false
+        )}
       </div>
       <div className="px-3 py-2">
         {loading && <LoadingPage text={"Loading data"} />}
@@ -314,12 +314,14 @@ export default function Index() {
                   {maintenances?.pagination.total} data
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
-                  <Pagging
-                    total={maintenances?.pagination.total}
-                    itemsPerPage={maintenances?.pagination.perPage}
-                    currentPage={maintenances?.pagination.currentPage}
-                    onPageChange={(page) => setPage(page)}
-                  />
+                  <div className="table-responsive">
+                    <Pagging
+                      total={maintenances?.pagination.total}
+                      itemsPerPage={maintenances?.pagination.perPage}
+                      currentPage={maintenances?.pagination.currentPage}
+                      onPageChange={(page) => setPage(page)}
+                    />
+                  </div>
                 </div>
               </div>
             ) : (
