@@ -8,6 +8,7 @@ use App\Models\Notif;
 use App\Models\Pegawai;
 use App\Models\Pelanggan;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -178,5 +179,33 @@ class AuthController extends Controller
       Notif::find($v->id)->update(['is_read'=> '1']);
     }
     return response()->json(['msg' => 'Successfuly Login', "data" => [], 'error' => null], 200);
+  }
+
+  public function update_data_login(Request $request)
+  {
+    $idLogin = $request->idLogin;
+    $user = User::where('relasi_id',$idLogin)->first();
+
+    DB::beginTransaction();
+    try {
+      $payload = [
+        'username' => $user->username
+      ];
+
+      if($request->password != '' OR $request->password != null) {
+        $payload['password'] = Hash::make($request->password);
+      }
+
+      if($request->username != '' OR $request->username != null) {
+        $payload['username'] = $request->username;
+      }
+
+      $user->update($payload);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly updated data user', "data" => $payload, 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail created data user', "data" => [], 'error' => $e->getMessage()], 500);
+    }
   }
 }

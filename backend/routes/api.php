@@ -27,6 +27,7 @@ Route::get('/hello', function () {
 });
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('updateUserLogin', [AuthController::class, 'update_data_login']);
 Route::post('/register', [AuthController::class, 'store']);
 
 Route::get('/notifikasi', [AuthController::class, 'notifikasi']);

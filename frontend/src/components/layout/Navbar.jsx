@@ -1,7 +1,7 @@
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { faBars, faBell, faHashtag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNotifikasi } from "../context/Chat";
@@ -10,6 +10,7 @@ import useHookAxios from "../hook/useHookAxios";
 import { baseUrl } from "../util/BaseUrl";
 import axios from "../util/jsonApi";
 import ToDate from "../util/ToDate";
+const Setting = React.lazy(()=>import("../pages/Setting"))
 
 export default function Navbar({ sidebarOpen, setSidebar }) {
   const LokalUser = JSON.parse(localStorage.getItem("userData"));
@@ -106,6 +107,14 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
 
   const handleNotif = () => {
     mutate("notifikasi");
+  };
+
+  const [show, setShow] = useState(false);
+  const [dataModal, setDataModal] = useState(null);
+
+  const handleModal = () => {
+    setShow(true);
+    setDataModal(LokalUser.idUser);
   };
 
   return (
@@ -237,16 +246,19 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
           <div className="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
             {/* <a href="#" className="dropdown-item">
               My Profile
-            </a>
-            <a href="#" className="dropdown-item">
-              Settings
             </a> */}
+            <button className="dropdown-item" onClick={() => handleModal()}>
+              Settings
+            </button>
             <button onClick={handleLogout} className="dropdown-item">
               Log Out
             </button>
           </div>
         </div>
       </div>
+      <Suspense>
+        <Setting toggleModal={show} setState={setShow} data={dataModal} />
+      </Suspense>
     </nav>
   );
 }

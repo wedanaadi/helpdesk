@@ -8,6 +8,8 @@ use App\Models\File as FileKeluhan;
 use App\Models\Kategori;
 use App\Models\Keluhan;
 use App\Models\Log;
+use App\Models\Maintenance;
+use App\Models\MaintenanceReport;
 use App\Models\Pelanggan;
 use App\Models\SolveReport;
 use App\Models\UpdateComplaint;
@@ -380,6 +382,14 @@ class ComplaintController extends Controller
       $keluhanFind->update($payload);
       Log::create($dataLog);
       // UpdateComplaint::create($updateKeluhan);
+      $maintenance = Maintenance::where('tiket_keluhan',$keluhanFind->tiket);
+      if($maintenance->count()>0) {
+        $maintenance->first()->delete();
+      }
+      $maintenanceReport = MaintenanceReport::where('keluhan_id',$keluhanFind->tiket);
+      if($maintenanceReport->count()>0) {
+        $maintenanceReport->first()->delete();
+      }
       DB::commit();
       return response()->json(['msg' => 'Successfuly update status', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => []], 200);
     } catch (Exception $e) {
@@ -433,7 +443,15 @@ class ComplaintController extends Controller
 
       $keluhanFind->update($payload);
       Log::create($dataLog);
-      // UpdateComplaint::create($updateKeluhan);
+      // // UpdateComplaint::create($updateKeluhan);
+      $maintenance = Maintenance::where('tiket_keluhan',$keluhanFind->tiket);
+      if($maintenance->count()>0) {
+        $maintenance->first()->delete();
+      }
+      $maintenanceReport = MaintenanceReport::where('keluhan_id',$keluhanFind->tiket);
+      if($maintenanceReport->count()>0) {
+        $maintenanceReport->first()->delete();
+      }
       DB::commit();
       return response()->json(['msg' => 'Successfuly update status', "data" => ['payload' => $payload, 'email' => $dataEmail], 'error' => []], 200);
     } catch (Exception $e) {
