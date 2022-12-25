@@ -38,7 +38,7 @@ class PelangganController extends Controller
 
   public function provinsi(Request $request)
   {
-    $pro = DB::select('SELECT * FROM provinces');
+    $pro = DB::select('SELECT * FROM provinces WHERE id="51"');
     $data = [];
     foreach ($pro as $d) {
       array_push($data, [

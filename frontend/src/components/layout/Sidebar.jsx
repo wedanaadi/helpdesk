@@ -11,6 +11,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import logo from "../../assets/logo.png"
 
 export default function Sidebar({ sidebarOpen }) {
   const base_url = import.meta.env.VITE_bASE_ROUTE;
@@ -43,7 +44,8 @@ export default function Sidebar({ sidebarOpen }) {
         <Link to={`${base_url}/`} className="navbar-brand mx-4 mb-3">
           <h3 className="text-primary">
             {/* <i className="fa fa-hashtag me-2" /> */}
-            <FontAwesomeIcon icon={faHashtag} className="me-2" />
+            {/* <FontAwesomeIcon icon={faHashtag} className="me-2" /> */}
+            <img src={logo} alt="logo" width={'50px'} />
             DASHAPP
           </h3>
         </Link>

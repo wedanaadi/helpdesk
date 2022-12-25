@@ -5,6 +5,7 @@ import AuthConsumer from "../hook/Auth";
 import useHookAxios from "../hook/useHookAxios";
 import { baseUrl } from "../util/BaseUrl";
 import axios from "../util/jsonApi";
+import logo from "../../assets/logo.png";
 
 export default function Login() {
   const [response, error, loading, axiosFuc] = useHookAxios();
@@ -84,13 +85,12 @@ export default function Login() {
   useEffect(() => {
     axiosHandle && handleAxios();
   }, [response, error]);
-  
+
   useEffect(() => {
-    if(authed.auth === true) {
+    if (authed.auth === true) {
       navigasi(`${baseUrl}/`, { replace: true });
     }
   }, []);
-
 
   return (
     <div className="container-fluid">
@@ -100,6 +100,9 @@ export default function Login() {
       >
         <div className="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
           <div className="bg-light rounded p-4 p-sm-5 my-4 mx-3">
+            <div className="d-flex justify-content-center mb-3">
+              <img src={logo} alt="logo" width={"100px"} />
+            </div>
             <div className="d-flex align-items-center justify-content-between mb-3">
               <Link to={`${baseUrl}/`}>
                 <h3 className="text-primary">
@@ -152,7 +155,12 @@ export default function Login() {
                     </div>
                   ))}
               </div>
-              <button type="submit" className={`btn btn-primary py-3 w-100 mb-4 ${waiting ? 'disabled' : ''}`}>
+              <button
+                type="submit"
+                className={`btn btn-primary py-3 w-100 mb-4 ${
+                  waiting ? "disabled" : ""
+                }`}
+              >
                 Sign In
               </button>
             </form>

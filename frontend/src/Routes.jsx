@@ -36,6 +36,7 @@ const Pesan = React.lazy(() => import("./components/pages/Notifikasi"));
 const ViewPesan = React.lazy(() => import("./components/pages/ViewNotif"));
 const KeluhanAddSystem = React.lazy(() => import("./components/pages/keluhan/AddSystem"));
 const Tracking = React.lazy(() => import("./components/pages/keluhan/Tracking"));
+const DetailView = React.lazy(() => import("./components/pages/maintenance/DetailView"));
 
 export default [
   {
@@ -233,6 +234,14 @@ export default [
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
             <MaintenanceDetail />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/maintenance/teknisi/v`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <DetailView />
           </Suspense>
         ),
       },

@@ -202,12 +202,12 @@ export default function ChartMaintenance() {
   };
 
   useEffect(() => {
-    const invt = setTimeout(() => {
-      getProvinces();
-      handleView2();
-      getKategoris()
-    }, 1);
-    return () => clearInterval(invt);
+    getProvinces();
+    getKategoris();
+    handleView2();
+    // const invt = setTimeout(() => {
+    // }, 1);
+    // return () => clearInterval(invt);
   }, []);
 
   useEffect(() => {
@@ -302,16 +302,16 @@ export default function ChartMaintenance() {
           )}
         </div>
         <div className="row m-2">
-            <h5>Kategori</h5>
-            <div className="col-12 col-xl-4">
-              <Select
-                options={kategoris}
-                placeHolder={"Kategori"}
-                getter={selectKategori}
-                setter={setSelectKategori}
-              />
-            </div>
+          <h5>Kategori</h5>
+          <div className="col-12 col-xl-4">
+            <Select
+              options={kategoris}
+              placeHolder={"Kategori"}
+              getter={selectKategori}
+              setter={setSelectKategori}
+            />
           </div>
+        </div>
         <div className="row m-2">
           <h5>Wilayah</h5>
           <div className="col-12 col-xl-3">

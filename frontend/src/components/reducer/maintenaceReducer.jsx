@@ -3,6 +3,7 @@ export const INITIAL_STATE = {
   teknisi:"",
   note:"-",
   user_update:"",
+  public_url:import.meta.env.VITE_BASE_PUBLIC,
 };
 
 export const maintenanceReducer = (state, action) => {

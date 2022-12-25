@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendMailPelanggan;
+use App\Jobs\SendNotifTeknisi;
 use App\Libraries\Fungsi;
 use App\Models\Keluhan;
 use App\Models\Log;
@@ -40,6 +41,30 @@ class MaintenanceController extends Controller
       $data->where('pegawai_id', request('idUser'));
     }
     return response()->json(['msg' => 'Get Maintenance', "data" => $data->paginate(request('perpage')), 'error' => []], 200);
+  }
+
+  public function detail()
+  {
+    $data = Maintenance::filter(request(['search']))
+      ->with(
+        'teknisi',
+        'keluhans',
+        'keluhans.pelanggan',
+        'keluhans.pelanggan.kelurahan',
+        'keluhans.pelanggan.kelurahan.kecamatan',
+        'keluhans.pelanggan.kelurahan.kecamatan.kabkot',
+        'keluhans.pelanggan.kelurahan.kecamatan.kabkot.provinsi',
+        'keluhans.files'
+      )
+      ->select(
+        '*',
+        DB::raw("IF(status='0','ON',IF(status='1','SOLVED','PENDING')) AS status_desc"),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(expired_date/1000),"%Y-%m-%d %H:%i:%s") as expired_date')
+      )
+      ->OrderBy('status', 'ASC')
+      ->OrderBy('tiket_maintenance', 'ASC');
+      $data->where('tiket_maintenance', request('ticketMaintenance'));
+    return response()->json(['msg' => 'Get Maintenance', "data" => $data->first(), 'error' => []], 200);
   }
 
   public function store(Request $request)
@@ -91,6 +116,17 @@ class MaintenanceController extends Controller
         'email' => $datakeluhan->pelanggan->email,
       ];
 
+      $pegawaiData = Pegawai::find($request->teknisi);
+      $dataEmailTeknisi = [
+        'message' => ['Anda ditugaskan untuk menangani keluhan'],
+        'ticket_keluhan' => $datakeluhan->tiket,
+        'ticket_maintenance' => $newTiket,
+        'subject' => 'Penugasan Penanganan',
+        'email' => $pegawaiData->email,
+        'teknisi' => $request->teknisi,
+        'public_url' => $request->public_url."/maintenance/teknisi/v?ticket=".$newTiket
+      ];
+
       $dataLog = [
         'keluhan_id' => $request->ticket_keluhan,
         'relasi_log' => $newTiket,
@@ -109,7 +145,7 @@ class MaintenanceController extends Controller
       }
       // $this->sendEmail($dataEmail);
       DB::commit();
-      return response()->json(['msg' => 'Successfuly created data maintenance', 'data' => ['payload' => $payload, "email" => $dataEmail], 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly created data maintenance', 'data' => ['payload' => $payload, "email" => $dataEmail, "emailTeknisi" => $dataEmailTeknisi], 'error' => null], 201);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed created data maintenance', "data" => null, 'error' => $e->getMessage()], 500);
@@ -156,6 +192,17 @@ class MaintenanceController extends Controller
         'email' => $keluhan->pelanggan->email,
       ];
 
+      $pegawaiData = Pegawai::find($request->teknisi);
+      $dataEmailTeknisi = [
+        'message' => ['Anda ditugaskan untuk menangani keluhan'],
+        'ticket_keluhan' => $find->tiket_keluhan,
+        'ticket_maintenance' => $find->tiket_maintenance,
+        'subject' => 'Penugasan Penanganan',
+        'email' => $pegawaiData->email,
+        'teknisi' => $request->teknisi,
+        'public_url' => $request->public_url."/maintenance/teknisi/v?ticket=".$find->tiket_maintenance
+      ];
+
       $dataLog = [
         'keluhan_id' => $request->ticket_keluhan,
         'relasi_log' => $find->tiket_maintenance,
@@ -168,7 +215,7 @@ class MaintenanceController extends Controller
       $find->update($payload);
       $prevLog->update($dataLog);
       DB::commit();
-      return response()->json(['msg' => 'Successfuly update data maintenance', "data" => ['payload' => $payload, "email" => $dataEmail], 'error' => null], 201);
+      return response()->json(['msg' => 'Successfuly update data maintenance', "data" => ['payload' => $payload, "email" => $dataEmail, "emailTeknisi" => $dataEmailTeknisi], 'error' => null], 201);
     } catch (\Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'Failed update data maintenance', "data" => null, 'error' => $e->getMessage()], 500);
@@ -260,5 +307,11 @@ class MaintenanceController extends Controller
   {
     dispatch(new SendMailPelanggan($request->all()));
     return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
+  }
+
+  public function sendEmailTeknisi(Request $request)
+  {
+    dispatch(new SendNotifTeknisi($request->all()));
+    return response()->json(['msg' => 'Successfuly send email Teknisi', "data" => null, 'error' => null], 200);
   }
 }

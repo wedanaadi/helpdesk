@@ -87,8 +87,10 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::delete('keluhan/{id}', [ComplaintController::class, 'destroy']);
 
   Route::get('maintenance', [MaintenanceController::class, 'index']);
+  Route::get('maintenance-detail', [MaintenanceController::class, 'detail']);
   Route::post('maintenance', [MaintenanceController::class, 'store']);
   Route::post('maintenance/sendEmail', [MaintenanceController::class, 'sendEmail']);
+  Route::post('maintenance/sendEmail/t', [MaintenanceController::class, 'sendEmailTeknisi']);
   Route::put('maintenance/{id}', [MaintenanceController::class, 'update']);
   Route::put('maintenance/status/{id}', [MaintenanceController::class, 'changeStatus']);
   Route::delete('maintenance/{id}', [MaintenanceController::class, 'destroy']);

@@ -25,6 +25,7 @@ export default function FormEdit() {
   const navigasi = useNavigate();
   const dataEdit = JSON.parse(atob(localStorage.getItem("dataEdit")));
   const LoginData = JSON.parse(localStorage.getItem('userData'))
+  const [sendEmailTeknisi, errET, loadingET, teknisiSendFunc] = useHookAxios();
 
   const handleChange = (e) => {
     dispatch({
@@ -142,6 +143,17 @@ export default function FormEdit() {
         method: "POST",
         url: `maintenance/sendEmail`,
         data: response.email,
+        reqConfig: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        },
+      });
+      teknisiSendFunc({
+        axiosInstance: axios,
+        method: "POST",
+        url: `maintenance/sendEmail/t`,
+        data: response.emailTeknisi,
         reqConfig: {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth")}`,

@@ -7,6 +7,7 @@ export const INITIAL_STATE = {
   status:"1",
   ticket_keluhan:"",
   user_update:"",
+  public_url:import.meta.env.VITE_BASE_PUBLIC,
 };
 
 export const updateKelurahanReducer = (state, action) => {

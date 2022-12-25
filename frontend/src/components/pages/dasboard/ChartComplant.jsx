@@ -151,12 +151,13 @@ export default function ChartComplaint() {
   };
 
   useEffect(() => {
-    const invt = setTimeout(() => {
-      getProvinces();
-      handleView();
-      getKategoris();
-    }, 1);
-    return () => clearInterval(invt);
+    getProvinces();
+    getKategoris();
+    handleView();
+    // const invt = setTimeout(() => {
+
+    // }, 1);
+    // return () => clearInterval(invt);
   }, []);
 
   useEffect(() => {

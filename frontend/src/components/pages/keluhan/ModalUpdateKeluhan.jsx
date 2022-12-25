@@ -14,6 +14,7 @@ import { useNotifikasi } from "../../context/Chat";
 
 export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
   const [teknisi, errTeknisi, loadingTeknisi, pelFunc] = useHookAxios();
+  const [sendEmailTeknisi, errET, loadingET, teknisiSendFunc] = useHookAxios();
   const [selectTeknisi, setTeknisi] = useState(null);
   const [selectTipe, setTipe] = useState(null);
   const [deskripsi, setDeskripsi] = useState("");
@@ -154,6 +155,17 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
           method: "POST",
           url: `maintenance/sendEmail`,
           data: response.email,
+          reqConfig: {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          },
+        });
+        teknisiSendFunc({
+          axiosInstance: axios,
+          method: "POST",
+          url: `maintenance/sendEmail/t`,
+          data: response.emailTeknisi,
           reqConfig: {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("auth")}`,

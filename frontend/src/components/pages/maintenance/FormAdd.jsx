@@ -24,6 +24,7 @@ export default function FormAdd() {
   const [validation, setValidation] = useState(null);
   const navigasi = useNavigate();
   const LoginData = JSON.parse(localStorage.getItem('userData'));
+  const [sendEmailTeknisi, errET, loadingET, teknisiSendFunc] = useHookAxios();
 
   const handleChange = (e) => {
     dispatch({
@@ -139,6 +140,17 @@ export default function FormAdd() {
         method: "POST",
         url: `maintenance/sendEmail`,
         data: response.email,
+        reqConfig: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        },
+      });
+      teknisiSendFunc({
+        axiosInstance: axios,
+        method: "POST",
+        url: `maintenance/sendEmail/t`,
+        data: response.emailTeknisi,
         reqConfig: {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth")}`,
