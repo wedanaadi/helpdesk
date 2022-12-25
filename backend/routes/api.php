@@ -64,6 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/kabkot-report', [ReportController::class, 'kabkot']);
   Route::get('/kecamatan-report', [ReportController::class, 'kecamatan']);
   Route::get('/kelurahan-report', [ReportController::class, 'kelurahan']);
+  Route::get('/kategori-report', [ReportController::class, 'kategori']);
 
   Route::get('/pelanggan-select',[PelangganController::class, 'select']);
   Route::get('/kategori-select',[KategoriController::class, 'select']);

@@ -45,6 +45,12 @@ export default function ChartComplaint() {
     useHookAxios();
   const [villages, errorvillages, loadingvillages, villagesFunc] =
     useHookAxios();
+  const [kategoris, errorKategoris, loadingKategoris, kategoriFunc] =
+    useHookAxios();
+  const [selectKategori, setSelectKategori] = useState({
+    label: "SEMUA",
+    value: "all",
+  });
   const [selectProvinsi, setSelectProvinsi] = useState({
     label: "SEMUA",
     value: "all",
@@ -70,6 +76,20 @@ export default function ChartComplaint() {
       axiosInstance: axios,
       method: "GET",
       url: `provinsi-report`,
+      data: null,
+      reqConfig: {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth")}`,
+        },
+      },
+    });
+  };
+
+  const getKategoris = () => {
+    kategoriFunc({
+      axiosInstance: axios,
+      method: "GET",
+      url: `kategori-report`,
       data: null,
       reqConfig: {
         headers: {
@@ -133,7 +153,8 @@ export default function ChartComplaint() {
   useEffect(() => {
     const invt = setTimeout(() => {
       getProvinces();
-      handleView()
+      handleView();
+      getKategoris();
     }, 1);
     return () => clearInterval(invt);
   }, []);
@@ -201,6 +222,9 @@ export default function ChartComplaint() {
     }
     if (selectVillage.value !== "all") {
       url += `&kelurahan=${selectVillage.value}`;
+    }
+    if (selectKategori.value !== "all") {
+      url += `&kategori=${selectKategori.value}`;
     }
     solvedAxios({
       axiosInstance: axios,
@@ -276,6 +300,17 @@ export default function ChartComplaint() {
                 />
               </div>
             )}
+          </div>
+          <div className="row m-2">
+            <h5>Kategori</h5>
+            <div className="col-12 col-xl-4">
+              <Select
+                options={kategoris}
+                placeHolder={"Kategori"}
+                getter={selectKategori}
+                setter={setSelectKategori}
+              />
+            </div>
           </div>
           <div className="row m-2">
             <h5>Wilayah</h5>

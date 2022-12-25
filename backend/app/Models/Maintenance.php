@@ -50,6 +50,11 @@ class Maintenance extends Model
           $query->where('id', $params);
         });
     });
+    $query->when($filters['kategori'] ?? false, function ($query, $params)  {
+      return $query->whereHas('keluhans.kategori', function ($query) use ($params) {
+          $query->where('id', $params);
+        });
+    });
   }
   public function teknisi()
   {

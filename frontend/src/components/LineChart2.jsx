@@ -35,20 +35,20 @@ export const options = {
   maintainAspectRatio: false,
   responsive: true,
   plugins: {
-    tooltip: {
-      callbacks: {
-        title: function () {
-          return "Jumlah";
-        }
-      }
-    },
+    // tooltip: {
+    //   callbacks: {
+    //     title: function () {
+    //       return "Jumlah";
+    //     }
+    //   }
+    // },
     legend: {
       display: false,
       position: "top",
     },
     title: {
-      display: false,
-      text: "Chart.js Line Chart",
+      display: true,
+      text: "Grafik Maintenance",
     },
   },
 };

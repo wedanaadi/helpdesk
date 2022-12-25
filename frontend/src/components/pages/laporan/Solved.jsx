@@ -47,6 +47,12 @@ export default function Solved() {
     useHookAxios();
   const [villages, errorvillages, loadingvillages, villagesFunc] =
     useHookAxios();
+  const [kategoris, errorKategoris, loadingKategoris, kategoriFunc] =
+    useHookAxios();
+  const [selectKategori, setSelectKategori] = useState({
+    label: "SEMUA",
+    value: "all",
+  });
   const [selectProvinsi, setSelectProvinsi] = useState({
     label: "SEMUA",
     value: "all",
@@ -65,6 +71,20 @@ export default function Solved() {
   });
   const [response, error, loading, axiosFunc] = useHookAxios();
   const [dataExcel, setExcel] = useState([]);
+
+  const getKategoris = () => {
+    kategoriFunc({
+      axiosInstance: axios,
+      method: "GET",
+      url: `kategori-report`,
+      data: null,
+      reqConfig: {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth")}`,
+        },
+      },
+    });
+  };
 
   const getProvinces = () => {
     provincesFunc({
@@ -134,6 +154,7 @@ export default function Solved() {
   useEffect(() => {
     const invt = setTimeout(() => {
       getProvinces();
+      getKategoris()
     }, 1);
     return () => clearInterval(invt);
   }, []);
@@ -200,6 +221,9 @@ export default function Solved() {
     }
     if (selectVillage.value !== "all") {
       url += `&kelurahan=${selectVillage.value}`;
+    }
+    if (selectKategori.value !== "all") {
+      url += `&kategori=${selectKategori.value}`;
     }
     axiosFunc({
       axiosInstance: axios,
@@ -307,6 +331,17 @@ export default function Solved() {
           )}
         </div>
         <div className="row m-2">
+          <h5>Kategori</h5>
+        <div className="col-12 col-xl-4">
+            <Select
+              options={kategoris}
+              placeHolder={"Kategori"}
+              getter={selectKategori}
+              setter={setSelectKategori}
+            />
+          </div>
+        </div>
+        <div className="row m-2">
           <h5>Wilayah</h5>
           <div className="col-12 col-xl-3">
             <div className="mb-3">
@@ -369,7 +404,7 @@ export default function Solved() {
           <div className="col-12 d-flex flex-row-reverse">
             <ExportToExcel
               apiData={dataExcel}
-              fileName={`Solved-report-${ToDate(new Date())}`}
+              fileName={`Complaint-report-${ToDate(new Date())}`}
             />
           </div>
         </div>
@@ -421,12 +456,12 @@ export default function Solved() {
                       ))
                     ) : (
                       <tr className="text-center">
-                        <td colSpan={9}>Tidak Ada data</td>
+                        <td colSpan={11}>Tidak Ada data</td>
                       </tr>
                     )
                   ) : (
                     <tr className="text-center">
-                      <td colSpan={9}>Tidak Ada data</td>
+                      <td colSpan={11}>Tidak Ada data</td>
                     </tr>
                   )}
                 </tbody>

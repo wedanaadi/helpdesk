@@ -40,11 +40,11 @@ export const data = {
       data: [10,5,3,67,34,11,90],
       backgroundColor: 'rgba(255, 99, 132, 0.5)',
     },
-    // {
-    //   label: 'Dataset 2',
-    //   data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-    //   backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    // },
+    {
+      label: 'Dataset 2',
+      data: [11,4,3,69,24,19,100],
+      backgroundColor: 'rgba(53, 162, 235, 0.5)',
+    },
   ],
 };
 

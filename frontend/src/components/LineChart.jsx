@@ -35,36 +35,36 @@ export const options = {
   maintainAspectRatio: false,
   responsive: true,
   plugins: {
-    tooltip: {
-      callbacks: {
-        title: function () {
-          return "Jumlah";
-        },
-      },
-    },
+    // tooltip: {
+    //   callbacks: {
+    //     title: function () {
+    //       return "Jumlah";
+    //     },
+    //   },
+    // },
     legend: {
       display: false,
       position: "top",
     },
     title: {
-      display: false,
-      text: "Chart.js Line Chart",
+      display: true,
+      text: "Grafik Complaint",
     },
   },
 };
 
 const labels = ["January", "February", "March", "April", "May", "June", "July"];
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      data: [5, 3, 4, 5, 3],
-      borderColor: "rgb(255, 99, 132)",
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
-    },
-  ],
-};
+// export const data = {
+//   labels,
+//   datasets: [
+//     {
+//       data: [5, 3, 4, 5, 3],
+//       borderColor: "rgb(255, 99, 132)",
+//       backgroundColor: "rgba(255, 99, 132, 0.5)",
+//     },
+//   ],
+// };
 
 export default function lineChartSolved({ dataMentah }) {
   const [dataChart, setData] = useState({
@@ -72,8 +72,8 @@ export default function lineChartSolved({ dataMentah }) {
     datasets: [
       {
         data: [],
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgb(0, 156, 255)",
+        backgroundColor: "rgba(0, 156, 255, 0.5)",
       },
     ],
   });
@@ -84,8 +84,8 @@ export default function lineChartSolved({ dataMentah }) {
       datasets: [
         {
           data: [],
-          borderColor: "rgb(255, 99, 132)",
-          backgroundColor: "rgba(255, 99, 132, 0.5)",
+          borderColor: "rgb(0, 156, 255)",
+          backgroundColor: "rgba(0, 156, 255, 0.5)",
         },
       ],
     });
@@ -111,8 +111,8 @@ export default function lineChartSolved({ dataMentah }) {
           datasets: [
             { label: "Label Test" },
             { data: Data },
-            { borderColor: "rgb(255, 99, 132)" },
-            { backgroundColor: "rgba(255, 99, 132, 0.5)" },
+            { borderColor: "rgb(0, 156, 255)" },
+            { backgroundColor: "rgba(0, 156, 255, 0.5)" },
           ],
         };
         setData(dataSheet);

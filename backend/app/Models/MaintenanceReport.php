@@ -41,6 +41,11 @@ class MaintenanceReport extends Model
         $query->where('id', $params);
       });
     });
+    $query->when($filters['kategori'] ?? false, function ($query, $params) {
+      return $query->whereHas('keluhan.kategori', function ($query) use ($params) {
+        $query->where('id', $params);
+      });
+    });
   }
 
   public function keluhan()

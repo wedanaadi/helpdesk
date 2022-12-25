@@ -91,9 +91,26 @@ class ReportController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  public function kategori(Request $request)
+  {
+    $pro = DB::select('SELECT * FROM kategoris WHERE is_aktif="1"');
+    $data = [];
+    array_push($data, [
+      'label' => 'SEMUA',
+      'value' => 'all'
+    ]);
+    foreach ($pro as $d) {
+      array_push($data, [
+        'label' => $d->nama_kategori,
+        'value' => $d->id
+      ]);
+    }
+    return response()->json(['msg' => 'Get Kategori', "data" => $data, 'error' => []], 200);
+  }
+
   public function report_complaint()
   {
-    $data = Keluhan::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
+    $data = Keluhan::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan', 'kategori']))
       ->leftJoin('maintenance_reports', 'keluhan_id', '=', 'tiket')
       ->with(
         'kategori',
@@ -130,7 +147,7 @@ class ReportController extends Controller
 
   public function report_maintenance()
   {
-    $pending = Maintenance::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
+    $pending = Maintenance::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan', 'kategori']))
       ->select(
         DB::raw('tiket_keluhan as keluhan_id'),
         'created_at',
@@ -141,7 +158,7 @@ class ReportController extends Controller
       ->where('status', '!=', '1');
     $data = MaintenanceReport::union($pending)
       ->where('status', '1')
-      ->filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
+      ->filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan', 'kategori']))
       ->with(
         'keluhan',
         'keluhan.kategori',
@@ -190,9 +207,39 @@ class ReportController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data->get(), 'error' => []], 200);
   }
 
-  public function chart_complaint()
+  public function chart_complaint2()
   {
     $data = Keluhan::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
+      ->leftJoin('maintenance_reports', 'keluhan_id', '=', 'tiket')
+      ->with(
+        'kategori',
+        'pelanggan',
+        'pelanggan.kelurahan',
+        'pelanggan.kelurahan.kecamatan',
+        'pelanggan.kelurahan.kecamatan.kabkot',
+        'pelanggan.kelurahan.kecamatan.kabkot.provinsi'
+      )
+      ->whereRaw('keluhan_id IS NULL')
+      ->select('keluhans.*', 'maintenance_reports.keluhan_id', DB::raw('IF(keluhans.status = "0","ON",IF(keluhans.status = "1","SOLVED","ON PROCCESS")) AS status_desc'));
+    if (request('type') == "1") {
+      $data->select('kategori_id', DB::raw('"day" as type'), DB::raw('DAY(FROM_UNIXTIME(keluhans.created_at/1000)) label'), DB::raw('count(keluhans.id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(keluhans.created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(keluhans.created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(keluhans.created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(keluhans.created_at/1000)) day'));
+      $data->groupBy('month', 'day','kategori_id');
+    } else if (request('type') == "2") {
+      $data->select('kategori_id', DB::raw('"month" as type'), DB::raw('MONTH(FROM_UNIXTIME(keluhans.created_at/1000)) label'), DB::raw('count(keluhans.id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(keluhans.created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(keluhans.created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(keluhans.created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(keluhans.created_at/1000)) day'));
+      // $data->select(DB::raw('"month" as type'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) label'), DB::raw('count(id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day'));
+      $data->groupBy('year', 'month','kategori_id');
+    } else {
+      $data->select('kategori_id', DB::raw('"day" as type'), DB::raw('DAY(FROM_UNIXTIME(keluhans.created_at/1000)) label'), DB::raw('count(keluhans.id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(keluhans.created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(keluhans.created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(keluhans.created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(keluhans.created_at/1000)) day'));
+      // $data->select(DB::raw('"day" as type'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'), DB::raw('count(id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day'));
+      $data->groupBy('day','kategori_id');
+    }
+    return $data->get();
+    return response()->json(['msg' => 'Get pegawais', "data" => $data->get(), 'error' => []], 200);
+  }
+
+  public function chart_complaint()
+  {
+    $data = Keluhan::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan','kategori']))
       ->leftJoin('maintenance_reports', 'keluhan_id', '=', 'tiket')
       ->with(
         'pelanggan',
@@ -221,7 +268,7 @@ class ReportController extends Controller
 
   public function chart_maintenance()
   {
-    $pending = Maintenance::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']));
+    $pending = Maintenance::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan','kategori']));
     $pending->where('status', '!=', '1');
     if (request('type') == '2') {
       $pending->select(
@@ -249,7 +296,7 @@ class ReportController extends Controller
       );
     }
 
-    $report = MaintenanceReport::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan']))
+    $report = MaintenanceReport::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan','kategori']))
       ->where('status', '1');
     if (request('type') == '2') {
       $report->select(
@@ -278,7 +325,7 @@ class ReportController extends Controller
     }
     $report->union($pending);
     $data = DB::table(DB::raw("({$report->toSql()}) as sub"))
-    ->mergeBindings($report->getQuery());
+      ->mergeBindings($report->getQuery());
     if (request('type') == "1") {
       $data->select('*', DB::raw('count(jumlah) as jumlah'));
       $data->groupBy('month', 'day');
