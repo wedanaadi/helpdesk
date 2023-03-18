@@ -2,10 +2,12 @@ import {
   faArrowLeft,
   faCheckDouble,
   faClock,
+  faSync,
+  faTimeline,
   faWrench,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useHookAxios from "../../hook/useHookAxios";
 import Map2 from "../../Map2";
@@ -13,7 +15,9 @@ import { baseUrl } from "../../util/BaseUrl";
 import ToDate, { ConvertToEpoch } from "../../util/ToDate";
 import axios from "../../util/jsonApi";
 import { toast } from "react-toastify";
+import ModalChangePegawai from "./ModalChangePegawai";
 const ModalUpdate = React.lazy(() => import("./ModalUpdate"));
+const ModalExtend = React.lazy(() => import("./ModalExtend"));
 
 export default function DetailMaintenance() {
   const detailLokal = JSON.parse(localStorage.getItem("detailMaintenance"));
@@ -84,12 +88,35 @@ export default function DetailMaintenance() {
   const handleModal = (data, status) => {
     setShow(true);
     setDataModal(data);
-    setTipeStatus(status)
+    setTipeStatus(status);
   };
+
+  // add expired
+  const [showModalExtend, SetshowModalExtend] = useState(false);
+  const [showModalPegawai, setShowModalPegawai] = useState(false);
 
   return (
     <div className="row g-4">
-      <ModalUpdate toggleModal={show} setState={setShow} data={dataModal} aksiUpdate={tipeStatus} />
+      <ModalUpdate
+        toggleModal={show}
+        setState={setShow}
+        data={dataModal}
+        aksiUpdate={tipeStatus}
+      />
+      <Suspense>
+        <ModalExtend
+          toogleShow={showModalExtend}
+          setClose={SetshowModalExtend}
+          dataDetail={detailLokal}
+        />
+      </Suspense>
+      <Suspense>
+        <ModalChangePegawai
+          toogleShow={showModalPegawai}
+          setClose={setShowModalPegawai}
+          dataDetail={detailLokal}
+        />
+      </Suspense>
       <div className="col-12 mx-0">
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
@@ -130,34 +157,85 @@ export default function DetailMaintenance() {
               </span>
             </div>
             <div>
-              {parseInt(detailLokal.status) !== 1 &&
-              checkExp() &&
-              lokalUser.role == "3" ? (
-                <>
-                  <span>Update Ticket: </span>&nbsp;
-                  <button
-                    className="btn btn-success"
-                    onClick={() => handleModal(detailLokal,'1')}
-                  >
-                    <FontAwesomeIcon icon={faCheckDouble} />
-                    &nbsp; Solved
-                  </button>{" "}
-                  &nbsp;{" "}
-                  {parseInt(detailLokal.status) !== 2 ? (
-                    <button
-                      className="btn btn-warning"
-                      onClick={() => handleModal(detailLokal,'2')}
-                    >
-                      <FontAwesomeIcon icon={faClock} />
-                      &nbsp; Pending
-                    </button>
-                  ) : (
-                    false
-                  )}
-                </>
-              ) : (
-                false
-              )}
+              <div className="row">
+                {lokalUser.role !== 4 ? (
+                  <div className="d-flex justify-content-between align-items-center">
+                    <span>Aksi Ticket: </span>
+                    &nbsp;
+                    {lokalUser.role === 1 || lokalUser.role === 2 ? (
+                      <button
+                        className="btn btn-success"
+                        onClick={() => SetshowModalExtend(true)}
+                      >
+                        <FontAwesomeIcon icon={faClock} />
+                        &nbsp; Perpanjang Expired Date
+                      </button>
+                    ):false}
+                    &nbsp;{" "}
+                    {lokalUser.role === 3 && (
+                      <Link
+                        to={`${baseUrl}/keluhan/track/${detailLokal.tiket_keluhan}`}
+                        className="btn btn-warning"
+                      >
+                        <FontAwesomeIcon icon={faTimeline} />
+                        &nbsp; Tracking Penanganan
+                      </Link>
+                    )}
+                    &nbsp;
+                    {parseInt(detailLokal.status) === 0 ? (
+                      <button
+                        className="btn btn-warning"
+                        onClick={() => setShowModalPegawai(true)}
+                      >
+                        <FontAwesomeIcon icon={faSync} />
+                        &nbsp; Ganti Teknisi
+                      </button>
+                    ) : (
+                      false
+                    )}
+                  </div>
+                ) : (
+                  false
+                )}
+              </div>
+
+              <div className="row mt-2">
+                <div className="d-flex justify-content-between align-items-center">
+                  {lokalUser.role===3 && <span>Update Ticket: </span>}
+                  &nbsp;
+                  <div>
+                    {parseInt(detailLokal.status) !== 1 &&
+                    checkExp() &&
+                    lokalUser.role === 3 ? (
+                      <>
+                        <button
+                          className="btn btn-success"
+                          onClick={() => handleModal(detailLokal, "1")}
+                        >
+                          <FontAwesomeIcon icon={faCheckDouble} />
+                          &nbsp; Solved
+                        </button>{" "}
+                      </>
+                    ) : (
+                      false
+                    )}
+                    {lokalUser.role === 3 ? (
+                      <>
+                        &nbsp;
+                        <button
+                          className="btn btn-warning"
+                          onClick={() => handleModal(detailLokal, "2")}
+                        >
+                          <FontAwesomeIcon icon={faClock} />
+                          &nbsp; Pending
+                        </button>
+                      </>
+                    ) : (
+                      false
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

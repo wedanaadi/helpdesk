@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import axios from "../../util/jsonApi";
 import LoadingPage from "../../LoadingPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faArrowLeft,
   faCheckDouble,
   faPencilAlt,
   faPlus,
@@ -16,7 +17,7 @@ import useHookAxios from "../../hook/useHookAxios";
 import { confirmAlert } from "react-confirm-alert";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../util/BaseUrl";
-import ToDate from "../../util/ToDate";
+import ToDate, { ConvertToEpoch } from "../../util/ToDate";
 
 export default function Index() {
   const LocalUser = JSON.parse(localStorage.getItem("userData"));
@@ -66,6 +67,9 @@ export default function Index() {
       url: url,
       data: null,
       reqConfig: {
+        params: {
+          idPelanggan: atob(localStorage.getItem("pelangganKeluhan")),
+        },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
         },
@@ -75,11 +79,11 @@ export default function Index() {
 
   useEffect(() => {
     getKeluhan();
-  }, [page, pagination]);
+  }, [page, pagination, localStorage.getItem("pelangganKeluhan")]);
 
   const handleEditButton = (data) => {
     localStorage.setItem("dataEdit", btoa(JSON.stringify(data)));
-    navigasi("edit", { replace: true });
+    navigasi(`${baseUrl}/keluhan/edit`, { replace: true });
   };
 
   const confirm = (id) => {
@@ -152,16 +156,26 @@ export default function Index() {
 
   const handleDetail = (data) => {
     localStorage.setItem("detailKeluhan", JSON.stringify(data));
-    navigasi("detail");
+    navigasi(`${baseUrl}/keluhan/detail`);
+  };
+
+  const checkExp = (expired_date_keluhan) => {
+    const db = ConvertToEpoch(expired_date_keluhan);
+    const now = ConvertToEpoch(new Date());
+    return db < now ? false : true;
   };
 
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Data Keluhan</h3>
-        <Link to={`add`} className="btn btn-success mb-0">
+        {/* <Link to={`add`} className="btn btn-success mb-0">
           <FontAwesomeIcon icon={faPlus} />
           &nbsp; Tambah
+        </Link> */}
+        <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
+          <FontAwesomeIcon icon={faArrowLeft} />
+          &nbsp; Kembali
         </Link>
       </div>
       <div className="px-3 py-2">
@@ -246,32 +260,28 @@ export default function Index() {
                               &nbsp; Detail
                             </button>
                             &nbsp;
-                            {data.status != "1" ? (
-                              LocalUser.idUser === data.created_user ||
-                              (LocalUser.idUser === "0" &&
-                                data.status != "1") ? (
-                                <>
-                                  <button
-                                    className="btn btn-warning"
-                                    onClick={() => handleEditButton(data)}
-                                  >
-                                    <FontAwesomeIcon icon={faPencilAlt} />
-                                    &nbsp; Edit
-                                  </button>
-                                  &nbsp;
-                                  <button
-                                    className="btn btn-danger"
-                                    onClick={() => confirm(data.id)}
-                                  >
-                                    <FontAwesomeIcon icon={faTrashAlt} />
-                                    &nbsp; Delete
-                                  </button>
-                                </>
-                              ) : (
-                                <></>
-                              )
-                            ) : (
-                              false
+                            {checkExp(data.expired_date) && (
+                              <>
+                                <button
+                                  className="btn btn-warning"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <FontAwesomeIcon icon={faPencilAlt} />
+                                  &nbsp; Edit
+                                </button>
+                                {data.status !== 1 && (
+                                  <>
+                                    &nbsp;
+                                    <button
+                                      className="btn btn-danger"
+                                      onClick={() => confirm(data.id)}
+                                    >
+                                      <FontAwesomeIcon icon={faTrashAlt} />
+                                      &nbsp; Delete
+                                    </button>
+                                  </>
+                                )}
+                              </>
                             )}
                           </td>
                         </tr>

@@ -13,6 +13,8 @@ import ToDate from "../util/ToDate";
 const Setting = React.lazy(()=>import("../pages/Setting"))
 
 export default function Navbar({ sidebarOpen, setSidebar }) {
+  const baseImageUrl = `${import.meta.env.VITE_STORAGE_BACKEND}/img`;
+  const baseImageDefault = `${baseUrl}/img/userlogo.png`;
   const LokalUser = JSON.parse(localStorage.getItem("userData"));
   let name = "";
   let role = "";
@@ -109,12 +111,17 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
     mutate("notifikasi");
   };
 
-  const [show, setShow] = useState(false);
-  const [dataModal, setDataModal] = useState(null);
+  // const [show, setShow] = useState(false);
+  // const [dataModal, setDataModal] = useState(null);
 
-  const handleModal = () => {
-    setShow(true);
-    setDataModal(LokalUser.idUser);
+  // const handleModal = () => {
+  //   setShow(true);
+  //   setDataModal(LokalUser.idUser);
+  // };
+
+  const handleTicket = (data) => {
+    localStorage.setItem("pelangganKeluhan", btoa(data));
+    navigasi(`${baseUrl}/keluhan/listTicket`,{ replace: true });
   };
 
   return (
@@ -163,7 +170,12 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
                         <div className="d-flex align-items-center">
                           <img
                             className="rounded-circle"
-                            src={`${baseUrl}/img/userlogo.png`}
+                            // src={`${baseUrl}/img/userlogo.png`}
+                            src={
+                              data?.sender?.profil === "-"
+                                ? baseImageDefault
+                                : `${baseImageUrl}/${data.sender.profil}`
+                            }
                             alt="image"
                             style={{ width: 40, height: 40 }}
                           />
@@ -210,8 +222,8 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
                   keluhan.data.map((data, index) => (
                     <div key={index}>
                       <div className="dropdown-item">
-                        <h6 className="fw-normal mb-0">{data.tiket}</h6>
-                        <small>{ToDate(data.human_created_at)}</small>
+                        <h6 role="button" className="fw-normal mb-0" onClick={() => handleTicket(data.pelanggan_id)}>{data.pelanggan_id}</h6>
+                        {/* <small>{ToDate(data.human_created_at)}</small> */}
                       </div>
                       <hr className="dropdown-divider" />
                     </div>
@@ -237,7 +249,11 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
           >
             <img
               className="rounded-circle me-lg-2"
-              src={`${baseUrl}/img/userlogo.png`}
+              src={
+                LokalUser?.relasi?.profil === "-"
+                  ? baseImageDefault
+                  : `${baseImageUrl}/${LokalUser?.relasi?.profil}`
+              }
               alt="image"
               style={{ width: 40, height: 40 }}
             />
@@ -247,18 +263,18 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
             {/* <a href="#" className="dropdown-item">
               My Profile
             </a> */}
-            <button className="dropdown-item" onClick={() => handleModal()}>
+            <Link to={`profile`} className="dropdown-item">
               Settings
-            </button>
+            </Link>
             <button onClick={handleLogout} className="dropdown-item">
               Log Out
             </button>
           </div>
         </div>
       </div>
-      <Suspense>
+      {/* <Suspense>
         <Setting toggleModal={show} setState={setShow} data={dataModal} />
-      </Suspense>
+      </Suspense> */}
     </nav>
   );
 }

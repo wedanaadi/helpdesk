@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -32,6 +33,12 @@ class AuthController extends Controller
 
     try {
       $user = User::firstWhere('username', $request->username);
+      if($user->role === 4) {
+        $pelanggan = Pelanggan::firstWhere('id',$user->relasi_id);
+        if($pelanggan->is_aktif === 0) {
+          return response()->json(['errors' => 'Akun anda dinon-aktifkan!'], 403);
+        }
+      }
       if (!$user || !Hash::check($request->password, $user->password)) {
         return response()->json(['errors' => 'Bad Credentials, Cek kembali username atau password!'], 403);
       }
@@ -39,12 +46,14 @@ class AuthController extends Controller
         $pelanggan = Pelanggan::find($user->relasi_id);
         $userList = [
           'idUser' => $pelanggan->id,
+          'idLogin' => $user->id,
           'role' => $user->role,
           'relasi' => $pelanggan
         ];
       } else if ($user->role == '5') {
         $userList = [
           'idUser' => "0",
+          'idLogin' => $user->id,
           'role' => $user->role,
           'relasi' => [
             'nama' => 'Super User',
@@ -55,6 +64,7 @@ class AuthController extends Controller
         $pegawai = Pegawai::find($user->relasi_id);
         $userList = [
           'idUser' => $pegawai->id,
+          'idLogin' => $user->id,
           'role' => $user->role,
           'relasi' => $pegawai
         ];
@@ -106,8 +116,18 @@ class AuthController extends Controller
     try {
       $data = $request->all();
       dispatch(new SendMailJob($data));
+      $logEmail = [
+        'id' => Str::uuid()->toString(),
+        'ticket_id' => $request->ticket,
+        'type' => $request->type === 'toTeknisi' ? 'M' : 'K',
+        'to' => $request->email,
+        'subject' => $request->subject,
+        'message' => $request->body,
+        'time_delevery' => round(microtime(true) * 1000)
+      ];
+      DB::table('logs_email')->insert($logEmail);
       // return redirect()->route('kirim-email')->with('status', 'Email berhasil dikirim');
-      return response()->json(['msg' => 'Successfuly Login', "data" => $data, 'error' => null], 200);
+      return response()->json(['msg' => 'Successfuly send', "data" => $data, 'error' => null], 200);
     } catch (\Exception $e) {
       return response()->json(['msg' => 'Failed Login', "data" => null, 'error' => $e->getMessage()], 500);
     }
@@ -207,5 +227,26 @@ class AuthController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'fail created data user', "data" => [], 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function isReadNotifikasi(Request $request)
+  {
+    $data = Notif::find($request->id);
+    $data->update([
+      'is_read' => 1
+    ]);
+    return response()->json(['msg' => 'Successfuly isRead', "data" => [], 'error' => null], 200);
+  }
+
+  public function getQueue()
+  {
+    $data = DB::table('queue_email_jobs')->where('isDone',"0")->get();
+    return response()->json(['msg' => 'Successfuly queue', "data" => $data, 'error' => null], 200);
+  }
+
+  public function deleteQueue()
+  {
+    $data = DB::table('queue_email_jobs')->delete();
+    return response()->json(['msg' => 'Successfuly queue', "data" => null, 'error' => null], 200);
   }
 }

@@ -10,22 +10,99 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\PelanggansImport;
+use Illuminate\Support\Facades\Hash;
 
 class PelangganController extends Controller
 {
   public function index()
   {
     $data = Pelanggan::filter(request(['search']))
-      ->with('kelurahan','kelurahan.kecamatan','kelurahan.kecamatan.kabkot','kelurahan.kecamatan.kabkot.provinsi')
-      ->where('is_aktif',"1")
-      ->OrderBy('nama_pelanggan', 'ASC')
+      ->with('kelurahan', 'kelurahan.kecamatan', 'kelurahan.kecamatan.kabkot', 'kelurahan.kecamatan.kabkot.provinsi')
+      // ->where('is_aktif', "1")
+      ->OrderBy('id', 'ASC')
+      ->OrderBy('is_aktif', 'DESC')
       ->paginate(request('perpage'));
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  public function showPelanggan(Request $request)
+  {
+    $data = Pelanggan::find($request->id);
+    return response()->json(['msg' => 'find pegawais', "data" => $data, 'error' => []], 200);
+  }
+
+  public function changeProfile(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'nama' => 'required',
+      'email' => 'required|email',
+      'telepon' => 'required',
+      'alamat' => 'required',
+      'kordinat' => 'required',
+    ], [
+      'email' => 'Format email salah!',
+      'required' => 'Input :attribute harus diisi!',
+      // 'role.required' => 'Input jabatan harus diisi!',
+      'unique' => 'Input :attribute sudah digunakan!',
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
+    }
+
+    $find = Pelanggan::findOrFail($request->idUser);
+    DB::beginTransaction();
+    try {
+      $userData = User::where('relasi_id', $request->idUser);
+      $kordinat = explode(', ',$request->kordinat);
+      $payload = [
+        'nama_pelanggan' => $request->nama,
+        'email' => $request->email,
+        'alamat' => $request->alamat,
+        'telepon' => $request->telepon,
+        'lat' => $kordinat[0],
+        'long' => $kordinat[1],
+      ];
+
+      if ($request->profile) {
+        $dataImage = $request->profile;
+        $destinationPath = storage_path('app') . '/public/img';
+        $fileName = 'profile-' . Str::uuid()->toString() . "=" . preg_replace('/\s+/', '', $dataImage->getClientOriginalName());
+        // // $extensi = $dataImage->getClientOriginalExtension();
+        $dataImage->move($destinationPath, $fileName);
+        if ($request->oldProfile !== '-') {
+          unlink($destinationPath.'/' . $request->oldProfile);
+        }
+        $payload['profil'] = $fileName;
+      }
+
+      $payloadUser = [];
+      if($request->password != '' OR $request->password != null) {
+        $payloadUser['password'] = Hash::make($request->password);
+      }
+
+      if($request->username != '' OR $request->username != null) {
+        $payloadUser['username'] = $request->username;
+      }
+
+      $find->update($payload);
+      if(count($payloadUser) > 0) {
+        $userData->update($payloadUser);
+      }
+      $newData = Pelanggan::find($request->idUser);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly update data pegawai', "data" => ['payload' => $newData, 'email' => null], 'error' => null], 200);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'Failed update data pegawai', "data" => null, 'error' => $e->getMessage()], 500);
+    }
+  }
+
   public function select(Request $request)
   {
-    $pro = DB::select('SELECT * FROM pelanggans');
+    $pro = DB::select('SELECT * FROM pelanggans ORDER BY is_aktif DESC, nama_pelanggan ASC');
     $data = [];
     foreach ($pro as $d) {
       array_push($data, [
@@ -52,7 +129,7 @@ class PelangganController extends Controller
   public function kabkot(Request $request)
   {
     $data = [];
-    if($request->provId) {
+    if ($request->provId) {
       $kabkot = DB::select("SELECT * FROM regencies WHERE province_id = '$request->provId'");
       foreach ($kabkot as $d) {
         array_push($data, [
@@ -67,7 +144,7 @@ class PelangganController extends Controller
   public function kecamatan(Request $request)
   {
     $data = [];
-    if($request->regId) {
+    if ($request->regId) {
       $kabkot = DB::select("SELECT * FROM districts WHERE regency_id = '$request->regId'");
       foreach ($kabkot as $d) {
         array_push($data, [
@@ -82,7 +159,7 @@ class PelangganController extends Controller
   public function kelurahan(Request $request)
   {
     $data = [];
-    if($request->discId) {
+    if ($request->discId) {
       $kabkot = DB::select("SELECT * FROM villages WHERE district_id = '$request->discId'");
       foreach ($kabkot as $d) {
         array_push($data, [
@@ -165,11 +242,11 @@ class PelangganController extends Controller
     }
   }
 
-  public function update(Request $request,$id)
+  public function update(Request $request, $id)
   {
     $validator = Validator::make($request->all(), [
       'nama_pelanggan' => 'required',
-      'email' => 'required|email|unique:pelanggans,email,'.$id.',id',
+      'email' => 'required|email|unique:pelanggans,email,' . $id . ',id',
       'telepon' => 'required',
       'alamat' => 'required',
       'provinsi' => 'required',
@@ -188,10 +265,10 @@ class PelangganController extends Controller
       return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
     }
 
-    $find=Pelanggan::findOrFail($id);
+    $find = Pelanggan::findOrFail($id);
     DB::beginTransaction();
     try {
-      $userData = User::where('relasi_id',$id);
+      $userData = User::where('relasi_id', $id);
       $payload = [
         'nama_pelanggan' => $request->nama_pelanggan,
         'email' => $request->email,
@@ -231,17 +308,17 @@ class PelangganController extends Controller
     }
   }
 
-  public function destroy($id)
+  public function destroy(Request $request, $id)
   {
     $find = Pelanggan::findOrFail($id);
     DB::beginTransaction();
     try {
       $payload = [
-        'is_aktif' => "0",
+        'is_aktif' => $request->value,
         'updated_at' => round(microtime(true) * 1000),
       ];
       $find->update($payload);
-      User::where('relasi_id',$id)->delete();
+      // User::where('relasi_id', $id)->delete();
       DB::commit();
       return response()->json(['msg' => 'Successfuly update data delete', "data" => $payload, 'error' => null], 201);
     } catch (\Exception $e) {
@@ -254,5 +331,36 @@ class PelangganController extends Controller
   {
     dispatch(new SendMailCreated($request->all()));
     return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
+  }
+
+  public function import(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'file' => 'required',
+    ], [
+      'required' => 'Input :attribute harus diisi!',
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
+    }
+
+    DB::beginTransaction();
+    try {
+      Excel::import(new PelanggansImport, request()->file('file'));
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly import data pelanggan', "data" => [], 'error' => null], 200);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'Failed created data pelanggan', "data" => null, 'error' => $e->getMessage()], 500);
+    }
+    // Excel::import(new PelanggansImport, request()->file('file'));
+    // return response()->json(['test'=>$a, 'adi' =>'fdjh']);
+    // $dataImage = $request->file;
+    // $destinationPath = 'images/file';
+    // $destinationPath = storage_path('app') . '/public/file';
+    // $fileName = 'file-' . Str::uuid()->toString() . "=" . preg_replace('/\s+/', '', $dataImage->getClientOriginalName());
+    // // $extensi = $dataImage->getClientOriginalExtension();
+    // $dataImage->move($destinationPath, $fileName);
   }
 }

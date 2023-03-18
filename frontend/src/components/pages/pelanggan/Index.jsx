@@ -4,11 +4,12 @@ import LoadingPage from "../../LoadingPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
+  faFileExcel,
   faPencilAlt,
   faPlus,
   faSearch,
+  faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { Search, Pagging } from "../../datatable";
 import Select from "../../Select";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,6 +18,7 @@ import { confirmAlert } from "react-confirm-alert";
 import { toast } from "react-toastify";
 import { baseUrl } from "../../util/BaseUrl";
 import SendEmail from "./SendEmail";
+const ImportComponent = React.lazy(() => import("./modalImport"));
 
 export default function Index() {
   const UserLogin = JSON.parse(localStorage.getItem("userData"));
@@ -84,9 +86,9 @@ export default function Index() {
     navigasi("edit", { replace: true });
   };
 
-  const confirm = (id) => {
+  const confirm = (id, value) => {
     confirmAlert({
-      title: "Hapus Data",
+      title: `${value===0?'Non-Aktifkan':'Aktifkan'} Pelanggan`,
       message: "Yakin melakukan ini.",
       buttons: [
         {
@@ -100,6 +102,9 @@ export default function Index() {
               url: `pelanggan/${id}`,
               data: null,
               reqConfig: {
+                params: {
+                  value
+                },
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("auth")}`,
                 },
@@ -138,7 +143,7 @@ export default function Index() {
 
     if (pelanggans && !validation && !error && !loading) {
       toast.update(toastId.current, {
-        render: "Successfuly deleted",
+        render: "Successfuly...",
         type: "success",
         isLoading: false,
         autoClose: 1500,
@@ -165,23 +170,39 @@ export default function Index() {
     setDataModal(data);
   };
 
+  const [showImportComponent, setShowImportComponent] = useState(false);
+
   return (
     <div className="row bg-light rounded mx-0">
       <Suspense>
-        <SendEmail
-          toggleModal={show}
-          setState={setShow}
-          data={dataModal}
-          type="toTeknisi"
-        />
+        <>
+          <SendEmail
+            toggleModal={show}
+            setState={setShow}
+            data={dataModal}
+            type="toTeknisi"
+          />
+          <ImportComponent
+            toogleShow={showImportComponent}
+            setClose={setShowImportComponent}
+            reloadData={()=>getPelanggan()}
+          />
+        </>
       </Suspense>
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Pelanggan</h3>
         {UserLogin.role == "1" ? (
-          <Link to={`add`} className="btn btn-success mb-0">
-            <FontAwesomeIcon icon={faPlus} />
-            &nbsp; Tambah
-          </Link>
+          <div className="mb-0">
+            <button className="btn btn-success" onClick={()=> setShowImportComponent(true)}>
+              <FontAwesomeIcon icon={faFileExcel} />
+              &nbsp; Import
+            </button>
+            &nbsp;
+            <Link to={`add`} className="btn btn-success">
+              <FontAwesomeIcon icon={faPlus} />
+              &nbsp; Tambah
+            </Link>
+          </div>
         ) : (
           false
         )}
@@ -230,6 +251,7 @@ export default function Index() {
                     <th>Kabupaten/Kota</th>
                     <th>Kecamatan</th>
                     <th>Kelurahan</th>
+                    <th>Status</th>
                     {UserLogin.role == "1" ? <th>Aksi</th> : false}
                   </tr>
                 </thead>
@@ -256,13 +278,13 @@ export default function Index() {
                             <div className="d-flex justify-content-between mx-0">
                               <span>{data.email}</span>
                               &nbsp;
-                                <button
-                                  className="btn btn-info mb-0"
-                                  onClick={() => handleModal(data)}
-                                >
-                                  <FontAwesomeIcon icon={faEnvelope} />
-                                  &nbsp; Kirim
-                                </button>
+                              <button
+                                className="btn btn-info mb-0"
+                                onClick={() => handleModal(data)}
+                              >
+                                <FontAwesomeIcon icon={faEnvelope} />
+                                &nbsp; Kirim
+                              </button>
                               &nbsp;
                             </div>
                           </td>
@@ -274,6 +296,7 @@ export default function Index() {
                           <td>{data.kelurahan?.kecamatan?.kabkot?.name}</td>
                           <td>{data.kelurahan?.kecamatan?.name}</td>
                           <td>{data.kelurahan?.name}</td>
+                          <td>{data?.is_aktif === 1 ? 'Aktif' : 'Non-Aktif'}</td>
                           {UserLogin.role == "1" ? (
                             <>
                               <td className="text-center w-15">
@@ -285,13 +308,19 @@ export default function Index() {
                                   &nbsp; Edit
                                 </button>
                                 &nbsp;
-                                <button
+                                {data?.is_aktif === 1 ? (<button
                                   className="btn btn-danger"
-                                  onClick={() => confirm(data.id)}
+                                  onClick={() => confirm(data.id, 0)}
                                 >
-                                  <FontAwesomeIcon icon={faTrashAlt} />
-                                  &nbsp; Delete
-                                </button>
+                                  <FontAwesomeIcon icon={faXmarkCircle} />
+                                  &nbsp; Non-Aktifkan
+                                </button>) : (<button
+                                  className="btn btn-success"
+                                  onClick={() => confirm(data.id, 1)}
+                                >
+                                  <FontAwesomeIcon icon={faXmarkCircle} />
+                                  &nbsp; Aktifkan
+                                </button>)} 
                               </td>
                             </>
                           ) : (
@@ -320,12 +349,12 @@ export default function Index() {
                 </div>
                 <div className="col-12 col-xl-6 d-flex flex-row-reverse">
                   <div className="table-responsive">
-                  <Pagging
-                    total={pelanggans?.pagination.total}
-                    itemsPerPage={pelanggans?.pagination.perPage}
-                    currentPage={pelanggans?.pagination.currentPage}
-                    onPageChange={(page) => setPage(page)}
-                  />
+                    <Pagging
+                      total={pelanggans?.pagination.total}
+                      itemsPerPage={pelanggans?.pagination.perPage}
+                      currentPage={pelanggans?.pagination.currentPage}
+                      onPageChange={(page) => setPage(page)}
+                    />
                   </div>
                 </div>
               </div>

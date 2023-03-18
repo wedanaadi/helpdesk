@@ -389,7 +389,7 @@ export default function KeluhanEditPelanggan() {
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
             <h3 className="mb-0">File</h3>
-            <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
+            <Link to={`${baseUrl}/keluhan/pelanggan`} className="btn btn-secondary mb-0">
               <FontAwesomeIcon icon={faArrowLeft} />
               &nbsp; Kembali
             </Link>

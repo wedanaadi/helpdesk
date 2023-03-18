@@ -22,10 +22,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/hello', function () {
-  return [0 => ['nama' => 'Adi'], 1 => ['nama' => 'Wedana']];
-});
-
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('updateUserLogin', [AuthController::class, 'update_data_login']);
 Route::post('/register', [AuthController::class, 'store']);
@@ -33,6 +29,12 @@ Route::post('/register', [AuthController::class, 'store']);
 Route::get('/notifikasi', [AuthController::class, 'notifikasi']);
 Route::post('/sendChat', [AuthController::class, 'save_pesan']);
 Route::get('/getNotif', [AuthController::class, 'getData']);
+Route::get('/Notifikasi-isRead', [AuthController::class, 'isReadNotifikasi']);
+Route::get('/get-queue', [AuthController::class, 'getQueue']);
+Route::post('/delete-queue', [AuthController::class, 'deleteQueue']);
+
+Route::post('import/pelanggan', [PelangganController::class, 'import']);
+Route::post('import/keluhan', [ComplaintController::class, 'import']);
 
 Route::middleware('auth:sanctum')->group(function () {
   Route::post('logout', [AuthController::class, 'logout']);
@@ -45,13 +47,17 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::delete('/kategori/{id}', [KategoriController::class, 'destroy']);
 
   Route::get('/pegawai', [PegawaiController::class, 'index']);
+  Route::get('/pegawai-profile-data', [PegawaiController::class, 'showPegawai']);
   Route::post('/pegawai', [PegawaiController::class, 'store']);
+  Route::post('/profile-change-pegawai', [PegawaiController::class, 'changeProfile']);
   Route::post('/pegawai/sendEmail', [PegawaiController::class, 'sendEmail']);
   Route::put('/pegawai/{id}', [PegawaiController::class, 'update']);
   Route::delete('/pegawai/{id}', [PegawaiController::class, 'destroy']);
 
   Route::get('/pelanggan', [PelangganController::class, 'index']);
+  Route::get('/pelanggan-profile-data', [PelangganController::class, 'showPelanggan']);
   Route::post('/pelanggan', [PelangganController::class, 'store']);
+  Route::post('/profile-change-pelanggan', [PelangganController::class, 'changeProfile']);
   Route::post('/pelanggan/sendEmail', [PelangganController::class, 'sendEmail']);
   Route::put('/pelanggan/{id}', [PelangganController::class, 'update']);
   Route::delete('/pelanggan/{id}', [PelangganController::class, 'destroy']);
@@ -76,6 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('keluhan', [ComplaintController::class, 'index']);
   Route::get('keluhan-notifikasi', [ComplaintController::class, 'notifikasi_keluhan']);
   Route::get('keluhan-pelanggan', [ComplaintController::class, 'index_pelanggan']);
+  Route::get('list-pelanggan', [ComplaintController::class, 'listPelangganKeluhan']);
   Route::get('keluhan/files/{id}', [ComplaintController::class, 'files']);
   Route::get('log-keluhan', [ComplaintController::class, 'log']);
   // Route::get('track/{id}', [ComplaintController::class, 'track']);
@@ -88,11 +95,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('maintenance', [MaintenanceController::class, 'index']);
   Route::get('maintenance-detail', [MaintenanceController::class, 'detail']);
+  Route::get('logs-email', [MaintenanceController::class, 'logEmailTrack']);
   Route::post('maintenance', [MaintenanceController::class, 'store']);
   Route::post('maintenance/sendEmail', [MaintenanceController::class, 'sendEmail']);
   Route::post('maintenance/sendEmail/t', [MaintenanceController::class, 'sendEmailTeknisi']);
   Route::put('maintenance/{id}', [MaintenanceController::class, 'update']);
   Route::put('maintenance/status/{id}', [MaintenanceController::class, 'changeStatus']);
+  Route::put('maintenance/expired/{id}', [MaintenanceController::class, 'changeExpiredDate']);
+  Route::put('maintenance/teknisiChange/{id}', [MaintenanceController::class, 'changeTeknisi']);
   Route::delete('maintenance/{id}', [MaintenanceController::class, 'destroy']);
 
 });

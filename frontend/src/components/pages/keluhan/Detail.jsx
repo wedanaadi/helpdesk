@@ -127,7 +127,7 @@ export default function Detail() {
               </Link>
             ) : (
               <Link
-                to={`${baseUrl}/keluhan`}
+                to={`${baseUrl}/keluhan/listTicket`}
                 className="btn btn-secondary mb-0"
               >
                 <FontAwesomeIcon icon={faArrowLeft} />

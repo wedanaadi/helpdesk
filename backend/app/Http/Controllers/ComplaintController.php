@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\KeluhansImport;
 use App\Jobs\SendMailKeluhan;
 use App\Libraries\Fungsi;
 use App\Models\File as FileKeluhan;
@@ -18,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ComplaintController extends Controller
 {
@@ -70,6 +72,7 @@ class ComplaintController extends Controller
         )
         // ->selectRaw('*, created_at AS "tanggal_tiket"')
         ->where('is_aktif', '1')
+        ->where('pelanggan_id', $request->idPelanggan)
         ->OrderBy('status', 'ASC')
         ->OrderBy('tiket', 'ASC')
         ->paginate(request('perpage'));
@@ -77,10 +80,20 @@ class ComplaintController extends Controller
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
 
+  public function listPelangganKeluhan()
+  {
+    $data = Keluhan::filter(request(['search']))
+    ->with('pelanggan')
+    ->groupBy('pelanggan_id')
+    ->paginate(request('perpage'));
+    return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
+  }
+
   public function notifikasi_keluhan()
   {
     $data = Keluhan::where('status','0')
     ->select('*',DB::raw('date_format(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d %H:%i:%s") as human_created_at'))
+    ->groupBy('pelanggan_id')
     ->orderBy('created_at','DESC')
     ->get();
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
@@ -198,6 +211,7 @@ class ComplaintController extends Controller
         'user_id' => $request->pelanggan,
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
+        'updated_by' => $request->updated_user,
       ];
 
       if ($prevTicket->count() > 0) {
@@ -296,6 +310,7 @@ class ComplaintController extends Controller
         'type' => '1',
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
+        'updated_by' => $request->updated_user,
       ];
 
       $find->update($payload);
@@ -488,7 +503,7 @@ class ComplaintController extends Controller
   public function log(Request $request)
   {
     $sql = "SELECT * FROM (
-              SELECT logs.created_at, logs.deskripsi, IFNULL(nama_pegawai,'Sistem') AS 'updated_by' from logs
+              SELECT logs.created_at, logs.deskripsi, IFNULL(nama_pegawai,(select nama_pelanggan from pelanggans WHERE id=logs.updated_by)) AS 'updated_by' from logs
               INNER join pelanggans on pelanggans.id = logs.user_id
               LEFT join pegawais on pegawais.id = logs.updated_by
               WHERE logs.type = '1' AND logs.`keluhan_id` = '$request->idKeluhan'
@@ -504,6 +519,12 @@ class ComplaintController extends Controller
               INNER join pegawais on pegawais.`id` = logs.user_id
               LEFT join pegawais up on up.`id` = logs.updated_by
               WHERE logs.type = '3' AND logs.`keluhan_id` = '$request->idKeluhan'
+              UNION
+              SELECT logs.created_at, concat(logs.deskripsi, ' Teknisi baru yang menangani adalah ', pegawais.`nama_pegawai`),
+              IFNULL(up.nama_pegawai,'Sistem') AS 'updated_by' from logs
+              INNER join pegawais on pegawais.`id` = logs.user_id
+              LEFT join pegawais up on up.id = logs.updated_by
+              WHERE logs.type = '4' AND logs.`keluhan_id` = '$request->idKeluhan'
               ORDER BY created_at
               ) AS pivot
     ) AS tbfix
@@ -516,5 +537,28 @@ class ComplaintController extends Controller
   {
     dispatch(new SendMailKeluhan($request->all()));
     return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
+  }
+
+  public function import(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'file' => 'required',
+    ], [
+      'required' => 'Input :attribute harus diisi!',
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
+    }
+
+    DB::beginTransaction();
+    try {
+      Excel::import(new KeluhansImport, request()->file('file'));
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly import data keluhan', "data" => [], 'error' => null], 200);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'Failed created data keluhan', "data" => null, 'error' => $e->getMessage()], 500);
+    }
   }
 }

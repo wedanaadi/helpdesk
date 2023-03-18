@@ -22,7 +22,8 @@ class Keluhan extends Model
       return $query->where('tiket', 'like', '%' . $search . '%')
         // ->where('comment', 'like', '%' . $search . '%')
         ->orWhereHas('pelanggan', function ($query) use ($search) {
-          $query->where('nama_pelanggan', $search);
+          $query->where('nama_pelanggan', 'like', '%' . $search . '%');
+          // $query->where('nama_pelanggan', $search);
         })
         ->orWhereHas('kategori', function ($query) use ($search) {
           $query->where('nama_kategori', $search);

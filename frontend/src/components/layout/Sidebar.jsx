@@ -11,11 +11,14 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets/logo.png"
+import logo from "../../assets/logo.png";
+import { baseUrl } from "../util/BaseUrl";
 
 export default function Sidebar({ sidebarOpen }) {
   const base_url = import.meta.env.VITE_bASE_ROUTE;
   const LokalUser = JSON.parse(localStorage.getItem("userData"));
+  const baseImageUrl = `${import.meta.env.VITE_STORAGE_BACKEND}/img`;
+  const baseImageDefault = `${baseUrl}/img/userlogo.png`;
   const hk = LokalUser?.role;
   let name = "";
   let role = "";
@@ -45,7 +48,7 @@ export default function Sidebar({ sidebarOpen }) {
           <h3 className="text-primary">
             {/* <i className="fa fa-hashtag me-2" /> */}
             {/* <FontAwesomeIcon icon={faHashtag} className="me-2" /> */}
-            <img src={logo} alt="logo" width={'50px'} />
+            <img src={logo} alt="logo" width={"50px"} />
             DASHAPP
           </h3>
         </Link>
@@ -53,7 +56,11 @@ export default function Sidebar({ sidebarOpen }) {
           <div className="position-relative">
             <img
               className="rounded-circle"
-              src={`${base_url}/img/userlogo.png`}
+              src={
+                LokalUser?.relasi?.profil === "-"
+                  ? baseImageDefault
+                  : `${baseImageUrl}/${LokalUser?.relasi?.profil}`
+              }
               alt="image"
               style={{ width: 40, height: 40 }}
             />

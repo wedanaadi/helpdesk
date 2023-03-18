@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { baseUrl } from "../util/BaseUrl";
+import AuthConsumer from "./Auth";
 
 const useHookAxios = () => {
   const [response, setResponse] = useState([]);
@@ -9,6 +10,7 @@ const useHookAxios = () => {
   const [loading, setLoading] = useState(false); //different!
   const [controller, setController] = useState();
   const navigasi = useNavigate();
+  const [authed, dispatch] = AuthConsumer();
 
   const hookFunc = async (configObj) => {
     const { axiosInstance, method, url, data = {}, reqConfig = {} } = configObj;
@@ -40,7 +42,9 @@ const useHookAxios = () => {
       } else if (err?.response?.status === 403) {
         error = { error: err.response.data.errors, type: "bad" };
       } else if (err?.response?.status === 401) {
+        localStorage.clear()
         navigasi(`${baseUrl}/login`, { replace: true });
+        dispatch({ type: "logout" });
         toast.error("unauthentication", { autoClose: 1500 });
         // error = { error: err.response.data.message, type: "unauthentication" };
       } else {

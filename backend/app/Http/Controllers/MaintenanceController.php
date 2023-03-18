@@ -63,7 +63,7 @@ class MaintenanceController extends Controller
       )
       ->OrderBy('status', 'ASC')
       ->OrderBy('tiket_maintenance', 'ASC');
-      $data->where('tiket_maintenance', request('ticketMaintenance'));
+    $data->where('tiket_maintenance', request('ticketMaintenance'));
     return response()->json(['msg' => 'Get Maintenance', "data" => $data->first(), 'error' => []], 200);
   }
 
@@ -124,7 +124,7 @@ class MaintenanceController extends Controller
         'subject' => 'Penugasan Penanganan',
         'email' => $pegawaiData->email,
         'teknisi' => $request->teknisi,
-        'public_url' => $request->public_url."/maintenance/teknisi/v?ticket=".$newTiket
+        'public_url' => $request->public_url . "/maintenance/teknisi/v?ticket=" . $newTiket
       ];
 
       $dataLog = [
@@ -200,7 +200,7 @@ class MaintenanceController extends Controller
         'subject' => 'Penugasan Penanganan',
         'email' => $pegawaiData->email,
         'teknisi' => $request->teknisi,
-        'public_url' => $request->public_url."/maintenance/teknisi/v?ticket=".$find->tiket_maintenance
+        'public_url' => $request->public_url . "/maintenance/teknisi/v?ticket=" . $find->tiket_maintenance
       ];
 
       $dataLog = [
@@ -313,5 +313,92 @@ class MaintenanceController extends Controller
   {
     dispatch(new SendNotifTeknisi($request->all()));
     return response()->json(['msg' => 'Successfuly send email Teknisi', "data" => null, 'error' => null], 200);
+  }
+
+  public function changeExpiredDate(Request $request, $id)
+  {
+    $data = Maintenance::find($id);
+    DB::beginTransaction();
+    try {
+      $data->update([
+        'expired_date' => $request->newExpDate
+      ]);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly update data expired', "data" => [
+        'expired_date' => $request->newExpDate
+      ], 'error' => null], 200);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'Failed update data Kategori', "data" => null, 'error' => $e->getMessage()], 500);
+    }
+  }
+
+  public function changeTeknisi(Request $request, $id)
+  {
+    $validator = Validator::make($request->all(), [
+      'newTeknisi' => 'required',
+    ], [
+      'newTeknisi.required' => 'Input Teknisi Baru harus diisi!',
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
+    }
+
+    $data = Maintenance::find($id);
+    DB::beginTransaction();
+    try {
+      $data->update([
+        'pegawai_id' => $request->newTeknisi['value']
+      ]);
+
+      $dataOldEmail = [
+        'message' => ['Penugasan penanganan ticket maintenance dibatalkan.' . PHP_EOL . 'Teknisi baru sudah ditugaskan.'],
+        'ticket_keluhan' => $request->ticket_keluhan,
+        'ticket_maintenance' => $request->ticket_maintenance,
+        'subject' => 'Pembatalan Penugasan Penanganan Ticket Complaint',
+        'email' => $request->prevEmailTeknisi,
+      ];
+
+      $pegawaiData = Pegawai::find($request->newTeknisi['value']);
+      $dataEmailTeknisi = [
+        'message' => ['Anda ditugaskan untuk menangani keluhan'],
+        'ticket_keluhan' => $request->ticket_keluhan,
+        'ticket_maintenance' => $request->ticket_maintenance,
+        'subject' => 'Penugasan Penanganan',
+        'email' => $pegawaiData->email,
+        'teknisi' => $request->newTeknisi['value'],
+        'public_url' => $request->public_url . "/maintenance/teknisi/v?ticket=" . $request->ticket_maintenance
+      ];
+
+      $dataLog = [
+        'keluhan_id' => $request->ticket_keluhan,
+        'relasi_log' => $request->ticket_maintenance,
+        'user_id' => $request->newTeknisi['value'],
+        'updated_by' => $request->user_update,
+        'deskripsi' => 'Ticket Maintenance dirubah".',
+        'type' => '4',
+        'created_at' => round(microtime(true) * 1000),
+        'updated_at' => round(microtime(true) * 1000),
+      ];
+      Log::create($dataLog);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly update data expired', "data" => [
+        'expired_date' => $request->newExpDate, 'emailPembatalan' => $dataOldEmail, 'emailBaru' => $dataEmailTeknisi
+      ], 'error' => null], 200);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'Failed update data Kategori', "data" => null, 'error' => $e->getMessage()], 500);
+    }
+  }
+
+  public function logEmailTrack(Request $request)
+  {
+    $sql = "SELECT logs_email.*, pegawais.nama_pegawai FROM logs_email
+    JOIN pegawais on pegawais.email = logs_email.`to`
+    WHERE ticket_id = '$request->ticket'
+    ORDER BY time_delevery DESC";
+    $data = DB::select($sql);
+    return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 }

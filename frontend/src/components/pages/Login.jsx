@@ -6,6 +6,7 @@ import useHookAxios from "../hook/useHookAxios";
 import { baseUrl } from "../util/BaseUrl";
 import axios from "../util/jsonApi";
 import logo from "../../assets/logo.png";
+import axios2 from "axios";
 
 export default function Login() {
   const [response, error, loading, axiosFuc] = useHookAxios();
@@ -30,61 +31,103 @@ export default function Login() {
     setAxiosHandle(true);
     setWaiting(true);
     toastId.current = toast.loading("Please wait...");
-    axiosFuc({
-      axiosInstance: axios,
-      method: "POST",
-      url: `login`,
-      data: form,
-    });
-  };
-
-  const handleAxios = async () => {
-    let message = "";
-    setValidation(null);
-    if (!loading && error) {
-      if (error.type === "validation") {
-        setValidation(error.error);
-        message = "Error Validasi";
-      } else if (error.type === "bad") {
-        setValidation(error?.error);
-        message = error?.error;
-      } else {
-        setValidation(error.error?.statusText);
-        message = error.error?.statusText;
-      }
-
-      toast.update(toastId.current, {
-        render: message,
-        type: "error",
-        isLoading: false,
-        autoClose: 1500,
-      });
-      setAxiosHandle(false);
-      setWaiting(false);
-    }
-
-    if (response && !error && !validation && !loading) {
-      toast.update(toastId.current, {
-        render: "Successfuly Login",
-        type: "success",
-        isLoading: false,
-        autoClose: 1500,
-      });
-      localStorage.setItem("auth", response?.access_token);
-      localStorage.setItem("userData", JSON.stringify(response?.user_data));
-      dispatch({ type: "login" });
-      setTimeout(() => {
-        setReload(true);
+    // axiosFuc({
+    //   axiosInstance: axios,
+    //   method: "POST",
+    //   url: `login`,
+    //   data: form,
+    // });
+    axios2
+      .post(`${import.meta.env.VITE_BASE_BACKEND}login`, form)
+      .then((response) => {
+        const res = response.data;
+        toast.update(toastId.current, {
+          render: "Successfuly Login",
+          type: "success",
+          isLoading: false,
+          autoClose: 1500,
+        });
+        localStorage.setItem("auth", res?.data?.access_token);
+        localStorage.setItem("userData", JSON.stringify(res?.data?.user_data));
+        dispatch({ type: "login" });
+        setTimeout(() => {
+          setReload(true);
+          setAxiosHandle(false);
+          setWaiting(false);
+          navigasi(`${baseUrl}/`, { replace: true });
+        }, 10);
+      })
+      .catch((err) => {
+        let message = "";
+        setValidation(null);
+        if (err?.response?.status === 422) {
+          setValidation(err.response.data.errors);
+          message = "Error Validasi";
+        } else if (err?.response?.status === 403) {
+          setValidation(err.response.data.errors);
+          message = err.response.data.errors;
+        } else {
+          setValidation(null);
+          message = error.error?.statusText;
+        }
+        toast.update(toastId.current, {
+          render: message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
         setAxiosHandle(false);
         setWaiting(false);
-        navigasi(`${baseUrl}/`, { replace: true });
-      }, 10);
-    }
+      });
   };
 
-  useEffect(() => {
-    axiosHandle && handleAxios();
-  }, [response, error]);
+  // const handleAxios = async () => {
+  //   let message = "";
+  //   setValidation(null);
+  //   if (!loading && error) {
+  //     if (error.type === "validation") {
+  //       setValidation(error.error);
+  //       message = "Error Validasi";
+  //     } else if (error.type === "bad") {
+  //       setValidation(error?.error);
+  //       message = error?.error;
+  //     } else {
+  //       setValidation(error.error?.statusText);
+  //       message = error.error?.statusText;
+  //     }
+
+  //     toast.update(toastId.current, {
+  //       render: message,
+  //       type: "error",
+  //       isLoading: false,
+  //       autoClose: 1500,
+  //     });
+  //     setAxiosHandle(false);
+  //     setWaiting(false);
+  //   }
+
+  //   if (response && !error && !validation && !loading) {
+  //     toast.update(toastId.current, {
+  //       render: "Successfuly Login",
+  //       type: "success",
+  //       isLoading: false,
+  //       autoClose: 1500,
+  //     });
+  //     localStorage.setItem("auth", response?.access_token);
+  //     localStorage.setItem("userData", JSON.stringify(response?.user_data));
+  //     dispatch({ type: "login" });
+  //     setTimeout(() => {
+  //       setReload(true);
+  //       setAxiosHandle(false);
+  //       setWaiting(false);
+  //       navigasi(`${baseUrl}/`, { replace: true });
+  //     }, 10);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   axiosHandle && handleAxios();
+  // }, [response, error]);
 
   useEffect(() => {
     if (authed.auth === true) {
@@ -123,16 +166,15 @@ export default function Login() {
                   onChange={handleChange}
                 />
                 <label htmlFor="floatingInput">Username</label>
-                {error &&
-                  validation?.username?.map((msg, index) => (
-                    <div
-                      id="kategoriHelp"
-                      className="form-text text-danger"
-                      key={index}
-                    >
-                      {msg}
-                    </div>
-                  ))}
+                {validation?.username?.map((msg, index) => (
+                  <div
+                    id="kategoriHelp"
+                    className="form-text text-danger"
+                    key={index}
+                  >
+                    {msg}
+                  </div>
+                ))}
               </div>
               <div className="form-floating mb-4">
                 <input
@@ -144,16 +186,15 @@ export default function Login() {
                   onChange={handleChange}
                 />
                 <label htmlFor="floatingPassword">Password</label>
-                {error &&
-                  validation?.password?.map((msg, index) => (
-                    <div
-                      id="kategoriHelp"
-                      className="form-text text-danger"
-                      key={index}
-                    >
-                      {msg}
-                    </div>
-                  ))}
+                {validation?.password?.map((msg, index) => (
+                  <div
+                    id="kategoriHelp"
+                    className="form-text text-danger"
+                    key={index}
+                  >
+                    {msg}
+                  </div>
+                ))}
               </div>
               <button
                 type="submit"

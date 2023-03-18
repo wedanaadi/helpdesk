@@ -10,6 +10,7 @@ import ToDate from "../../util/ToDate";
 export default function Tracking() {
   const { id } = useParams();
   const [response, error, loading, axiosFunc] = useHookAxios();
+  const lokalUser = JSON.parse(localStorage.getItem("userData"));
 
   const getTrack = () => {
     axiosFunc({
@@ -44,7 +45,7 @@ export default function Tracking() {
               Nomor Ticket: <b>{id}</b>
             </h3>
             <Link
-              to={`${baseUrl}/keluhan/detail`}
+              to={`${baseUrl}/${lokalUser.role === 3 ? 'maintenance':'keluhan'}/detail`}
               className="btn btn-secondary mb-0"
             >
               <FontAwesomeIcon icon={faArrowLeft} />

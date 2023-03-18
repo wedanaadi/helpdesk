@@ -4,6 +4,7 @@ import LoadingPage from "../../LoadingPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
+  faFileArchive,
   faMessage,
   faPencilAlt,
   faPlus,
@@ -16,7 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useHookAxios from "../../hook/useHookAxios";
 import { confirmAlert } from "react-confirm-alert";
 import { toast } from "react-toastify";
-import ToDate from "../../util/ToDate";
+import ToDate, { ConvertToEpoch } from "../../util/ToDate";
 import SendEmail from "./SendEmail";
 
 export default function Index() {
@@ -170,6 +171,22 @@ export default function Index() {
     setDataModal(data);
   };
 
+  const handleLogsEmail = (data) => {
+    const saveData = {
+      teknisi: data.teknisi,
+      tiket_maintenance: data.tiket_maintenance,
+      tiket_keluhan: data.tiket_keluhan,
+    };
+    localStorage.setItem("logsEmail", btoa(JSON.stringify(saveData)));
+    navigasi("logsemail", { replace: true });
+  };
+
+  const checkExp = (expired_date_maintenance) => {
+    const db = ConvertToEpoch(expired_date_maintenance);
+    const now = ConvertToEpoch(new Date());
+    return db < now ? false : true;
+  };
+
   return (
     <div className="row bg-light rounded mx-0">
       <Suspense>
@@ -262,6 +279,14 @@ export default function Index() {
                                   &nbsp; Send Email
                                 </button>
                                 &nbsp;
+                                <button
+                                  onClick={() => handleLogsEmail(data)}
+                                  className="btn btn-secondary mb-0"
+                                >
+                                  <FontAwesomeIcon icon={faFileArchive} />
+                                  &nbsp; Logs Email
+                                </button>
+                                &nbsp;
                               </>
                             )}
                             <button
@@ -271,26 +296,31 @@ export default function Index() {
                               <FontAwesomeIcon icon={faSearch} />
                               &nbsp; Detail
                             </button>
-                            {LocalUser.role != "3" && data.status != "1" && (
-                              <>
-                                &nbsp;
-                                <button
-                                  className="btn btn-warning"
-                                  onClick={() => handleEditButton(data)}
-                                >
-                                  <FontAwesomeIcon icon={faPencilAlt} />
-                                  &nbsp; Edit
-                                </button>
-                                &nbsp;
-                                <button
-                                  className="btn btn-danger"
-                                  onClick={() => confirm(data.id)}
-                                >
-                                  <FontAwesomeIcon icon={faTrashAlt} />
-                                  &nbsp; Delete
-                                </button>
-                              </>
-                            )}
+                            {checkExp(data.expired_date) &&
+                              LocalUser.role !== 3 && (
+                                <>
+                                  &nbsp;
+                                  <button
+                                    className="btn btn-warning"
+                                    onClick={() => handleEditButton(data)}
+                                  >
+                                    <FontAwesomeIcon icon={faPencilAlt} />
+                                    &nbsp; Edit
+                                  </button>
+                                  {data.status !== 1 && (
+                                    <>
+                                      &nbsp;
+                                      <button
+                                        className="btn btn-danger"
+                                        onClick={() => confirm(data.id)}
+                                      >
+                                        <FontAwesomeIcon icon={faTrashAlt} />
+                                        &nbsp; Delete
+                                      </button>
+                                    </>
+                                  )}
+                                </>
+                              )}
                           </td>
                         </tr>
                       ))

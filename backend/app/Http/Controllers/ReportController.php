@@ -259,9 +259,9 @@ class ReportController extends Controller
       // $data->select(DB::raw('"month" as type'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) label'), DB::raw('count(id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day'));
       $data->groupBy('year', 'month');
     } else {
-      $data->select(DB::raw('"day" as type'), DB::raw('DAY(FROM_UNIXTIME(keluhans.created_at/1000)) label'), DB::raw('count(keluhans.id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(keluhans.created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(keluhans.created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(keluhans.created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(keluhans.created_at/1000)) day'));
+      $data->select(DB::raw('"day" as type'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(keluhans.created_at/1000),"%Y-%m-%d") label'), DB::raw('count(keluhans.id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(keluhans.created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(keluhans.created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(keluhans.created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(keluhans.created_at/1000)) day'));
       // $data->select(DB::raw('"day" as type'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'), DB::raw('count(id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day'));
-      $data->groupBy('day');
+      $data->groupBy('day','year', 'month');
     }
     return response()->json(['msg' => 'Get pegawais', "data" => $data->get(), 'error' => []], 200);
   }
@@ -298,6 +298,7 @@ class ReportController extends Controller
 
     $report = MaintenanceReport::filter(request(['periode', 'provinsi', 'kabkot', 'kecamatan', 'kelurahan','kategori']))
       ->where('status', '1');
+
     if (request('type') == '2') {
       $report->select(
         DB::raw("keluhan_id AS id"),
@@ -309,8 +310,11 @@ class ReportController extends Controller
         DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
         DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
         DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      )
+      ->groupBy(
+        DB::raw("YEAR(FROM_UNIXTIME(created_at/1000))"),
       );
-    } else {
+    } else if (request('type') == '1') {
       $report->select(
         DB::raw("keluhan_id AS id"),
         'status',
@@ -321,6 +325,27 @@ class ReportController extends Controller
         DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
         DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
         DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      )
+      ->groupBy(
+        DB::raw("DAY(FROM_UNIXTIME(created_at/1000))"),
+        DB::raw("MONTH(FROM_UNIXTIME(created_at/1000))"),
+      );
+    } else {
+      $report->select(
+        DB::raw("keluhan_id AS id"),
+        'status',
+        DB::raw('"day" as type'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") label'),
+        DB::raw('count(id) as jumlah'),
+        DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'),
+        DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'),
+        DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'),
+        DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day')
+      )
+      ->groupBy(
+        DB::raw("DAY(FROM_UNIXTIME(created_at/1000))"),
+        DB::raw("MONTH(FROM_UNIXTIME(created_at/1000))"),
+        DB::raw("YEAR(FROM_UNIXTIME(created_at/1000))"),
       );
     }
     $report->union($pending);
@@ -334,8 +359,9 @@ class ReportController extends Controller
       $data->groupBy('month', 'year');
     } else {
       $data->select('*', DB::raw('count(jumlah) as jumlah'));
-      $data->groupBy('day');
+      $data->groupBy('day','month', 'year');
     }
+    $data->orderBy('format_date','ASC');
     return response()->json(['msg' => 'Get pegawais', "data" => $data->get(), 'error' => []], 200);
   }
 

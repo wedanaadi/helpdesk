@@ -37,6 +37,10 @@ const ViewPesan = React.lazy(() => import("./components/pages/ViewNotif"));
 const KeluhanAddSystem = React.lazy(() => import("./components/pages/keluhan/AddSystem"));
 const Tracking = React.lazy(() => import("./components/pages/keluhan/Tracking"));
 const DetailView = React.lazy(() => import("./components/pages/maintenance/DetailView"));
+const Profile = React.lazy(()=>import("./components/pages/Profile"))
+const UbahProfile = React.lazy(()=>import("./components/pages/UbahProfile"))
+const ListPelanggan = React.lazy(() => import("./components/pages/keluhan/ListPelanggan"))
+const LogEmail = React.lazy(() => import("./components/pages/maintenance/LogEmail"))
 
 export default [
   {
@@ -135,6 +139,14 @@ export default [
       },
       {
         path: `${base_url}/keluhan`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <ListPelanggan />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${base_url}/keluhan/listTicket`,
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
             <Keluhan />
@@ -238,6 +250,14 @@ export default [
         ),
       },
       {
+        path: `${base_url}/maintenance/logsemail`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <LogEmail />
+          </Suspense>
+        ),
+      },
+      {
         path: `${base_url}/maintenance/teknisi/v`,
         element: (
           <Suspense fallback={<LoadingPage text={"Load Page"} />}>
@@ -276,7 +296,23 @@ export default [
             <ViewPesan />
           </Suspense>
         )
-      }
+      },
+      {
+        path: `${base_url}/profile`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <Profile />
+          </Suspense>
+        )
+      },
+      {
+        path: `${base_url}/profile/edit`,
+        element: (
+          <Suspense fallback={<LoadingPage text={"Load Page"} />}>
+            <UbahProfile />
+          </Suspense>
+        )
+      },
     ],
   },
   {
