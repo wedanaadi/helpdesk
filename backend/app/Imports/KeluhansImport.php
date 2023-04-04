@@ -28,6 +28,7 @@ class KeluhansImport implements WithStartRow, ToCollection
     $dataFixed = [];
     $kategori = null;
     $userLogin = null;
+    $pelanggan = null;
     foreach ($rows as $row) {
       $idKategori = Kategori::where('nama_kategori',$row[0]);
       if ($idKategori->count() > 0) {
@@ -36,6 +37,10 @@ class KeluhansImport implements WithStartRow, ToCollection
       $idUser = Pegawai::where('nama_pegawai',$row[4]);
       if ($idUser->count() > 0) {
         $userLogin = $idUser->first()->id;
+      }
+      $idPelanggan = Pelanggan::where('nama_pelanggan',$row[1])->where('id',$row[2]);
+      if ($idPelanggan->count() > 0) {
+        $pelanggan = $idPelanggan->first()->nama_pelanggan;
       }
       $prevTicket = Keluhan::where('kategori_id', $kategori)
         ->where('pelanggan_id', $row[2])
@@ -50,7 +55,7 @@ class KeluhansImport implements WithStartRow, ToCollection
           ->first();
         $newTiket = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'K', $date);
       }
-      if (!is_null($row[0]) and !is_null($kategori)) {
+      if(!is_null($row[0]) and !is_null($kategori) and !is_null($pelanggan) and !is_null($userLogin)) {
         $data = [
           'id' => Str::uuid()->toString(),
           'kategori_id' => $kategori,
@@ -97,8 +102,11 @@ class KeluhansImport implements WithStartRow, ToCollection
           'url' =>"keluhan/sendEmail",
           'task' => json_encode($dataEmail),
         ]);
-        // dispatch(new SendMailKeluhan($dataEmail));
       }
+
+      $kategori=null;
+      $pelanggan=null;
+      //   // dispatch(new SendMailKeluhan($dataEmail));
     }
   }
 }

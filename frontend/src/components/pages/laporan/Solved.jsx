@@ -154,7 +154,7 @@ export default function Solved() {
   useEffect(() => {
     const invt = setTimeout(() => {
       getProvinces();
-      getKategoris()
+      getKategoris();
     }, 1);
     return () => clearInterval(invt);
   }, []);
@@ -190,7 +190,7 @@ export default function Solved() {
   }, [selectDistrict]);
 
   const handleView = () => {
-    let url = `complaint-report?perpage=${pagination.value}&&type=${type.value}`;
+    let url = `complaint-report?perpage=${pagination.value}&page=${page}&type=${type.value}`;
     if (type.value === "3") {
       let last = new Date(endDateRange);
       url += `&periode=${[
@@ -245,6 +245,10 @@ export default function Solved() {
 
     return () => clearInterval(inv);
   }, []);
+
+  useEffect(() => {
+    handleView();
+  }, [page]);
 
   useEffect(() => {
     const inv = setTimeout(() => {
@@ -332,7 +336,7 @@ export default function Solved() {
         </div>
         <div className="row m-2">
           <h5>Kategori</h5>
-        <div className="col-12 col-xl-4">
+          <div className="col-12 col-xl-4">
             <Select
               options={kategoris}
               placeHolder={"Kategori"}
@@ -400,16 +404,16 @@ export default function Solved() {
       <hr />
       <div className="px-3 py-2">
         {loading && <LoadingPage text={"Loading data"} />}
-        <div className="row mb-2 mt-2">
-          <div className="col-12 d-flex flex-row-reverse">
-            <ExportToExcel
-              apiData={dataExcel}
-              fileName={`Complaint-report-${ToDate(new Date())}`}
-            />
-          </div>
-        </div>
         {!loading && !error && (
           <>
+            <div className="row mb-2 mt-2">
+              <div className="col-12 d-flex flex-row-reverse">
+                <ExportToExcel
+                  apiData={dataExcel}
+                  fileName={`Complaint-report-${ToDate(new Date())}`}
+                />
+              </div>
+            </div>
             <div className="table-responsive">
               <table className="table table-bordered text-nowrap">
                 <thead className="bg-white text-center fw-bold">
@@ -435,23 +439,26 @@ export default function Solved() {
                           <td className="text-center">
                             {response.pagination.from + index}
                           </td>
-                          <td>{data.tiket}</td>
-                          <td>{data.kategori.nama_kategori}</td>
-                          <td>{data.pelanggan.nama_pelanggan}</td>
-                          <td>{ToDate(data.created_at, "full")}</td>
-                          <td>{data.status_desc}</td>
-                          <td>{data.pegawai.nama_pegawai}</td>
+                          <td>{data?.tiket}</td>
+                          <td>{data?.kategori?.nama_kategori}</td>
+                          <td>{data?.pelanggan?.nama_pelanggan}</td>
+                          <td>{ToDate(data?.created_at, "full")}</td>
+                          <td>{data?.status_desc}</td>
+                          <td>{data?.pegawai?.nama_pegawai}</td>
                           <td>
                             {
-                              data.pelanggan.kelurahan.kecamatan.kabkot.provinsi
-                                .name
+                              data?.pelanggan?.kelurahan?.kecamatan?.kabkot
+                                ?.provinsi?.name
                             }
                           </td>
                           <td>
-                            {data.pelanggan.kelurahan.kecamatan.kabkot.name}
+                            {
+                              data?.pelanggan?.kelurahan?.kecamatan?.kabkot
+                                ?.name
+                            }
                           </td>
-                          <td>{data.pelanggan.kelurahan.kecamatan.name}</td>
-                          <td>{data.pelanggan.kelurahan.name}</td>
+                          <td>{data?.pelanggan?.kelurahan?.kecamatan?.name}</td>
+                          <td>{data?.pelanggan?.kelurahan?.name}</td>
                         </tr>
                       ))
                     ) : (

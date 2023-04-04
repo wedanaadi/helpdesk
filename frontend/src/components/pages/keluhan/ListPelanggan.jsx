@@ -1,4 +1,9 @@
-import { faEye, faFileExcel, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faFileExcel,
+  faPlus,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -98,34 +103,37 @@ export default function ListPelanggan() {
           </Link>
         </div>
       </div>
-      <div className="px-3 py-2">
-        {loading && <LoadingPage text={"Loading data"} />}
-        <div className="row mb-2 mt-2">
-          <div className="col-md-2">
-            <Select
-              options={optionsPage}
-              placeHolder={"Page"}
-              getter={pagination}
-              setter={setPagination}
-            />
-          </div>
-          <div className="col-md-10 d-flex flex-row-reverse">
-            <>
-              <button className="btn btn-primary" onClick={() => getKeluhan()}>
-                <FontAwesomeIcon icon={faSearch} />
-              </button>
-              &nbsp;
-              <Search
-                onSearch={(value) => {
-                  setSearch(value);
-                }}
-              />
-            </>
-          </div>
-        </div>
-      </div>
+      {loading && <LoadingPage text={"Loading data"} />}
       {!loading && !error && (
         <>
+          <div className="px-3 py-2">
+            <div className="row mb-2 mt-2">
+              <div className="col-md-2">
+                <Select
+                  options={optionsPage}
+                  placeHolder={"Page"}
+                  getter={pagination}
+                  setter={setPagination}
+                />
+              </div>
+              <div className="col-md-10 d-flex flex-row-reverse">
+                <>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => getKeluhan()}
+                  >
+                    <FontAwesomeIcon icon={faSearch} />
+                  </button>
+                  &nbsp;
+                  <Search
+                    onSearch={(value) => {
+                      setSearch(value);
+                    }}
+                  />
+                </>
+              </div>
+            </div>
+          </div>
           <div className="table-responsive">
             <table className="table table-bordered text-nowrap">
               <thead className="bg-white text-center fw-bold">
@@ -143,11 +151,11 @@ export default function ListPelanggan() {
                       <td className="text-center">
                         {keluhans.pagination.from + index}
                       </td>
-                      <td>{row.pelanggan.id}</td>
-                      <td>{row.pelanggan.nama_pelanggan}</td>
+                      <td>{row?.pelanggan?.id}</td>
+                      <td>{row?.pelanggan?.nama_pelanggan}</td>
                       <td className="text-center">
                         <button
-                          onClick={() => handleTicket(row.pelanggan.id)}
+                          onClick={() => handleTicket(row?.pelanggan?.id)}
                           className="btn btn-info mb-0"
                         >
                           <FontAwesomeIcon icon={faEye} />

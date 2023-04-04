@@ -190,7 +190,7 @@ export default function Solved() {
   }, [selectDistrict]);
 
   const handleView = () => {
-    let url = `maintenance-report?perpage=${pagination.value}&&type=${type.value}`;
+    let url = `maintenance-report?perpage=${pagination.value}&page=${page}&type=${type.value}`;
     if (type.value === "3") {
       let last = new Date(endDateRange);
       url += `&periode=${[
@@ -273,6 +273,10 @@ export default function Solved() {
     return () => clearInterval(inv);
   }, []);
 
+  useEffect(() => {
+    handleView();
+  }, [page]);
+
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
@@ -334,7 +338,7 @@ export default function Solved() {
         </div>
         <div className="row m-2">
           <h5>Kategori</h5>
-        <div className="col-12 col-xl-4">
+          <div className="col-12 col-xl-4">
             <Select
               options={kategoris}
               placeHolder={"Kategori"}
@@ -402,16 +406,16 @@ export default function Solved() {
       <hr />
       <div className="px-3 py-2">
         {loading && <LoadingPage text={"Loading data"} />}
-        <div className="row mb-2 mt-2">
-          <div className="col-12 d-flex flex-row-reverse">
-            <ExportToExcel
-              apiData={dataExcel}
-              fileName={`Maintenance-report-${ToDate(new Date())}`}
-            />
-          </div>
-        </div>
         {!loading && !error && (
           <>
+            <div className="row mb-2 mt-2">
+              <div className="col-12 d-flex flex-row-reverse">
+                <ExportToExcel
+                  apiData={dataExcel}
+                  fileName={`Maintenance-report-${ToDate(new Date())}`}
+                />
+              </div>
+            </div>
             <div className="table-responsive">
               <table className="table table-bordered text-nowrap">
                 <thead className="bg-white text-center fw-bold">
@@ -437,28 +441,31 @@ export default function Solved() {
                           <td className="text-center">
                             {response.pagination.from + index}
                           </td>
-                          <td>{data.keluhan.tiket}</td>
-                          <td>{data.keluhan.kategori.nama_kategori}</td>
-                          <td>{data.keluhan.pelanggan.nama_pelanggan}</td>
+                          <td>{data?.keluhan?.tiket}</td>
+                          <td>{data?.keluhan?.kategori?.nama_kategori}</td>
+                          <td>{data?.keluhan?.pelanggan?.nama_pelanggan}</td>
                           <td>{ToDate(data.created_at, "full")}</td>
-                          <td>{data.status_desc}</td>
-                          <td>{data.keluhan.pegawai.nama_pegawai}</td>
+                          <td>{data?.status_desc}</td>
+                          <td>{data?.keluhan?.pegawai?.nama_pegawai}</td>
                           <td>
                             {
-                              data.keluhan.pelanggan.kelurahan.kecamatan.kabkot
-                                .provinsi.name
+                              data?.keluhan?.pelanggan?.kelurahan?.kecamatan
+                                ?.kabkot?.provinsi?.name
                             }
                           </td>
                           <td>
                             {
-                              data.keluhan.pelanggan.kelurahan.kecamatan.kabkot
-                                .name
+                              data?.keluhan?.pelanggan?.kelurahan?.kecamatan
+                                ?.kabkot?.name
                             }
                           </td>
                           <td>
-                            {data.keluhan.pelanggan.kelurahan.kecamatan.name}
+                            {
+                              data?.keluhan?.pelanggan?.kelurahan?.kecamatan
+                                ?.name
+                            }
                           </td>
-                          <td>{data.keluhan.pelanggan.kelurahan.name}</td>
+                          <td>{data?.keluhan?.pelanggan?.kelurahan?.name}</td>
                         </tr>
                       ))
                     ) : (

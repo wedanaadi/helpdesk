@@ -232,7 +232,7 @@ export default function Navbar({ sidebarOpen, setSidebar }) {
                   to={`${baseUrl}/keluhan`}
                   className="dropdown-item text-center"
                 >
-                  Lihat keluhan
+                  Lihat Semua keluhan
                 </Link>
               </div>
             </div>

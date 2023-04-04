@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test', function(){
+  return "Test Api Success";
+});
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('updateUserLogin', [AuthController::class, 'update_data_login']);
 Route::post('/register', [AuthController::class, 'store']);

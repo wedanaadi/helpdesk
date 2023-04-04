@@ -95,6 +95,7 @@ class ComplaintController extends Controller
     ->select('*',DB::raw('date_format(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d %H:%i:%s") as human_created_at'))
     ->groupBy('pelanggan_id')
     ->orderBy('created_at','DESC')
+    ->limit(5)
     ->get();
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
