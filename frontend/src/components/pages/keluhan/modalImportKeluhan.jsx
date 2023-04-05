@@ -79,6 +79,7 @@ export default function modalImportKeluhan({ toogleShow, setClose, reloadData })
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  //! NOTE: kode untuk view
   return (
     <>
       <Modal show={toogleShow} onHide={handleClose}>
@@ -92,6 +93,7 @@ export default function modalImportKeluhan({ toogleShow, setClose, reloadData })
                 <label htmlFor="namaTeknisi" className="form-label">
                   File Excel
                 </label>
+                 {/* NOTE : Input untuk file */}
                 <input
                   type="file"
                   name="fileImport"
@@ -112,6 +114,7 @@ export default function modalImportKeluhan({ toogleShow, setClose, reloadData })
             </div>
           </Modal.Body>
           <Modal.Footer>
+             {/* NOTE : Tombol Import */}
             <Button type="submit" variant="primary">
               Import Excel
             </Button>

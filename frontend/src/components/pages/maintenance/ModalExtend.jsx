@@ -82,6 +82,7 @@ export default function ModalExtend({ toogleShow, setClose, dataDetail }) {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  //! NOTE: kode untuk view
   return (
     <>
     <Modal show={toogleShow} onHide={handleClose}>
@@ -95,6 +96,7 @@ export default function ModalExtend({ toogleShow, setClose, dataDetail }) {
               <label htmlFor="extendDate" className="form-label">
                 Lama Hari
               </label>
+               {/* NOTE : Input untuk extend day */}
               <input
                 type="number"
                 name="extendDate"
@@ -117,6 +119,7 @@ export default function ModalExtend({ toogleShow, setClose, dataDetail }) {
           </div>
         </Modal.Body>
         <Modal.Footer>
+           {/* NOTE : Tombol Simpan */}
           <Button type="submit" variant="primary">
             Simpan
           </Button>

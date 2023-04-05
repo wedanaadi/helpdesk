@@ -165,14 +165,12 @@ export default function Index() {
     return db < now ? false : true;
   };
 
+  //! NOTE: Kode untuk view
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Data Keluhan</h3>
-        {/* <Link to={`add`} className="btn btn-success mb-0">
-          <FontAwesomeIcon icon={faPlus} />
-          &nbsp; Tambah
-        </Link> */}
+         {/* NOTE : Tombol Kembali */}
         <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
           <FontAwesomeIcon icon={faArrowLeft} />
           &nbsp; Kembali
@@ -189,6 +187,7 @@ export default function Index() {
               setter={setPagination}
             />
           </div>
+           {/* NOTE : Input untuk search data */}
           <div className="col-md-10 d-flex flex-row-reverse">
             <>
               <button className="btn btn-primary" onClick={() => getKeluhan()}>
@@ -205,6 +204,7 @@ export default function Index() {
         </div>
         {!loading && !error && (
           <>
+           {/* NOTE : Tabel data */}
             <div className="table-responsive">
               <table className="table table-bordered text-nowrap">
                 <thead className="bg-white text-center fw-bold">
@@ -252,6 +252,7 @@ export default function Index() {
                             false
                           )} */}
                           <td className="text-center w-15">
+                             {/* NOTE : Tombol Detail */}
                             <button
                               onClick={() => handleDetail(data)}
                               className="btn btn-success mb-0"
@@ -262,6 +263,7 @@ export default function Index() {
                             &nbsp;
                             {checkExp(data.expired_date) && (
                               <>
+                               {/* NOTE : Tombol Edit */}
                                 <button
                                   className="btn btn-warning"
                                   onClick={() => handleEditButton(data)}
@@ -271,6 +273,7 @@ export default function Index() {
                                 </button>
                                 {data.status !== 1 && (
                                   <>
+                                   {/* NOTE : Tombol Hapus */}
                                     &nbsp;
                                     <button
                                       className="btn btn-danger"

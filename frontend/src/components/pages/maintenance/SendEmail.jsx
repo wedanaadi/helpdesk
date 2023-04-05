@@ -81,6 +81,7 @@ export default function SendEmail({ toggleModal, setState, data, type }) {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  //! NOTE: kode untuk view
   return (
     <>
       <Modal show={toggleModal} onHide={handleClose}>
@@ -94,6 +95,7 @@ export default function SendEmail({ toggleModal, setState, data, type }) {
                 <label htmlFor="namaTeknisi" className="form-label">
                   Email Teknis
                 </label>
+                 {/* NOTE : Input untuk email */}
                 <input
                   readOnly
                   type="text"
@@ -106,6 +108,7 @@ export default function SendEmail({ toggleModal, setState, data, type }) {
                 <label htmlFor="namaTeknisi" className="form-label">
                   Subject
                 </label>
+                 {/* NOTE : Input untuk subject */}
                 <input
                   type="text"
                   name="ticket_keluhan"
@@ -128,6 +131,7 @@ export default function SendEmail({ toggleModal, setState, data, type }) {
                 <label htmlFor="namaTeknisi" className="form-label">
                   Body
                 </label>
+                 {/* NOTE : Input untuk body */}
                 <textarea
                   name="note"
                   className="form-control"
@@ -149,6 +153,7 @@ export default function SendEmail({ toggleModal, setState, data, type }) {
             </div>
           </Modal.Body>
           <Modal.Footer>
+             {/* NOTE : tombol simpan */}
             <Button type="submit" variant="primary">
               Save Changes
             </Button>

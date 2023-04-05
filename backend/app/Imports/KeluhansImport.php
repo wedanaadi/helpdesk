@@ -30,15 +30,15 @@ class KeluhansImport implements WithStartRow, ToCollection
     $userLogin = null;
     $pelanggan = null;
     foreach ($rows as $row) {
-      $idKategori = Kategori::where('nama_kategori',$row[0]);
+      $idKategori = Kategori::where('nama_kategori', $row[0]);
       if ($idKategori->count() > 0) {
         $kategori = $idKategori->first()->id;
       }
-      $idUser = Pegawai::where('nama_pegawai',$row[4]);
+      $idUser = Pegawai::where('nama_pegawai', $row[4]);
       if ($idUser->count() > 0) {
         $userLogin = $idUser->first()->id;
       }
-      $idPelanggan = Pelanggan::where('nama_pelanggan',$row[1])->where('id',$row[2]);
+      $idPelanggan = Pelanggan::where('nama_pelanggan', $row[1])->where('id', $row[2]);
       if ($idPelanggan->count() > 0) {
         $pelanggan = $idPelanggan->first()->nama_pelanggan;
       }
@@ -55,7 +55,7 @@ class KeluhansImport implements WithStartRow, ToCollection
           ->first();
         $newTiket = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'K', $date);
       }
-      if(!is_null($row[0]) and !is_null($kategori) and !is_null($pelanggan) and !is_null($userLogin)) {
+      if (!is_null($row[0]) and !is_null($kategori) and !is_null($pelanggan) and !is_null($userLogin)) {
         $data = [
           'id' => Str::uuid()->toString(),
           'kategori_id' => $kategori,
@@ -99,13 +99,14 @@ class KeluhansImport implements WithStartRow, ToCollection
         Log::create($dataLog);
         DB::table('queue_email_jobs')->insert([
           'id' => Str::uuid()->toString(),
-          'url' =>"keluhan/sendEmail",
+          'url' => "keluhan/sendEmail",
           'task' => json_encode($dataEmail),
         ]);
       }
 
-      $kategori=null;
-      $pelanggan=null;
+      $kategori = null;
+      $userLogin = null;
+      $pelanggan = null;
       //   // dispatch(new SendMailKeluhan($dataEmail));
     }
   }

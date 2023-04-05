@@ -126,6 +126,7 @@ export default function ModalMaintenace({ ticket }) {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  //! NOTE: kode untuk view
   return (
     <div
       className="modal fade"
@@ -155,6 +156,7 @@ export default function ModalMaintenace({ ticket }) {
                   <label htmlFor="namaTeknisi" className="form-label">
                     Nomor Keluhan
                   </label>
+                   {/* NOTE : Input untuk nomor keluhan */}
                   <input
                     readOnly
                     type="text"
@@ -167,6 +169,7 @@ export default function ModalMaintenace({ ticket }) {
                   <label htmlFor="namaTeknisi" className="form-label">
                     Nama Teknisi
                   </label>
+                   {/* NOTE : Input untuk teknisi */}
                   <Select
                     options={teknisi}
                     placeHolder={"Teknisi"}
@@ -188,6 +191,7 @@ export default function ModalMaintenace({ ticket }) {
                   <label htmlFor="namaTeknisi" className="form-label">
                     Note
                   </label>
+                   {/* NOTE : Input untuk notr */}
                   <textarea
                     name="note"
                     className="form-control"
@@ -199,6 +203,7 @@ export default function ModalMaintenace({ ticket }) {
             </div>
             <div className="modal-footer">
               <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+                 {/* NOTE : Tombol simpan */}
                 <button type="submit" className="btn btn-primary">
                   Buat Ticket
                 </button>

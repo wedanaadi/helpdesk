@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 
 class MaintenanceController extends Controller
 {
+  // ! NOTE : Kode untuk menampilkan data maintenance
   public function index()
   {
     $data = Maintenance::filter(request(['search']))
@@ -43,6 +44,7 @@ class MaintenanceController extends Controller
     return response()->json(['msg' => 'Get Maintenance', "data" => $data->paginate(request('perpage')), 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk menampilkan data detail maintenance
   public function detail()
   {
     $data = Maintenance::filter(request(['search']))
@@ -67,6 +69,7 @@ class MaintenanceController extends Controller
     return response()->json(['msg' => 'Get Maintenance', "data" => $data->first(), 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk menambah data baru
   public function store(Request $request)
   {
     $validator = Validator::make($request->all(), [
@@ -152,6 +155,7 @@ class MaintenanceController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk mengubah data
   public function update(Request $request, $id)
   {
     $validator = Validator::make($request->all(), [
@@ -222,6 +226,7 @@ class MaintenanceController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk menghapus data
   public function destroy($id)
   {
     $find = Maintenance::findOrFail($id);
@@ -239,6 +244,7 @@ class MaintenanceController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk mengubah status ticket menjadi solved atau pending
   public function changeStatus(Request $request, $id)
   {
     $maintenance = Maintenance::findOrFail($id);
@@ -303,18 +309,21 @@ class MaintenanceController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk mengirim email notifikasi
   public function sendEmail(Request $request)
   {
     dispatch(new SendMailPelanggan($request->all()));
     return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
   }
 
+  // ! NOTE : Kode untuk mengirim email ke teknisi
   public function sendEmailTeknisi(Request $request)
   {
     dispatch(new SendNotifTeknisi($request->all()));
     return response()->json(['msg' => 'Successfuly send email Teknisi', "data" => null, 'error' => null], 200);
   }
 
+  // ! NOTE : Kode untuk mangubah expired date
   public function changeExpiredDate(Request $request, $id)
   {
     $data = Maintenance::find($id);
@@ -333,6 +342,7 @@ class MaintenanceController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk mengubah teknisi yang ditugaskan
   public function changeTeknisi(Request $request, $id)
   {
     $validator = Validator::make($request->all(), [
@@ -392,6 +402,7 @@ class MaintenanceController extends Controller
     }
   }
 
+  // ! NOTE : Kode Tracking Ticket di maintenance
   public function logEmailTrack(Request $request)
   {
     $sql = "SELECT logs_email.*, pegawais.nama_pegawai FROM logs_email

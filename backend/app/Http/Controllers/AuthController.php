@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+  // ! NOTE : alur login ketika tombol login diklik
   public function login(Request $request)
   {
     $validator = Validator::make($request->all(), [
@@ -156,6 +157,7 @@ class AuthController extends Controller
     }
   }
 
+  // ! NOTE : Kode proses logout sistem
   public function logout()
   {
     Auth::user()->tokens()->delete();

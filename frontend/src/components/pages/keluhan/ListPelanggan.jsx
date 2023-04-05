@@ -79,6 +79,7 @@ export default function ListPelanggan() {
 
   const [showImportComponent, setShowImportComponent] = useState(false);
 
+  //! NOTE: kode untuk view
   return (
     <div className="row bg-light mx-0 rounded">
       <ImportComponent
@@ -89,6 +90,7 @@ export default function ListPelanggan() {
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">List Keluhan Pelanggan</h3>
         <div>
+           {/* NOTE : Tombol import data */}
           <button
             className="btn btn-success"
             onClick={() => setShowImportComponent(true)}
@@ -97,6 +99,7 @@ export default function ListPelanggan() {
             &nbsp; Import
           </button>
           &nbsp;
+           {/* NOTE : Tombol tambah keluhan */}
           <Link to={`add`} className="btn btn-success mb-0">
             <FontAwesomeIcon icon={faPlus} />
             &nbsp; Tambah
@@ -116,6 +119,7 @@ export default function ListPelanggan() {
                   setter={setPagination}
                 />
               </div>
+               {/* NOTE : Input untuk search */}
               <div className="col-md-10 d-flex flex-row-reverse">
                 <>
                   <button
@@ -134,6 +138,7 @@ export default function ListPelanggan() {
               </div>
             </div>
           </div>
+           {/* NOTE : Tabel data */}
           <div className="table-responsive">
             <table className="table table-bordered text-nowrap">
               <thead className="bg-white text-center fw-bold">
@@ -154,6 +159,7 @@ export default function ListPelanggan() {
                       <td>{row?.pelanggan?.id}</td>
                       <td>{row?.pelanggan?.nama_pelanggan}</td>
                       <td className="text-center">
+                         {/* NOTE : Tombol Lihat Ticket Pelanggan */}
                         <button
                           onClick={() => handleTicket(row?.pelanggan?.id)}
                           className="btn btn-info mb-0"

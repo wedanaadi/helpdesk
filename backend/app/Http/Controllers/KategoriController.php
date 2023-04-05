@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class KategoriController extends Controller
 {
+  // ! NOTE : Kode untuk menampilkan data kategori
   public function index()
   {
     $data = Kategori::filter(request(['search']))
@@ -18,6 +19,7 @@ class KategoriController extends Controller
     return response()->json(['msg' => 'Get kategoris', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk menampilkan kategori di dropdown
   public function select(Request $request)
   {
     $pro = DB::select('SELECT * FROM kategoris');
@@ -31,6 +33,7 @@ class KategoriController extends Controller
     return response()->json(['msg' => 'Get kategoris', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk menambah data baru
   public function store(Request $request)
   {
     $validator = Validator::make($request->all(), [
@@ -59,6 +62,7 @@ class KategoriController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk mengubah data baru
   public function update(Request $request, $id)
   {
     $validator = Validator::make($request->all(), [
@@ -87,6 +91,7 @@ class KategoriController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk menghapus data
   public function destroy($id)
   {
     $find = Kategori::find($id);

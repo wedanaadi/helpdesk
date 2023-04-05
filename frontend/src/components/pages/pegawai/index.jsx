@@ -147,10 +147,12 @@ export default function Pegawai() {
     axiosHandle && handleAxios();
   }, [pegawais, error]);
 
+  //! NOTE: kode untuk view
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Pegawai</h3>
+         {/* NOTE : Tombol Tambah data */}
         <Link to={`add`} className="btn btn-success mb-0">
           <FontAwesomeIcon icon={faPlus} />
           &nbsp; Tambah
@@ -167,6 +169,7 @@ export default function Pegawai() {
               setter={setPagination}
             />
           </div>
+           {/* NOTE : Input untuk search */}
           <div className="col-md-10 d-flex flex-row-reverse">
             <>
               <button className="btn btn-primary" onClick={() => getPegawai()}>
@@ -183,6 +186,7 @@ export default function Pegawai() {
         </div>
         {!loading && !error && (
           <>
+           {/* NOTE : Tabel data */}
             <div className="table-responsive">
               <table className="table table-bordered text-nowrap">
                 <thead className="bg-white text-center fw-bold">
@@ -216,6 +220,7 @@ export default function Pegawai() {
                           </td>
                           <td>{data.alamat}</td>
                           <td className="text-center w-15">
+                             {/* NOTE : Tombol edit */}
                             <button
                               className="btn btn-warning"
                               onClick={() => handleEditButton(data)}
@@ -224,6 +229,7 @@ export default function Pegawai() {
                               &nbsp; Edit
                             </button>
                             &nbsp;
+                             {/* NOTE : Tombol hapus */}
                             <button
                               className="btn btn-danger"
                               onClick={() => confirm(data.id)}

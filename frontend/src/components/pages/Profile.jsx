@@ -1,6 +1,8 @@
 import React, { Suspense } from "react";
 const ProfilPegawai = React.lazy(() => import("./pegawai/ProfilPegawai"));
+//! NOTE: Profile untuk user pegawai
 const ProfilPelanggan = React.lazy(() => import("./pelanggan/ProfilPelanggan"));
+//! NOTE: profile untuk user pelanggan
 
 export default function Profile() {
   const LokalUser = JSON.parse(localStorage.getItem("userData"));

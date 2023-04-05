@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {baseUrl} from "../util/BaseUrl"
 
 export default function NotFound() {
+  //! NOTE: kode untuk view halaman Not Found
   return (
     <div className="container-fluid pt-4 px-4">
       <div className="row vh-100 bg-light rounded align-items-center justify-content-center mx-0">

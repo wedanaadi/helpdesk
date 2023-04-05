@@ -93,7 +93,7 @@ export default function KeluhanEditPelanggan() {
   const handleFile = (e) => {
     dispatch({
       type: "CHANGE_INPUT",
-      payload: {name:'files', value:[]},
+      payload: { name: "files", value: [] },
     });
     dispatch({
       type: "CHANGE_FILE",
@@ -277,6 +277,7 @@ export default function KeluhanEditPelanggan() {
     return () => clearInterval(inv);
   }, [kategori]);
 
+  //! NOTE: Kode untuk view
   return (
     <div className="row g-4">
       <div className="col-sm-12 col-xl-6 mx-0">
@@ -290,8 +291,9 @@ export default function KeluhanEditPelanggan() {
                 <label htmlFor="namaPelanggan" className="form-label">
                   Nama Pelanggan
                 </label>
+                {/* NOTE : Input untuk pelanggan */}
                 <Select
-                disabled={true}
+                  disabled={true}
                   options={pelanggan}
                   placeHolder={"Pelanggan"}
                   getter={selectPelanggan}
@@ -312,6 +314,7 @@ export default function KeluhanEditPelanggan() {
                 <label htmlFor="namaPelanggan" className="form-label">
                   Kategori
                 </label>
+                {/* NOTE : Input untuk kategori */}
                 <Select
                   options={kategori}
                   placeHolder={"Kategori"}
@@ -333,6 +336,7 @@ export default function KeluhanEditPelanggan() {
                 <label htmlFor="fileForm" className="form-label">
                   Lampiran
                 </label>
+                {/* NOTE : Input untuk file lampiran */}
                 <input
                   className="form-control"
                   // name="files"
@@ -357,6 +361,7 @@ export default function KeluhanEditPelanggan() {
                 <label htmlFor="comment" className="form-label">
                   Komentar
                 </label>
+                {/* NOTE : Input untuk komentar */}
                 <textarea
                   name="komentar"
                   id="komentar"
@@ -378,6 +383,7 @@ export default function KeluhanEditPelanggan() {
               </div>
             </div>
             <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+              {/* NOTE : Tombol Simpan */}
               <button type="submit" className="btn btn-primary">
                 Simpan
               </button>
@@ -389,7 +395,11 @@ export default function KeluhanEditPelanggan() {
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
             <h3 className="mb-0">File</h3>
-            <Link to={`${baseUrl}/keluhan/pelanggan`} className="btn btn-secondary mb-0">
+            {/* NOTE : Tombol Kembali */}
+            <Link
+              to={`${baseUrl}/keluhan/pelanggan`}
+              className="btn btn-secondary mb-0"
+            >
               <FontAwesomeIcon icon={faArrowLeft} />
               &nbsp; Kembali
             </Link>
@@ -406,7 +416,9 @@ export default function KeluhanEditPelanggan() {
                           href={`${import.meta.env.VITE_FILE_PUBLIC}/file/${
                             file.file
                           }`}
-                        >Lampiran {index+1}</a>
+                        >
+                          Lampiran {index + 1}
+                        </a>
                       </li>
                     ))}
                 </ul>

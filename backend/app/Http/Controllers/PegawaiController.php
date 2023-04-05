@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 
 class PegawaiController extends Controller
 {
+  // ! NOTE : Kode untuk menampilkan data pegawai
   public function index()
   {
     $data = Pegawai::filter(request(['search']))
@@ -23,6 +24,7 @@ class PegawaiController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk menambah data baru
   public function store(Request $request)
   {
     $validator = Validator::make($request->all(), [
@@ -82,6 +84,7 @@ class PegawaiController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk mengubah data
   public function update(Request $request, $id)
   {
     $validator = Validator::make($request->all(), [
@@ -144,12 +147,14 @@ class PegawaiController extends Controller
     }
   }
 
+  // ! NOTE: Kode untuk menampilkan profil pegawai
   public function showPegawai(Request $request)
   {
     $data = Pegawai::find($request->id);
     return response()->json(['msg' => 'find pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE: Kode untuk mengubah profil pegawai
   public function changeProfile(Request $request)
   {
     $validator = Validator::make($request->all(), [
@@ -213,6 +218,7 @@ class PegawaiController extends Controller
     }
   }
 
+  // ! NOTE: Kode untuk menghapus / nonaktifkan pegawai
   public function destroy($id)
   {
     $find = Pegawai::findOrFail($id);
@@ -232,12 +238,14 @@ class PegawaiController extends Controller
     }
   }
 
+  // ! NOTE: Kode untuk mengirim email notifikasi
   public function sendEmail(Request $request)
   {
     dispatch(new SendMailCreated($request->all()));
     return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
   }
 
+  // ! NOTE: Kode untuk menampikan data pegawai di dropdown
   public function select(Request $request)
   {
     $pro = DB::select('SELECT * FROM pegawais WHERE role="3"');
@@ -251,6 +259,7 @@ class PegawaiController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE: Kode untuk menampikan data pegawai di dropdown di kirim pesan
   public function select_sender(Request $request)
   {
     $pro = DB::select('SELECT * FROM pegawais WHERE id != "' . $request->idUser . '"');

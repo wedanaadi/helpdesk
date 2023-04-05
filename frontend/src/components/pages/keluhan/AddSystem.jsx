@@ -182,10 +182,12 @@ export default function AddSystem() {
     return () => clearInterval(inv);
   }, [pelanggan]);
 
+  // ! NOTE: Kode untuk view
   return (
     <div className="row col-6 bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Ajukan Keluhan</h3>
+         {/* NOTE : Tombol Kembali */}
         <Link
           to={`${baseUrl}/pelanggan`}
           className="btn btn-secondary mb-0"
@@ -200,6 +202,7 @@ export default function AddSystem() {
             <label htmlFor="namaPelanggan" className="form-label">
               Nama Pelanggan
             </label>
+             {/* NOTE : Input untuk pelanggan */}
             <Select
               disabled={true}
               options={pelanggan}
@@ -222,6 +225,7 @@ export default function AddSystem() {
             <label htmlFor="namaPelanggan" className="form-label">
               Kategori
             </label>
+             {/* NOTE : Input untuk kategori */}
             <Select
               options={kategori}
               placeHolder={"Kategori"}
@@ -243,6 +247,7 @@ export default function AddSystem() {
             <label htmlFor="fileForm" className="form-label">
               Lampiran
             </label>
+             {/* NOTE : Input untuk lampiran */}
             <input
               className="form-control"
               name="files"
@@ -267,6 +272,7 @@ export default function AddSystem() {
             <label htmlFor="comment" className="form-label">
               Komentar
             </label>
+             {/* NOTE : Input untuk komentar */}
             <textarea
               name="komentar"
               id="komentar"
@@ -288,6 +294,7 @@ export default function AddSystem() {
           </div>
         </div>
         <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+           {/* NOTE : Tombol simpan */}
           <button type="submit" className="btn btn-primary">
             Simpan
           </button>

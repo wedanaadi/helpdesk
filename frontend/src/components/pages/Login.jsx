@@ -135,6 +135,7 @@ export default function Login() {
     }
   }, []);
 
+   // ! NOTE: Kode halaman mulai
   return (
     <div className="container-fluid">
       <div
@@ -156,6 +157,7 @@ export default function Login() {
               <h3>Sign In</h3>
             </div>
             <form onSubmit={handleSubmit} autoComplete="off">
+              {/* NOTE : Input untuk username */}
               <div className="form-floating mb-3">
                 <input
                   type="text"
@@ -177,6 +179,7 @@ export default function Login() {
                 ))}
               </div>
               <div className="form-floating mb-4">
+                 {/* NOTE : Input untuk password */}
                 <input
                   type="password"
                   className="form-control"
@@ -196,6 +199,7 @@ export default function Login() {
                   </div>
                 ))}
               </div>
+               {/* NOTE : Tombol Login */}
               <button
                 type="submit"
                 className={`btn btn-primary py-3 w-100 mb-4 ${

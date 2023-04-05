@@ -193,11 +193,13 @@ export default function Index() {
         <h3 className="mb-0">Pelanggan</h3>
         {UserLogin.role == "1" ? (
           <div className="mb-0">
+             {/* NOTE : Tombol Import Data */}
             <button className="btn btn-success" onClick={()=> setShowImportComponent(true)}>
               <FontAwesomeIcon icon={faFileExcel} />
               &nbsp; Import
             </button>
             &nbsp;
+             {/* NOTE : Tombol Tambah data */}
             <Link to={`add`} className="btn btn-success">
               <FontAwesomeIcon icon={faPlus} />
               &nbsp; Tambah
@@ -218,6 +220,7 @@ export default function Index() {
               setter={setPagination}
             />
           </div>
+           {/* NOTE : Input untuk search */}
           <div className="col-md-10 d-flex flex-row-reverse">
             <>
               <button
@@ -235,6 +238,7 @@ export default function Index() {
             </>
           </div>
         </div>
+         {/* NOTE : Tabel data */}
         {!loading && !error && (
           <>
             <div className="table-responsive">
@@ -278,6 +282,7 @@ export default function Index() {
                             <div className="d-flex justify-content-between mx-0">
                               <span>{data.email}</span>
                               &nbsp;
+                               {/* NOTE : Tombol kirim email */}
                               <button
                                 className="btn btn-info mb-0"
                                 onClick={() => handleModal(data)}
@@ -300,6 +305,7 @@ export default function Index() {
                           {UserLogin.role == "1" ? (
                             <>
                               <td className="text-center w-15">
+                                 {/* NOTE : Tombol edit */}
                                 <button
                                   className="btn btn-warning"
                                   onClick={() => handleEditButton(data)}
@@ -308,7 +314,9 @@ export default function Index() {
                                   &nbsp; Edit
                                 </button>
                                 &nbsp;
-                                {data?.is_aktif === 1 ? (<button
+                                 {/* NOTE : Tombol aktif / non aktif */}
+                                {data?.is_aktif === 1 ? (
+                                <button
                                   className="btn btn-danger"
                                   onClick={() => confirm(data.id, 0)}
                                 >

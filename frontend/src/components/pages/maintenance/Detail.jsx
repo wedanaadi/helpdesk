@@ -95,6 +95,7 @@ export default function DetailMaintenance() {
   const [showModalExtend, SetshowModalExtend] = useState(false);
   const [showModalPegawai, setShowModalPegawai] = useState(false);
 
+  //! NOTE: kode untuk view
   return (
     <div className="row g-4">
       <ModalUpdate
@@ -121,6 +122,7 @@ export default function DetailMaintenance() {
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
             <h3 className="pb-1 mb-0">Detail Ticket Maintenance</h3>
+             {/* NOTE : Tombol Kembali */}
             <Link
               to={`${baseUrl}/maintenance`}
               className="btn btn-secondary mb-0"
@@ -133,6 +135,7 @@ export default function DetailMaintenance() {
       </div>
       <div className="col-12 mx-0">
         <div className="row p-2">
+           {/* NOTE : detail tiket */}
           <div className="d-flex justify-content-between align-items-center">
             <div>
               <b>NOMOR</b>:{" "}
@@ -162,6 +165,7 @@ export default function DetailMaintenance() {
                   <div className="d-flex justify-content-between align-items-center">
                     <span>Aksi Ticket: </span>
                     &nbsp;
+                     {/* NOTE : Tombol expired date */}
                     {lokalUser.role === 1 || lokalUser.role === 2 ? (
                       <button
                         className="btn btn-success"
@@ -172,6 +176,7 @@ export default function DetailMaintenance() {
                       </button>
                     ):false}
                     &nbsp;{" "}
+                     {/* NOTE : Tombol Tracking */}
                     {lokalUser.role === 3 && (
                       <Link
                         to={`${baseUrl}/keluhan/track/${detailLokal.tiket_keluhan}`}
@@ -182,6 +187,7 @@ export default function DetailMaintenance() {
                       </Link>
                     )}
                     &nbsp;
+                     {/* NOTE : Tombol Ganti Teknisi */}
                     {parseInt(detailLokal.status) === 0 ? (
                       <button
                         className="btn btn-warning"
@@ -208,6 +214,7 @@ export default function DetailMaintenance() {
                     checkExp() &&
                     lokalUser.role === 3 ? (
                       <>
+                       {/* NOTE : Tombol solved */}
                         <button
                           className="btn btn-success"
                           onClick={() => handleModal(detailLokal, "1")}
@@ -222,6 +229,7 @@ export default function DetailMaintenance() {
                     {lokalUser.role === 3 ? (
                       <>
                         &nbsp;
+                         {/* NOTE : Tombol Pending */}
                         <button
                           className="btn btn-warning"
                           onClick={() => handleModal(detailLokal, "2")}

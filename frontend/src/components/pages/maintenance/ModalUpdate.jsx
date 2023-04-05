@@ -136,6 +136,7 @@ export default function ModalUpdate({
     });
   }, [toggleModal]);
 
+  //! NOTE: kode untuk view
   return (
     <>
       <Modal show={toggleModal} onHide={handleClose}>
@@ -149,6 +150,7 @@ export default function ModalUpdate({
                 <label htmlFor="namaTeknisi" className="form-label">
                   Deskripsi Update Penanganan
                 </label>
+                 {/* NOTE : Input untuk deskripsi */}
                 <textarea
                   name="deskripsi"
                   className="form-control"
@@ -170,6 +172,7 @@ export default function ModalUpdate({
             </div>
           </Modal.Body>
           <Modal.Footer>
+             {/* NOTE : Tombol simpan perubahan */}
             <Button type="submit" variant="primary">
               Update Perubahan
             </Button>

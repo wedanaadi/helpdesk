@@ -130,6 +130,7 @@ export default function ModalChangePegawai({
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  //! NOTE: kode untuk view
   return (
     <>
       <Modal show={toogleShow} onHide={handleClose}>
@@ -143,6 +144,7 @@ export default function ModalChangePegawai({
                 <label htmlFor="extendDate" className="form-label">
                   Teknisi Sebelumnya
                 </label>
+                 {/* NOTE : Input untuk teknisi sebelumnya */}
                 <input
                   type="text"
                   name="extendDate"
@@ -155,6 +157,7 @@ export default function ModalChangePegawai({
                 <label htmlFor="extendDate" className="form-label">
                   Teknisi Baru
                 </label>
+                 {/* NOTE : Input untuk teknisi baru */}
                 <Select
                   options={teknisi}
                   placeHolder={"Teknisi"}
@@ -175,6 +178,7 @@ export default function ModalChangePegawai({
             </div>
           </Modal.Body>
           <Modal.Footer>
+             {/* NOTE : Tombol simpan */}
             <Button type="submit" variant="primary">
               Simpan
             </Button>

@@ -147,10 +147,12 @@ export default function Kategori() {
     axiosHandle && handleAxios();
   }, [kategoris, error]);
 
+  // ! NOTE: Kode untuk view (halaman)
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Kategori</h3>
+         {/* NOTE : Tombol tambah data */}
         <Link to={`add`} className="btn btn-success mb-0">
           <FontAwesomeIcon icon={faPlus} />
           &nbsp; Tambah
@@ -183,6 +185,7 @@ export default function Kategori() {
         </div>
         {!loading && !error && (
           <>
+           {/* NOTE : Tabel data */}
             <div className="table-responsive">
               <table className="table table-bordered text-nowrap">
                 <thead className="bg-white text-center fw-bold">
@@ -202,6 +205,7 @@ export default function Kategori() {
                           </td>
                           <td>{data.nama_kategori}</td>
                           <td className="text-center w-15">
+                             {/* NOTE : Tombol Edit */}
                             <button
                               className="btn btn-warning"
                               onClick={() => handleEditButton(data)}
@@ -210,6 +214,7 @@ export default function Kategori() {
                               &nbsp; Edit
                             </button>
                             &nbsp;
+                             {/* NOTE : Tombol Hapus */}
                             <button
                               className="btn btn-danger"
                               onClick={() => confirm(data.id)}

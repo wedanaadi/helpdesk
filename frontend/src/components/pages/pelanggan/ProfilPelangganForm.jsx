@@ -144,6 +144,7 @@ export default function ProfilPelangganForm({dataLogin}) {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  //! NOTE: Kode untuk view
   return (
     <>
       <form autoComplete="off" onSubmit={handleSubmit}>
@@ -151,6 +152,7 @@ export default function ProfilPelangganForm({dataLogin}) {
           <div className="col-lg-3 mx-0">
             <div className="bg-light rounded p-3">
               <div className="px-3 py-2 text-center">
+                 {/* NOTE : Profile Image */}
                 <img
                   src={
                     dataProfile.profil === "-"
@@ -161,6 +163,7 @@ export default function ProfilPelangganForm({dataLogin}) {
                   className="rounded-circle img-fluid"
                   style={{ width: "150px", height: "150px" }}
                 />
+                 {/* NOTE : Input untuk picture profile */}
                 <input
                   type="file"
                   name="profile"
@@ -185,6 +188,7 @@ export default function ProfilPelangganForm({dataLogin}) {
                     <label htmlFor="nama" className="form-label">
                       Nama Pelanggan
                     </label>
+                     {/* NOTE : Input untuk pelanggan */}
                     <input
                       type="text"
                       name="nama"
@@ -212,6 +216,7 @@ export default function ProfilPelangganForm({dataLogin}) {
                     <label htmlFor="email" className="form-label">
                       Email
                     </label>
+                     {/* NOTE : Input untuk email */}
                     <input
                       type="email"
                       name="email"
@@ -238,6 +243,7 @@ export default function ProfilPelangganForm({dataLogin}) {
                     <label htmlFor="telepon" className="form-label">
                       Telepon
                     </label>
+                     {/* NOTE : Input untuk telepon */}
                     <input
                       type="text"
                       name="telepon"
@@ -264,6 +270,7 @@ export default function ProfilPelangganForm({dataLogin}) {
                     <label htmlFor="alamat" className="form-label">
                       Alamat
                     </label>
+                     {/* NOTE : Input untuk alamat */}
                     <textarea
                       name="alamat"
                       id="alamat"
@@ -288,6 +295,7 @@ export default function ProfilPelangganForm({dataLogin}) {
                     <label htmlFor="kordinat" className="form-label">
                       Kordinat
                     </label>
+                     {/* NOTE : Input untuk kordinat */}
                     <input
                       type="text"
                       name="kordinat"
@@ -314,6 +322,7 @@ export default function ProfilPelangganForm({dataLogin}) {
                     <label htmlFor="username" className="form-label">
                       Username
                     </label>
+                     {/* NOTE : Input untuk username */}
                     <input
                       type="text"
                       name="username"
@@ -329,6 +338,7 @@ export default function ProfilPelangganForm({dataLogin}) {
                     <label htmlFor="password" className="form-label">
                       Password
                     </label>
+                     {/* NOTE : Input untuk password */}
                     <input
                       type="password"
                       name="password"
@@ -340,6 +350,7 @@ export default function ProfilPelangganForm({dataLogin}) {
                   </div>
                 </div>
                 <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+                   {/* NOTE : Tombol SImpan */}
                   <button type="submit" className="btn btn-primary">
                     Simpan
                   </button>

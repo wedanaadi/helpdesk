@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 
 class PelangganController extends Controller
 {
+  // ! NOTE: Kode untuk menampilkan data pelanggan
   public function index()
   {
     $data = Pelanggan::filter(request(['search']))
@@ -27,12 +28,14 @@ class PelangganController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE: Kode untuk menampilkan profil
   public function showPelanggan(Request $request)
   {
     $data = Pelanggan::find($request->id);
     return response()->json(['msg' => 'find pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE: KOde untuk mengubah profil
   public function changeProfile(Request $request)
   {
     $validator = Validator::make($request->all(), [
@@ -100,6 +103,7 @@ class PelangganController extends Controller
     }
   }
 
+  // ! NOTE: Kode untuk menampilkan pelanggan di dropdown
   public function select(Request $request)
   {
     $pro = DB::select('SELECT * FROM pelanggans ORDER BY is_aktif DESC, nama_pelanggan ASC');
@@ -113,6 +117,7 @@ class PelangganController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE: Kode untuk menampilkan provinsi di tambah/ubah data
   public function provinsi(Request $request)
   {
     $pro = DB::select('SELECT * FROM provinces WHERE id="51"');
@@ -126,6 +131,7 @@ class PelangganController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE: Kode untuk menampilkan kabupaten/kota di tambah/ubah data
   public function kabkot(Request $request)
   {
     $data = [];
@@ -141,6 +147,7 @@ class PelangganController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE: Kode untuk menampilkan kecamatan di tambah/ubah data
   public function kecamatan(Request $request)
   {
     $data = [];
@@ -156,6 +163,7 @@ class PelangganController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE: Kode untuk menampilkan kelurahan di tambah/ubah data
   public function kelurahan(Request $request)
   {
     $data = [];
@@ -171,6 +179,7 @@ class PelangganController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+   // ! NOTE: Kode untuk menambah data baru
   public function store(Request $request)
   {
     $validator = Validator::make($request->all(), [
@@ -242,6 +251,7 @@ class PelangganController extends Controller
     }
   }
 
+   // ! NOTE: Kode untuk mengubah data
   public function update(Request $request, $id)
   {
     $validator = Validator::make($request->all(), [
@@ -308,6 +318,7 @@ class PelangganController extends Controller
     }
   }
 
+   // ! NOTE: Kode untuk menon-aktifkan / aktifkan pegawai
   public function destroy(Request $request, $id)
   {
     $find = Pelanggan::findOrFail($id);
@@ -327,12 +338,14 @@ class PelangganController extends Controller
     }
   }
 
+   // ! NOTE: Kode untuk mengirim email notifikasi
   public function sendEmail(Request $request)
   {
     dispatch(new SendMailCreated($request->all()));
     return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
   }
 
+   // ! NOTE: Kode untuk data pelanggan
   public function import(Request $request)
   {
     $validator = Validator::make($request->all(), [

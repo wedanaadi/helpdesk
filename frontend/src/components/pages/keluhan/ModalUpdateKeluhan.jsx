@@ -242,6 +242,7 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
     });
   }, [toggleModal]);
 
+  //! NOTE: kode untuk view
   return (
     <>
       <Modal show={toggleModal} onHide={handleClose}>
@@ -255,6 +256,7 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
                 <label htmlFor="namaTeknisi" className="form-label">
                   Tipe Aksi
                 </label>
+                 {/* NOTE : Input untuk tipe aksi */}
                 <Select
                   options={optionTipes}
                   placeHolder={"Aksi"}
@@ -268,6 +270,7 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
                     <label htmlFor="namaTeknisi" className="form-label">
                       Nama Teknisi
                     </label>
+                     {/* NOTE : Input untuk teknisi */}
                     <Select
                       options={teknisi}
                       placeHolder={"Teknisi"}
@@ -295,6 +298,7 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
                     <label htmlFor="namaTeknisi" className="form-label">
                       Deskripsi Update Penanganan
                     </label>
+                     {/* NOTE : Input untuk deskripsi */}
                     <textarea
                       name="deskripsi"
                       className="form-control"
@@ -320,6 +324,7 @@ export default function ModalUpdateKeluhan({ toggleModal, setState, data }) {
             </div>
           </Modal.Body>
           <Modal.Footer>
+             {/* NOTE : Tombol update perubahan */}
             {selectTipe?.value ? (
               <Button type="submit" variant="primary">
                 Update Perubahan

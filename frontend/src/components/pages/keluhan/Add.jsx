@@ -173,10 +173,12 @@ export default function KeluhanAdd() {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  // ! NOTE: Kode untuk view
   return (
     <div className="row col-6 bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Tambah Keluhan</h3>
+         {/* NOTE : Tombol Kembali */}
         <Link to={`${baseUrl}/keluhan`} className="btn btn-secondary mb-0">
           <FontAwesomeIcon icon={faArrowLeft} />
           &nbsp; Kembali
@@ -188,6 +190,7 @@ export default function KeluhanAdd() {
             <label htmlFor="namaPelanggan" className="form-label">
               Nama Pelanggan
             </label>
+             {/* NOTE : Input untuk pelanggan */}
             <Select
               options={pelanggan}
               placeHolder={"Pelanggan"}
@@ -209,6 +212,7 @@ export default function KeluhanAdd() {
             <label htmlFor="namaPelanggan" className="form-label">
               Kategori
             </label>
+             {/* NOTE : Input untuk kategori */}
             <Select
               options={kategori}
               placeHolder={"Kategori"}
@@ -230,6 +234,7 @@ export default function KeluhanAdd() {
             <label htmlFor="fileForm" className="form-label">
               Lampiran
             </label>
+             {/* NOTE : Input untuk Lampiran */}
             <input
               className="form-control"
               name="files"
@@ -254,6 +259,7 @@ export default function KeluhanAdd() {
             <label htmlFor="comment" className="form-label">
               Komentar
             </label>
+             {/* NOTE : Input untuk komentar */}
             <textarea
               name="komentar"
               id="komentar"
@@ -275,6 +281,7 @@ export default function KeluhanAdd() {
           </div>
         </div>
         <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+           {/* NOTE : Tombol Simpan data */}
           <button type="submit" className="btn btn-primary">
             Simpan
           </button>

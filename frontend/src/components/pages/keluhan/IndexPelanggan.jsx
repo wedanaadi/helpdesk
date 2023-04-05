@@ -160,10 +160,12 @@ export default function Index() {
     navigasi(`${baseUrl}/keluhan/detail`);
   };
 
+  //! NOTE: kode untuk view
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Data Keluhan</h3>
+         {/* NOTE : Tombol tambah Keluhan */}
         <Link to={`add`} className="btn btn-success mb-0">
           <FontAwesomeIcon icon={faPlus} />
           &nbsp; Ajukan Keluhan
@@ -180,6 +182,7 @@ export default function Index() {
               setter={setPagination}
             />
           </div>
+           {/* NOTE : Input untuk search */}
           <div className="col-md-10 d-flex flex-row-reverse">
             <>
               <button className="btn btn-primary" onClick={() => getKeluhan()}>
@@ -196,6 +199,7 @@ export default function Index() {
         </div>
         {!loading && !error && (
           <>
+           {/* NOTE : tabel data */}
             <div className="table-responsive">
               <table className="table table-bordered text-nowrap">
                 <thead className="bg-white text-center fw-bold">
@@ -243,6 +247,7 @@ export default function Index() {
                             false
                           )}
                           <td className="text-center w-15">
+                             {/* NOTE : Tombol detail */}
                             <button
                               onClick={() => handleDetail(data)}
                               className="btn btn-success mb-0"
@@ -254,6 +259,7 @@ export default function Index() {
                             {LocalUser.idUser === data.created_user &&
                             data.status != "1" ? (
                               <>
+                               {/* NOTE : Tombol edit */}
                                 <button
                                   className="btn btn-warning"
                                   onClick={() => handleEditButton(data)}
@@ -262,6 +268,7 @@ export default function Index() {
                                   &nbsp; Edit
                                 </button>
                                 &nbsp;
+                                 {/* NOTE : Tombol hapus */}
                                 <button
                                   className="btn btn-danger"
                                   onClick={() => confirm(data.id)}

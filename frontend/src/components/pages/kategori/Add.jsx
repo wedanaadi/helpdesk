@@ -82,10 +82,12 @@ export default function AddKategori() {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  // ! NOTE: Kode untuk halaman / view
   return (
     <div className="row col-12 col-xl-6 bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Tambah Kategori</h3>
+         {/* NOTE : Tombol Kembali */}
         <Link to={`${baseUrl}/kategori`} className="btn btn-secondary mb-0">
           <FontAwesomeIcon icon={faArrowLeft} />
           &nbsp; Kembali
@@ -97,6 +99,7 @@ export default function AddKategori() {
             <label htmlFor="namaKategori" className="form-label">
               Kategori
             </label>
+             {/* NOTE : Input untuk nama kategori */}
             <input
               type="text"
               name="nama_kategori"
@@ -119,6 +122,7 @@ export default function AddKategori() {
           </div>
         </div>
         <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+           {/* NOTE : Tombol simpan data */}
           <button type="submit" className="btn btn-primary">
             Simpan
           </button>

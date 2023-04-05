@@ -107,6 +107,7 @@ export default function Detail() {
     setDataModal(data);
   };
 
+  // ! NOTE: Kode untuk view
   return (
     <div className="row g-4">
       <Suspense fallback={<>Loading....</>}>
@@ -117,6 +118,7 @@ export default function Detail() {
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
             <h3 className="pb-1 mb-0">Detail Ticket Keluhan</h3>
+             {/* NOTE : Tombol Kembali */}
             {hk == "4" ? (
               <Link
                 to={`${baseUrl}/keluhan/pelanggan`}
@@ -140,6 +142,7 @@ export default function Detail() {
       <div className="col-12 mx-0">
         <div className="row p-2">
           <div className="d-flex justify-content-between align-items-center">
+             {/* NOTE : Detail Ticket */}
             <div>
               <b>NOMOR</b>:{" "}
               <span className="badge text-bg-info">{detailLokal.tiket}</span> -{" "}
@@ -154,6 +157,7 @@ export default function Detail() {
               </span>
             </div>
             <div>
+               {/* NOTE : Tombol Tracking Penanganan */}
               <Link
                 to={`${baseUrl}/keluhan/track/${detailLokal.tiket}`}
                 className="btn btn-warning"
@@ -168,6 +172,7 @@ export default function Detail() {
                 <>
                   { checkExp() ? (
                     <>
+                     {/* NOTE : Tombol update ticket */}
                       <button
                         className="btn btn-info"
                         onClick={() => handleModal(detailLokal)}

@@ -187,6 +187,7 @@ export default function Index() {
     return db < now ? false : true;
   };
 
+  //! NOTE: kode untuk view
   return (
     <div className="row bg-light rounded mx-0">
       <Suspense>
@@ -199,6 +200,7 @@ export default function Index() {
       </Suspense>
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Data Maintenance</h3>
+         {/* NOTE : Tombol tambah */}
         {hk == "1" || hk == "2" || hk == "5" ? (
           <Link to={`add`} className="btn btn-success mb-0">
             <FontAwesomeIcon icon={faPlus} />
@@ -219,6 +221,7 @@ export default function Index() {
               setter={setPagination}
             />
           </div>
+           {/* NOTE : Input untuk search */}
           <div className="col-md-10 d-flex flex-row-reverse">
             <>
               <button
@@ -236,6 +239,7 @@ export default function Index() {
             </>
           </div>
         </div>
+         {/* NOTE : Tabel Data */}
         {!loading && !error && (
           <>
             <div className="table-responsive">
@@ -271,6 +275,7 @@ export default function Index() {
                           <td className="text-center w-15">
                             {LocalUser.role != "3" && (
                               <>
+                               {/* NOTE : Tombol kirim email */}
                                 <button
                                   className="btn btn-info mb-0"
                                   onClick={() => handleModal(data)}
@@ -279,6 +284,7 @@ export default function Index() {
                                   &nbsp; Send Email
                                 </button>
                                 &nbsp;
+                                 {/* NOTE : Tombol histori Email */}
                                 <button
                                   onClick={() => handleLogsEmail(data)}
                                   className="btn btn-secondary mb-0"
@@ -289,6 +295,7 @@ export default function Index() {
                                 &nbsp;
                               </>
                             )}
+                             {/* NOTE : Tombol Detail */}
                             <button
                               onClick={() => handleDetail(data)}
                               className="btn btn-success mb-0"
@@ -300,6 +307,7 @@ export default function Index() {
                               LocalUser.role !== 3 && (
                                 <>
                                   &nbsp;
+                                   {/* NOTE : Tombol edit */}
                                   <button
                                     className="btn btn-warning"
                                     onClick={() => handleEditButton(data)}
@@ -310,6 +318,7 @@ export default function Index() {
                                   {data.status !== 1 && (
                                     <>
                                       &nbsp;
+                                       {/* NOTE : Tombol delete */}
                                       <button
                                         className="btn btn-danger"
                                         onClick={() => confirm(data.id)}

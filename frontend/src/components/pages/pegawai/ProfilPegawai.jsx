@@ -53,6 +53,7 @@ export default function ProfilPegawai({ dataLogin }) {
     navigasi("edit", { replace: true });
   };
 
+  //! NOTE: kode untuk view
   return (
     <>
       {loading && (
@@ -65,6 +66,7 @@ export default function ProfilPegawai({ dataLogin }) {
           <div className="col-lg-4 mx-0">
             <div className="bg-light rounded p-3">
               <div className="px-3 py-2 text-center">
+                 {/* NOTE : Image Profile */}
                 <img
                   src={
                     profile.profil === "-"
@@ -78,6 +80,7 @@ export default function ProfilPegawai({ dataLogin }) {
                 <h5 className="my-3">{profile.nama_pegawai}</h5>
                 <p>{roleName}</p>
                 <div className="d-flex justify-content-center mb-2">
+                   {/* NOTE : Tombol Ubah Profile */}
                   <button
                     type="button"
                     className="btn btn-primary"

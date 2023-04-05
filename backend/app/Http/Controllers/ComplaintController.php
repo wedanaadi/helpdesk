@@ -28,6 +28,7 @@ class ComplaintController extends Controller
    *
    * @return void
    */
+  // ! NOTE : Kode untuk menampilkan data Keluhan
   public function index(Request $request)
   {
     if ($request->role === '4') {
@@ -68,7 +69,7 @@ class ComplaintController extends Controller
           '*',
           DB::raw('date_format(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d %H:%i:%s") as created_at2'),
           DB::raw('IF(status = "0","ON",IF(status= "1","SOLVED","ON PROSES")) as status_keluhan'),
-          DB::raw('DATE_FORMAT(date_add(FROM_UNIXTIME(created_at/1000),INTERVAL 3 day),"%Y-%m-%d %H:%i:%s") as expired_date')
+          DB::raw('DATE_FORMAT(date_add(FROM_UNIXTIME(created_at/1000),INTERVAL 3 day),"%Y-%m-%d %H:%i:%s") as expired_date2'),
         )
         // ->selectRaw('*, created_at AS "tanggal_tiket"')
         ->where('is_aktif', '1')
@@ -80,6 +81,7 @@ class ComplaintController extends Controller
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk menapilkan list pelanggan di halaman keluhan
   public function listPelangganKeluhan()
   {
     $data = Keluhan::filter(request(['search']))
@@ -89,6 +91,7 @@ class ComplaintController extends Controller
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk menampilkan notifikasi keluhan di menu (disamping user login)
   public function notifikasi_keluhan()
   {
     $data = Keluhan::where('status','0')
@@ -100,6 +103,7 @@ class ComplaintController extends Controller
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk menampilkan keluhan untuk user pelanggan
   public function index_pelanggan(Request $request)
   {
     $data = Keluhan::filter(request(['search']))
@@ -133,6 +137,7 @@ class ComplaintController extends Controller
    * @param  mixed $request
    * @return void
    */
+  // ! NOTE : Kode untuk menambah data baru keluhan
   public function store(Request $request)
   {
     $validator = Validator::make($request->all(), [
@@ -238,6 +243,7 @@ class ComplaintController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk mengubah data keluhan
   public function update(Request $request, $id)
   {
     $validator = Validator::make($request->all(), [
@@ -327,12 +333,14 @@ class ComplaintController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk menampilkan file / lampiran dari masing - masing keluhan
   public function files($id)
   {
     $data = FileKeluhan::where('keluhan_id', $id)->get();
     return response()->json(['msg' => 'Get keluhan', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk menghapus keluhan
   public function destroy($id)
   {
     $keluhan = Keluhan::findOrFail($id);
@@ -352,6 +360,7 @@ class ComplaintController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk mengubah status keluhan menjadi solved by admin/helpdesk
   public function solve(Request $request, $id)
   {
     $validator = Validator::make($request->all(), [
@@ -414,6 +423,7 @@ class ComplaintController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk mengubah status keluhan menjadi on process
   public function onProccess(Request $request, $id)
   {
     $validator = Validator::make($request->all(), [
@@ -476,6 +486,7 @@ class ComplaintController extends Controller
     }
   }
 
+  // ! NOTE : Kode untuk select id ticket keluhan yang bukan diedit
   public function select(Request $request)
   {
     $data = [];
@@ -488,6 +499,8 @@ class ComplaintController extends Controller
     }
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
+
+  // ! NOTE : Kode untuk select id ticket yang dipilih
   public function selectOnlyId($id)
   {
     $data = [];
@@ -501,6 +514,7 @@ class ComplaintController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE : Kode Tracking Keluhan
   public function log(Request $request)
   {
     $sql = "SELECT * FROM (
@@ -534,12 +548,14 @@ class ComplaintController extends Controller
     return response()->json(['msg' => 'Get pegawais', "data" => $data, 'error' => []], 200);
   }
 
+  // ! NOTE : Kode untuk mengirim email insert/update keluhan
   public function sendEmail(Request $request)
   {
     dispatch(new SendMailKeluhan($request->all()));
     return response()->json(['msg' => 'Successfuly send email', "data" => null, 'error' => null], 200);
   }
 
+  // ! NOTE : Kode import data keluhan
   public function import(Request $request)
   {
     $validator = Validator::make($request->all(), [

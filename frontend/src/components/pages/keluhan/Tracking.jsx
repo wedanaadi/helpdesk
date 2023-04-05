@@ -36,6 +36,7 @@ export default function Tracking() {
     return () => clearInterval(invt);
   }, []);
 
+  //! NOTE: kode untuk view
   return (
     <div className="row g-4">
       <div className="col-12 mx-0">
@@ -44,6 +45,7 @@ export default function Tracking() {
             <h3 className="pb-1 mb-0">
               Nomor Ticket: <b>{id}</b>
             </h3>
+             {/* NOTE : Tombol Kembali */}
             <Link
               to={`${baseUrl}/${lokalUser.role === 3 ? 'maintenance':'keluhan'}/detail`}
               className="btn btn-secondary mb-0"
@@ -55,6 +57,7 @@ export default function Tracking() {
         </div>
       </div>
       <div className="p-3 border-bottom">
+        {/* Timeline update tracking */}
         <section className="py-2">
           <ul className="timeline">
             {response.length > 0 &&

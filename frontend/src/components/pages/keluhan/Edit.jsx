@@ -277,6 +277,7 @@ export default function KeluhanEdit() {
     return () => clearInterval(inv);
   }, [kategori]);
 
+  //! NOTE: kode untuk view 
   return (
     <div className="row g-4">
       <div className="col-sm-12 col-xl-6 mx-0">
@@ -290,6 +291,7 @@ export default function KeluhanEdit() {
                 <label htmlFor="namaPelanggan" className="form-label">
                   Nama Pelanggan
                 </label>
+                 {/* NOTE : Input untuk pelanggan */}
                 <Select
                   options={pelanggan}
                   placeHolder={"Pelanggan"}
@@ -311,6 +313,7 @@ export default function KeluhanEdit() {
                 <label htmlFor="namaPelanggan" className="form-label">
                   Kategori
                 </label>
+                 {/* NOTE : Input untuk kategori */}
                 <Select
                   options={kategori}
                   placeHolder={"Kategori"}
@@ -332,6 +335,7 @@ export default function KeluhanEdit() {
                 <label htmlFor="fileForm" className="form-label">
                   Lampiran
                 </label>
+                 {/* NOTE : Input untuk file lampiran */}
                 <input
                   className="form-control"
                   // name="files"
@@ -356,6 +360,7 @@ export default function KeluhanEdit() {
                 <label htmlFor="comment" className="form-label">
                   Komentar
                 </label>
+                 {/* NOTE : Input untuk komentar */}
                 <textarea
                   name="komentar"
                   id="komentar"
@@ -377,6 +382,7 @@ export default function KeluhanEdit() {
               </div>
             </div>
             <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+               {/* NOTE : Tombol Simpan */}
               <button type="submit" className="btn btn-primary">
                 Simpan
               </button>
@@ -388,6 +394,7 @@ export default function KeluhanEdit() {
         <div className="bg-light rounded">
           <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
             <h3 className="mb-0">File</h3>
+             {/* NOTE : Tombol Kembali */}
             <Link to={`${baseUrl}/keluhan/listTicket`} className="btn btn-secondary mb-0">
               <FontAwesomeIcon icon={faArrowLeft} />
               &nbsp; Kembali

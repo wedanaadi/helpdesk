@@ -263,10 +263,12 @@ export default function Add() {
     return () => clearInterval(inv);
   }, [kordinat]);
 
+  //! NOTE: kode untuk view
   return (
     <div className="row col-12 bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Tambah Pelanggan</h3>
+         {/* NOTE : Tombol kembalu */}
         <Link to={`${baseUrl}/pelanggan`} className="btn btn-secondary mb-0">
           <FontAwesomeIcon icon={faArrowLeft} />
           &nbsp; Kembali
@@ -279,6 +281,7 @@ export default function Add() {
               <label htmlFor="namaPegawai" className="form-label">
                 Nama Pelanggan
               </label>
+               {/* NOTE : Input untuk pelanggan */}
               <input
                 type="text"
                 name="nama_pelanggan"
@@ -305,6 +308,7 @@ export default function Add() {
               <label htmlFor="email" className="form-label">
                 Email
               </label>
+               {/* NOTE : Input untuk email */}
               <input
                 type="text"
                 name="email"
@@ -331,6 +335,7 @@ export default function Add() {
               <label htmlFor="telepon" className="form-label">
                 Telepon
               </label>
+               {/* NOTE : Input untuk telepon */}
               <input
                 type="text"
                 name="telepon"
@@ -357,6 +362,7 @@ export default function Add() {
               <label htmlFor="provinsi" className="form-label">
                 Provinsi
               </label>
+               {/* NOTE : Input untuk provinsi */}
               <Select
                 options={provinces}
                 placeHolder={"Provinsi"}
@@ -381,6 +387,7 @@ export default function Add() {
               <label htmlFor="provinsi" className="form-label">
                 Kabupaten / Kota
               </label>
+               {/* NOTE : Input untuk kabupaten kota */}
               <Select
                 options={regencies}
                 placeHolder={"Kab/Kot"}
@@ -405,6 +412,7 @@ export default function Add() {
               <label htmlFor="kecamatan" className="form-label">
                 Kecamatan
               </label>
+               {/* NOTE : Input untuk kecamatan */}
               <Select
                 options={districts}
                 placeHolder={"Kecamatan"}
@@ -429,6 +437,7 @@ export default function Add() {
               <label htmlFor="kecamatan" className="form-label">
                 Kelurahan
               </label>
+               {/* NOTE : Input untuk kelurahan */}
               <Select
                 options={villages}
                 placeHolder={"Kelurahan"}
@@ -453,6 +462,7 @@ export default function Add() {
               <label htmlFor="alamat" className="form-label">
                 Alamat
               </label>
+               {/* NOTE : Input untuk alamat */}
               <textarea
                 name="alamat"
                 id="alamat"
@@ -478,6 +488,7 @@ export default function Add() {
                   <label htmlFor="alamat" className="form-label">
                     Kordinat
                   </label>
+                   {/* NOTE : Input untuk kordinat */}
                   <input
                     name="lat"
                     type="text"
@@ -499,6 +510,7 @@ export default function Add() {
           <div className="col-12 col-xl-8">
             <div className="mb-3">
               <div className="d-flex justify-content-between align-items-center">
+                 {/* NOTE : Input untuk MAP */}
                 <label htmlFor="alamat" className="form-label">
                   Kordinat{" "}
                   <span className="text-danger">
@@ -522,6 +534,7 @@ export default function Add() {
           </div>
         </div>
         <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+           {/* NOTE : Tombol Simpan */}
           <button type="submit" className="btn btn-primary">
             Simpan
           </button>

@@ -172,10 +172,12 @@ export default function FormAdd() {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  //! NOTE: kode untuk view
   return (
     <div className="row col-12 col-xl-6 bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Tambah Keluhan</h3>
+         {/* NOTE : Tombol Kembali */}
         <Link to={`${baseUrl}/maintenance`} className="btn btn-secondary mb-0">
           <FontAwesomeIcon icon={faArrowLeft} />
           &nbsp; Kembali
@@ -187,6 +189,7 @@ export default function FormAdd() {
             <label htmlFor="namaTeknisi" className="form-label">
               Nomor Keluhan
             </label>
+             {/* NOTE : Input untuk nomor keluhan */}
             <Select
               options={keluhan}
               placeHolder={"Keluhan"}
@@ -208,6 +211,7 @@ export default function FormAdd() {
             <label htmlFor="namaTeknisi" className="form-label">
               Nama Teknisi
             </label>
+             {/* NOTE : Input untuk teknisi */}
             <Select
               options={teknisi}
               placeHolder={"Teknisi"}
@@ -240,6 +244,7 @@ export default function FormAdd() {
           </div> */}
         </div>
         <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+           {/* NOTE : Tombol Simpan */}
           <button type="submit" className="btn btn-primary">
             Buat Ticket
           </button>

@@ -97,7 +97,7 @@ export default function lineChartMaintenace({ dataMentah }) {
         let Data = [];
         dataMentah.length > 0
           ? dataMentah?.map((data) => {
-              if(data.id) {
+              if(data.id_ticket) {
                 Label.push(
                   data.type === "month" ? MonthName(data.label) : `Tgl ${data.label}`
                 );

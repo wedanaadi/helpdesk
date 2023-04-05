@@ -275,11 +275,13 @@ export default function Solved() {
     return () => clearInterval(inv);
   }, [response]);
 
+  //! NOTE: kode untuk view
   return (
     <div className="row bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Laporan Complaint</h3>
         <div>
+           {/* NOTE : Tombol Lihat laporan */}
           <button className="btn btn-info" onClick={handleView}>
             <FontAwesomeIcon icon={faEye} />
             &nbsp; Lihat
@@ -289,6 +291,7 @@ export default function Solved() {
       <div className="px-3 py-2">
         <div className="row m-2">
           <h5>Periode</h5>
+           {/* NOTE : Input untuk Periode */}
           <div className="col-12 col-xl-2">
             <Select
               options={optionsType}
@@ -336,6 +339,7 @@ export default function Solved() {
         </div>
         <div className="row m-2">
           <h5>Kategori</h5>
+           {/* NOTE : Input untuk kategori */}
           <div className="col-12 col-xl-4">
             <Select
               options={kategoris}
@@ -347,6 +351,7 @@ export default function Solved() {
         </div>
         <div className="row m-2">
           <h5>Wilayah</h5>
+           {/* NOTE : Input untuk wilayah */}
           <div className="col-12 col-xl-3">
             <div className="mb-3">
               <label htmlFor="provinsi" className="form-label">
@@ -408,12 +413,14 @@ export default function Solved() {
           <>
             <div className="row mb-2 mt-2">
               <div className="col-12 d-flex flex-row-reverse">
+                 {/* NOTE : Tombol export */}
                 <ExportToExcel
                   apiData={dataExcel}
                   fileName={`Complaint-report-${ToDate(new Date())}`}
                 />
               </div>
             </div>
+             {/* NOTE : Tabel data */}
             <div className="table-responsive">
               <table className="table table-bordered text-nowrap">
                 <thead className="bg-white text-center fw-bold">

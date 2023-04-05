@@ -92,6 +92,7 @@ export default function modalImport({ toogleShow, setClose, reloadData }) {
                 <label htmlFor="namaTeknisi" className="form-label">
                   File Excel
                 </label>
+                 {/* NOTE : Input untuk file import */}
                 <input
                   type="file"
                   name="fileImport"
@@ -112,6 +113,7 @@ export default function modalImport({ toogleShow, setClose, reloadData }) {
             </div>
           </Modal.Body>
           <Modal.Footer>
+             {/* NOTE : Tombol Import */}
             <Button type="submit" variant="primary">
               Import Excel
             </Button>

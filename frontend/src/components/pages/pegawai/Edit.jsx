@@ -157,10 +157,12 @@ export default function EditPegawai() {
     axiosHandle && handleAxios();
   }, [response, error]);
 
+  //! NOTE: kode untuk view
   return (
     <div className="row col-12 bg-light rounded mx-0">
       <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
         <h3 className="mb-0">Ubah Pegawai</h3>
+         {/* NOTE : tombol kembali */}
         <Link to={`${baseUrl}/pegawai`} className="btn btn-secondary mb-0">
           <FontAwesomeIcon icon={faArrowLeft} />
           &nbsp; Kembali
@@ -173,6 +175,7 @@ export default function EditPegawai() {
               <label htmlFor="namaPegawai" className="form-label">
                 Nama Pegawai
               </label>
+               {/* NOTE : Input untuk pegawai */}
               <input
                 type="text"
                 name="nama_pegawai"
@@ -199,6 +202,7 @@ export default function EditPegawai() {
               <label htmlFor="email" className="form-label">
                 Email
               </label>
+               {/* NOTE : Input untuk email */}
               <input
                 type="email"
                 name="email"
@@ -225,6 +229,7 @@ export default function EditPegawai() {
               <label htmlFor="telepon" className="form-label">
                 Telepon
               </label>
+               {/* NOTE : Input untuk telepon */}
               <input
                 type="text"
                 name="telepon"
@@ -251,6 +256,7 @@ export default function EditPegawai() {
               <label htmlFor="username" className="form-label">
                 Username
               </label>
+               {/* NOTE : Input untuk username */}
               <input
                 type="text"
                 name="username"
@@ -277,6 +283,7 @@ export default function EditPegawai() {
               <label htmlFor="password" className="form-label">
                 Password
               </label>
+               {/* NOTE : Input untuk password */}
               <input
                 type="password"
                 name="password"
@@ -303,6 +310,7 @@ export default function EditPegawai() {
               <label htmlFor="role" className="form-label">
                 Jabatan
               </label>
+               {/* NOTE : Input untuk jabatan */}
               <Select
                 options={optionsRole}
                 placeHolder={"Page"}
@@ -326,6 +334,7 @@ export default function EditPegawai() {
               <label htmlFor="alamat" className="form-label">
                 Alamat
               </label>
+               {/* NOTE : Input untuk alamat */}
               <textarea
                 name="alamat"
                 id="alamat"
@@ -347,6 +356,7 @@ export default function EditPegawai() {
           </div>
         </div>
         <div className="py-3 px-2 border-top d-flex flex-row-reverse">
+           {/* NOTE : Tombol Simpan */}
           <button type="submit" className="btn btn-primary">
             Simpan
           </button>

@@ -36,6 +36,7 @@ export default function LogEmail() {
     return () => clearInterval(invt);
   }, []);
 
+  //! NOTE: kode untuk view
   return (
     <>
       <div className="row g-4">
@@ -43,6 +44,7 @@ export default function LogEmail() {
           <div className="bg-light rounded p-3">
             <div className="d-flex justify-content-between align-items-center">
               <h3 className="mb-0">History Email Ticket </h3>
+               {/* NOTE : Tombol kembali */}
               <Link
                 to={`${baseUrl}/maintenance`}
                 className="btn btn-secondary mb-0"
@@ -51,6 +53,7 @@ export default function LogEmail() {
                 &nbsp; Kembali
               </Link>
             </div>
+             {/* NOTE : Timeline log Email */}
             <div className="p-3 border-bottom">
               <section className="py-2">
                 {loading && <LoadingPage text={"Loading logs...."} />}
