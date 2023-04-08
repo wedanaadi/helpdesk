@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { baseUrl } from '../../util/BaseUrl';
 
 export default function ModalExtend({ toogleShow, setClose, dataDetail }) {
-  const curr_exp = new Date(dataDetail.expired_date);
+  const curr_exp = new Date(parseInt(dataDetail.expired_date));
   const [axiosHandle, setAxiosHandle] = useState(false);
   const [response, error, loading, AxiosFuc] = useHookAxios();
   const [file, setFile] = useState(null);

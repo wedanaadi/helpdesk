@@ -272,6 +272,7 @@ class ReportController extends Controller
       // $data->select(DB::raw('"day" as type'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) label'), DB::raw('count(id) as jumlah'), DB::raw('DATE_FORMAT(FROM_UNIXTIME(created_at/1000),"%Y-%m-%d") as format_date'), DB::raw('YEAR(FROM_UNIXTIME(created_at/1000)) year'), DB::raw('MONTH(FROM_UNIXTIME(created_at/1000)) month'), DB::raw('DAY(FROM_UNIXTIME(created_at/1000)) day'));
       $data->groupBy('day','year', 'month');
     }
+    $data->orderBy('format_date','ASC');
     return response()->json(['msg' => 'Get pegawais', "data" => $data->get(), 'error' => []], 200);
   }
 

@@ -86,7 +86,7 @@ export default function ViewNotif() {
                     {/* {ToDate(log.created_at, "full")} */}
                   </p>
                   <p className="text-muted mb-2 fw-bold">
-                    {ToDate(data.created_at, "full")}
+                    {ToDate(parseInt(data.created_at), "full")}
                   </p>
                 </li>
               ))}

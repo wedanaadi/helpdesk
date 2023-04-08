@@ -13,7 +13,7 @@ export default function ProfilPelanggan({ dataLogin }) {
   const [profile, error, loading, axiosFuc] = useHookAxios();
   const navigasi = useNavigate();
 
-  switch (dataLogin.role) {
+  switch (parseInt(dataLogin.role)) {
     case 1:
       roleName = "Admin";
       break;

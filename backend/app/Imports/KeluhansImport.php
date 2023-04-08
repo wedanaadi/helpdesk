@@ -9,6 +9,7 @@ use App\Models\Keluhan;
 use App\Models\Log;
 use App\Models\Pegawai;
 use App\Models\Pelanggan;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -56,6 +57,7 @@ class KeluhansImport implements WithStartRow, ToCollection
         $newTiket = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'K', $date);
       }
       if (!is_null($row[0]) and !is_null($kategori) and !is_null($pelanggan) and !is_null($userLogin)) {
+        $expired_date = Carbon::now()->addDays(3)->timestamp;
         $data = [
           'id' => Str::uuid()->toString(),
           'kategori_id' => $kategori,
@@ -65,7 +67,7 @@ class KeluhansImport implements WithStartRow, ToCollection
           'tiket' => $newTiket,
           'created_user' => $userLogin,
           'updated_user' => $userLogin,
-          'expired_date' => strtotime(date("Y-m-d H:i:s") . "+3 days") * 1000,
+          'expired_date' => round($expired_date * 1000),
           'created_at' => round(microtime(true) * 1000),
           'updated_at' => round(microtime(true) * 1000),
         ];

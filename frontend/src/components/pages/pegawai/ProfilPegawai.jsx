@@ -12,7 +12,7 @@ export default function ProfilPegawai({ dataLogin }) {
   const [profile, error, loading, axiosFuc] = useHookAxios();
   const navigasi = useNavigate();
 
-  switch (profile.role) {
+  switch (parseInt(profile.role)) {
     case 1:
       roleName = "Admin";
       break;

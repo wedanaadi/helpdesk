@@ -47,7 +47,7 @@ export default function Tracking() {
             </h3>
              {/* NOTE : Tombol Kembali */}
             <Link
-              to={`${baseUrl}/${lokalUser.role === 3 ? 'maintenance':'keluhan'}/detail`}
+              to={`${baseUrl}/${lokalUser.role === "3" ? 'maintenance':'keluhan'}/detail`}
               className="btn btn-secondary mb-0"
             >
               <FontAwesomeIcon icon={faArrowLeft} />
@@ -76,7 +76,7 @@ export default function Tracking() {
                       Update By <span className="text-primary">{log.updated_by}</span>
                     </p>
                     <p className="text-muted mb-2 fw-bold">
-                      {ToDate(log.created_at, "full")}
+                      {ToDate(parseInt(log.created_at), "full")}
                     </p>
                   </li>
                 ) : (
@@ -90,7 +90,7 @@ export default function Tracking() {
                       Update By <span className="fw-bold">{log.updated_by}</span>
                     </p>
                     <p className="text-muted mb-2">
-                      {ToDate(log.created_at, "full")}
+                      {ToDate(parseInt(log.created_at), "full")}
                     </p>
                   </li>
                 )

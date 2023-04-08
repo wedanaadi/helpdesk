@@ -236,9 +236,9 @@ export default function Index() {
                               <td>{data.kategori.nama_kategori}</td>
                               <td>{data.comment}</td>
                               <td>
-                                {data.status === 0
+                                {data.status === "0"
                                   ? "Open"
-                                  : data.status === 2
+                                  : data.status === "2"
                                   ? "On Process"
                                   : "Solve"}
                               </td>

@@ -76,7 +76,7 @@ export default function LogEmail() {
                             to: <span className="text-primary">{log.to} ({log.nama_pegawai})</span>
                           </p>
                           <p className="text-muted mb-2 fw-bold">
-                            terkirim: {ToDate(log.time_delevery, "full")}
+                            terkirim: {ToDate(parseInt(log.time_delevery), "full")}
                           </p>
                         </li>
                       ) : (
@@ -91,7 +91,7 @@ export default function LogEmail() {
                             to : <span className="fw-bold">{log.to} ({log.nama_pegawai})</span>
                           </p>
                           <p className="text-muted mb-2">
-                            terkirim : {ToDate(log.time_delevery, "full")}
+                            terkirim : {ToDate(parseInt(log.time_delevery), "full")}
                           </p>
                         </li>
                       )

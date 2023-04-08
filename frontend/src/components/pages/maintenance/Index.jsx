@@ -303,8 +303,8 @@ export default function Index() {
                               <FontAwesomeIcon icon={faSearch} />
                               &nbsp; Detail
                             </button>
-                            {checkExp(data.expired_date) &&
-                              LocalUser.role !== 3 && (
+                            {checkExp(parseInt(data.expired_date)) &&
+                              LocalUser.role !== "3" && (
                                 <>
                                   &nbsp;
                                    {/* NOTE : Tombol edit */}
@@ -315,7 +315,7 @@ export default function Index() {
                                     <FontAwesomeIcon icon={faPencilAlt} />
                                     &nbsp; Edit
                                   </button>
-                                  {data.status !== 1 && (
+                                  {data.status !== "1" && (
                                     <>
                                       &nbsp;
                                        {/* NOTE : Tombol delete */}

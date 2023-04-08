@@ -237,9 +237,9 @@ export default function Index() {
                           <td>{data.pelanggan.nama_pelanggan}</td>
                           <td>{ToDate(data.created_at2, "full")}</td>
                           <td>
-                            {data.status === 0
+                            {data.status === "0"
                               ? "Open"
-                              : data.status === 2
+                              : data.status === "2"
                               ? "On Proccess"
                               : "Solved"}
                           </td>
@@ -261,7 +261,7 @@ export default function Index() {
                               &nbsp; Detail
                             </button>
                             &nbsp;
-                            {checkExp(data.expired_date) && (
+                            {checkExp(parseInt(data.expired_date)) && (
                               <>
                                {/* NOTE : Tombol Edit */}
                                 <button
@@ -271,7 +271,7 @@ export default function Index() {
                                   <FontAwesomeIcon icon={faPencilAlt} />
                                   &nbsp; Edit
                                 </button>
-                                {data.status !== 1 && (
+                                {data.status !== "1" && (
                                   <>
                                    {/* NOTE : Tombol Hapus */}
                                     &nbsp;

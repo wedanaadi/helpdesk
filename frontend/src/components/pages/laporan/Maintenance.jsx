@@ -249,7 +249,7 @@ export default function Solved() {
             "Nomor Keluhan": data.keluhan.tiket,
             "Kategori Keluhan": data.keluhan.kategori.nama_kategori,
             Pelanggan: data.keluhan.pelanggan.nama_pelanggan,
-            Dibuat: ToDate(data.created_at, "full"),
+            Dibuat: ToDate(parseInt(data.created_at), "full"),
             Status: data.status_desc,
             Ditangani: data.keluhan.pegawai.nama_pegawai,
             Provinsi:
@@ -451,7 +451,7 @@ export default function Solved() {
                           <td>{data?.keluhan?.tiket}</td>
                           <td>{data?.keluhan?.kategori?.nama_kategori}</td>
                           <td>{data?.keluhan?.pelanggan?.nama_pelanggan}</td>
-                          <td>{ToDate(data.created_at, "full")}</td>
+                          <td>{ToDate(parseInt(data.created_at), "full")}</td>
                           <td>{data?.status_desc}</td>
                           <td>{data?.keluhan?.pegawai?.nama_pegawai}</td>
                           <td>

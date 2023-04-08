@@ -30,7 +30,7 @@ export default function DetailMaintenance() {
   const navigasi = useNavigate();
 
   const checkExp = () => {
-    const db = ConvertToEpoch(detailLokal.expired_date);
+    const db = ConvertToEpoch(parseInt(detailLokal.expired_date));
     const now = ConvertToEpoch(new Date());
     return db < now ? false : true;
   };
@@ -148,11 +148,11 @@ export default function DetailMaintenance() {
               </span>
               <br /> <b>CREATED DATE TICKET</b>:{" "}
               <span className="badge text-bg-success">
-                {ToDate(detailLokal.created_at, "full")}
+                {ToDate(parseInt(detailLokal.created_at), "full")}
               </span>
               <br /> <b>EXPIRED DATE TICKET</b>:{" "}
               <span className="badge text-bg-danger">
-                {ToDate(detailLokal.expired_date, "full")}
+                {ToDate(parseInt(detailLokal.expired_date), "full")}
               </span>
               <br /> <b>Ditangani oleh</b> :{" "}
               <span className="badge text-bg-info">
@@ -161,12 +161,12 @@ export default function DetailMaintenance() {
             </div>
             <div>
               <div className="row">
-                {lokalUser.role !== 4 ? (
+                {lokalUser.role !== "4" ? (
                   <div className="d-flex justify-content-between align-items-center">
                     <span>Aksi Ticket: </span>
                     &nbsp;
                      {/* NOTE : Tombol expired date */}
-                    {lokalUser.role === 1 || lokalUser.role === 2 ? (
+                    {lokalUser.role === "1" || lokalUser.role === "2" ? (
                       <button
                         className="btn btn-success"
                         onClick={() => SetshowModalExtend(true)}
@@ -177,7 +177,7 @@ export default function DetailMaintenance() {
                     ):false}
                     &nbsp;{" "}
                      {/* NOTE : Tombol Tracking */}
-                    {lokalUser.role === 3 && (
+                    {lokalUser.role === "3" && (
                       <Link
                         to={`${baseUrl}/keluhan/track/${detailLokal.tiket_keluhan}`}
                         className="btn btn-warning"
@@ -188,7 +188,7 @@ export default function DetailMaintenance() {
                     )}
                     &nbsp;
                      {/* NOTE : Tombol Ganti Teknisi */}
-                    {parseInt(detailLokal.status) === 0 ? (
+                    {parseInt(detailLokal.status) === "0" ? (
                       <button
                         className="btn btn-warning"
                         onClick={() => setShowModalPegawai(true)}
@@ -207,12 +207,12 @@ export default function DetailMaintenance() {
 
               <div className="row mt-2">
                 <div className="d-flex justify-content-between align-items-center">
-                  {lokalUser.role===3 && <span>Update Ticket: </span>}
+                  {lokalUser.role=== "3" && <span>Update Ticket: </span>}
                   &nbsp;
                   <div>
                     {parseInt(detailLokal.status) !== 1 &&
                     checkExp() &&
-                    lokalUser.role === 3 ? (
+                    lokalUser.role === "3" ? (
                       <>
                        {/* NOTE : Tombol solved */}
                         <button
@@ -226,7 +226,7 @@ export default function DetailMaintenance() {
                     ) : (
                       false
                     )}
-                    {lokalUser.role === 3 ? (
+                    {lokalUser.role === "3" ? (
                       <>
                         &nbsp;
                          {/* NOTE : Tombol Pending */}
@@ -328,7 +328,7 @@ export default function DetailMaintenance() {
                     <td>Dibuat</td>
                     <td>:</td>
                     <td>
-                      <b>{ToDate(detailLokal.keluhans.created_at, "full")}</b>
+                      <b>{ToDate(parseInt(detailLokal.keluhans.created_at), "full")}</b>
                     </td>
                   </tr>
                   <tr>

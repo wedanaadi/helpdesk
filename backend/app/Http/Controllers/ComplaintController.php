@@ -14,6 +14,7 @@ use App\Models\MaintenanceReport;
 use App\Models\Pelanggan;
 use App\Models\SolveReport;
 use App\Models\UpdateComplaint;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -169,6 +170,7 @@ class ComplaintController extends Controller
           ->first();
         $newTiket = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'K', $date);
       }
+      $expired_date = Carbon::now()->addDays(3)->timestamp;
       $payload = [
         'tiket' => $newTiket,
         'pelanggan_id' => $request->pelanggan,
@@ -176,7 +178,7 @@ class ComplaintController extends Controller
         'comment' => $request->komentar,
         'created_user' => $request->created_user,
         'updated_user' => $request->updated_user,
-        'expired_date' => strtotime(date("Y-m-d H:i:s") . "+3 days") * 1000,
+        'expired_date' => round($expired_date * 1000),
         'status' => '0',
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),

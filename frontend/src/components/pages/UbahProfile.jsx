@@ -28,7 +28,7 @@ export default function UbahProfile() {
       </div>
 
       <Suspense>
-        {LokalUser.role !== 4 ? <FormProfilPegawai dataLogin={LokalUser} /> : <FormProfilPelanggan dataLogin={LokalUser} />}
+        {LokalUser.role !== "4" ? <FormProfilPegawai dataLogin={LokalUser} /> : <FormProfilPelanggan dataLogin={LokalUser} />}
       </Suspense>
     </>
   );

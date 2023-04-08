@@ -135,7 +135,7 @@ export default function Login() {
     }
   }, []);
 
-   // ! NOTE: Kode halaman mulai
+   // ! NOTE: Kode halaman view mulai
   return (
     <div className="container-fluid">
       <div

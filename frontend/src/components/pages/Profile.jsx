@@ -18,7 +18,7 @@ export default function Profile() {
       </div>
 
       <Suspense>
-        {LokalUser.role !== 4 ? <ProfilPegawai dataLogin={LokalUser} /> : <ProfilPelanggan dataLogin={LokalUser} />}
+        {LokalUser.role !== "4" ? <ProfilPegawai dataLogin={LokalUser} /> : <ProfilPelanggan dataLogin={LokalUser} />}
       </Suspense>
     </>
   );

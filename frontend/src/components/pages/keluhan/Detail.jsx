@@ -153,7 +153,7 @@ export default function Detail() {
               <br />
               <b>EXPIRED DATE TICKET</b>:{" "}
               <span className="badge text-bg-danger">
-                {ToDate(detailLokal.expired_date, "full")}
+                {ToDate(parseInt(detailLokal.expired_date), "full")}
               </span>
             </div>
             <div>
